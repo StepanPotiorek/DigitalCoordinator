@@ -1,0 +1,22 @@
+import { auth } from "@/lib/auth"
+import { redirect } from "next/navigation"
+
+export default async function DashboardPage() {
+  const session = await auth()
+
+  if (!session?.user) {
+    redirect("/login")
+  }
+
+  const role = session.user.role
+
+  if (role === "ADMIN") {
+    redirect("/dashboard/admin")
+  } else if (role === "COORDINATOR") {
+    redirect("/dashboard/workers")
+  } else if (role === "CLIENT") {
+    redirect("/dashboard/clients")
+  }
+
+  return null
+}

@@ -1,0 +1,185 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String    @id @default(cuid())
+  name         String?
+  email        String    @unique
+  passwordHash String
+  role         Role      @default(COORDINATOR)
+  client       Client?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
+
+enum Role {
+  ADMIN
+  COORDINATOR
+  CLIENT
+}
+
+model Worker {
+  id                   Int               @id @default(autoincrement())
+  name                 String
+  whatsapp             String
+  email                String?
+  employer             String?
+  accommodation        String?
+  arrivalDate          DateTime?
+  emergencyContactName String?
+  emergencyContactPhone String?
+  onboardingStatus     OnboardingStatus  @default(PENDING)
+  createdAt            DateTime          @default(now())
+  updatedAt            DateTime          @updatedAt
+
+  accommodationDetail Accommodation?
+  onboardingItems     OnboardingItem[]
+  issues              Issue[]
+  communications     CommunicationLog[]
+
+  @@index([employer])
+  @@index([onboardingStatus])
+  @@index([createdAt])
+}
+
+enum OnboardingStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+}
+
+model OnboardingItem {
+  id          Int                @id @default(autoincrement())
+  workerId    Int
+  label       String
+  category    OnboardingCategory
+  completed   Boolean            @default(false)
+  completedAt DateTime?
+  createdAt   DateTime           @default(now())
+
+  worker Worker @relation(fields: [workerId], references: [id], onDelete: Cascade)
+
+  @@index([workerId])
+  @@index([category])
+  @@index([completed])
+}
+
+enum OnboardingCategory {
+  BEFORE_ARRIVAL
+  AFTER_ARRIVAL
+  FIRST_DAY
+  SIM_CARD
+  BANK_ACCOUNT
+  ACCOMMODATION
+  EMERGENCY
+  LANGUAGE
+  ADAPTATION
+  IMMIGRATION
+}
+
+model Issue {
+  id          Int           @id @default(autoincrement())
+  workerId    Int?
+  issueType   String
+  description String
+  priority    IssuePriority @default(MEDIUM)
+  status      IssueStatus   @default(OPEN)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  worker Worker? @relation(fields: [workerId], references: [id], onDelete: SetNull)
+
+  @@index([workerId])
+  @@index([status])
+  @@index([priority])
+  @@index([createdAt])
+}
+
+enum IssuePriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum IssueStatus {
+  OPEN
+  IN_PROGRESS
+  RESOLVED
+}
+
+model Accommodation {
+  id           Int      @id @default(autoincrement())
+  workerId     Int      @unique
+  address      String
+  room         String?
+  rules        String?
+  contactName  String?
+  contactPhone String?
+  mapUrl       String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  worker Worker @relation(fields: [workerId], references: [id], onDelete: Cascade)
+
+  @@index([workerId])
+}
+
+model Client {
+  id           Int      @id @default(autoincrement())
+  name         String
+  contactEmail String?
+  contactPhone String?
+  notes        String?
+  userId       String?  @unique
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  user           User?              @relation(fields: [userId], references: [id])
+  communications CommunicationLog[]
+
+  @@index([name])
+}
+
+model CommunicationLog {
+  id        Int               @id @default(autoincrement())
+  workerId  Int
+  clientId  Int?
+  type      CommunicationType
+  message   String
+  createdBy String
+  createdAt DateTime          @default(now())
+
+  worker Worker  @relation(fields: [workerId], references: [id], onDelete: Cascade)
+  client Client? @relation(fields: [clientId], references: [id], onDelete: SetNull)
+
+  @@index([workerId])
+  @@index([clientId])
+  @@index([createdAt])
+}
+
+enum CommunicationType {
+  NOTE
+  ISSUE_UPDATE
+  ONBOARDING_UPDATE
+  GENERAL
+}
+
+model Faq {
+  id        Int      @id @default(autoincrement())
+  question  String
+  answer    String
+  category  String?
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([category])
+  @@index([order])
+}
