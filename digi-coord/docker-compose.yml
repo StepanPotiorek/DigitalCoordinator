@@ -8,9 +8,11 @@ services:
     volumes:
       - sqlite-data:/app/data
     environment:
+      - AUTH_SECRET=McQZE5r3jFE4NxaiuNcYeQpG4NXc36fT0y3VWluVikk=
+      - NEXTAUTH_SECRET=McQZE5r3jFE4NxaiuNcYeQpG4NXc36fT0y3VWluVikk=
+      - AUTH_URL=http://rdev.buq.cz:3000
+      - NEXTAUTH_URL=http://rdev.buq.cz:3000
       - DATABASE_URL=file:/app/data/prod.db
-      - NEXTAUTH_SECRET=change-this-to-a-random-secret
-      - NEXTAUTH_URL=http://localhost:3000
       - NEXT_TELEMETRY_DISABLED=1
     restart: unless-stopped
 
