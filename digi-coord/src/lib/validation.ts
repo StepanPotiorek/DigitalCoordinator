@@ -27,12 +27,17 @@ export function handleValidation(error: unknown): NextResponse {
 export const createWorkerSchema = z.object({
   name: z.string().min(1, "Name is required").max(200),
   whatsapp: z.string().min(1, "WhatsApp is required").max(50),
-  email: z.string().email().optional().or(z.literal("")),
+  email: z.string().email("Valid email is required"),
+  password: z.string().min(6, "Password must be at least 6 characters").max(100),
+  confirmPassword: z.string().min(1, "Please confirm your password"),
   employer: z.string().max(200).optional().or(z.literal("")),
   accommodation: z.string().max(500).optional().or(z.literal("")),
   arrivalDate: z.string().optional().or(z.literal("")),
   emergencyContactName: z.string().max(200).optional().or(z.literal("")),
   emergencyContactPhone: z.string().max(50).optional().or(z.literal("")),
+}).refine((data) => data.password === data.confirmPassword, {
+  message: "Passwords do not match",
+  path: ["confirmPassword"],
 })
 
 export const updateWorkerSchema = z.object({

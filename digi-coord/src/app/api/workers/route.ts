@@ -1,8 +1,9 @@
 import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
-import { apiHandler, unauthorized, created, badRequest, parseId } from "@/lib/api-utils"
+import { apiHandler, unauthorized, created, badRequest, conflict, parseId } from "@/lib/api-utils"
 import { validate, createWorkerSchema, updateWorkerSchema } from "@/lib/validation"
 import { defaultOnboardingItems } from "@/lib/onboarding-items"
+import { hash } from "bcryptjs"
 import { NextRequest } from "next/server"
 
 export async function GET(request: NextRequest) {
@@ -27,11 +28,26 @@ export async function POST(request: Request) {
     const body = await request.json()
     const data = validate(createWorkerSchema, body)
 
+    const existing = await prisma.user.findUnique({ where: { email: data.email } })
+    if (existing) {
+      return conflict("This email is already registered. Please sign in instead.")
+    }
+
+    const passwordHash = await hash(data.password, 12)
+
+    const user = await prisma.user.create({
+      data: {
+        name: data.name,
+        email: data.email,
+        passwordHash,
+      },
+    })
+
     const worker = await prisma.worker.create({
       data: {
         name: data.name,
         whatsapp: data.whatsapp,
-        email: data.email || null,
+        email: data.email,
         employer: data.employer || null,
         accommodation: data.accommodation || null,
         arrivalDate: data.arrivalDate ? new Date(data.arrivalDate) : null,
@@ -50,6 +66,6 @@ export async function POST(request: Request) {
       })
     }
 
-    return created(worker)
+    return created({ worker, user: { id: user.id, name: user.name, email: user.email } })
   })
 }

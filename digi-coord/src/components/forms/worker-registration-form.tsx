@@ -6,6 +6,8 @@ interface FormData {
   name: string
   whatsapp: string
   email: string
+  password: string
+  confirmPassword: string
   employer: string
   accommodation: string
   arrivalDate: string
@@ -17,11 +19,19 @@ const initialState: FormData = {
   name: "",
   whatsapp: "",
   email: "",
+  password: "",
+  confirmPassword: "",
   employer: "",
   accommodation: "",
   arrivalDate: "",
   emergencyContactName: "",
   emergencyContactPhone: "",
+}
+
+function validatePasswords(password: string, confirmPassword: string): string | null {
+  if (password.length < 6) return "Password must be at least 6 characters"
+  if (password !== confirmPassword) return "Passwords do not match"
+  return null
 }
 
 export function WorkerRegistrationForm() {
@@ -36,8 +46,15 @@ export function WorkerRegistrationForm() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    setLoading(true)
     setError("")
+
+    const pwError = validatePasswords(formData.password, formData.confirmPassword)
+    if (pwError) {
+      setError(pwError)
+      return
+    }
+
+    setLoading(true)
 
     const res = await fetch("/api/workers", {
       method: "POST",
@@ -62,8 +79,11 @@ export function WorkerRegistrationForm() {
         <div className="mb-4 text-4xl">✓</div>
         <h3 className="text-xl font-bold text-white">Registration Submitted</h3>
         <p className="mt-2 text-slate-400">
-          Thank you! Your worker registration has been received. A coordinator
-          will review your information and get in touch with you.
+          Registration successful! You can now{" "}
+          <a href="/login" className="text-blue-400 hover:text-blue-300">
+            sign in
+          </a>{" "}
+          with your email and password.
         </p>
       </div>
     )
@@ -120,17 +140,59 @@ export function WorkerRegistrationForm() {
             htmlFor="email"
             className="block text-sm font-medium text-slate-300"
           >
-            Email address
+            Email address <span className="text-red-400">*</span>
           </label>
           <input
             id="email"
             name="email"
             type="email"
+            required
             value={formData.email}
             onChange={handleChange}
             className="mt-1 w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-white placeholder-slate-500 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
             placeholder="juan@example.com"
           />
+        </div>
+
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label
+              htmlFor="password"
+              className="block text-sm font-medium text-slate-300"
+            >
+              Password <span className="text-red-400">*</span>
+            </label>
+            <input
+              id="password"
+              name="password"
+              type="password"
+              required
+              minLength={6}
+              value={formData.password}
+              onChange={handleChange}
+              className="mt-1 w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-white placeholder-slate-500 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+              placeholder="Min 6 characters"
+            />
+          </div>
+          <div>
+            <label
+              htmlFor="confirmPassword"
+              className="block text-sm font-medium text-slate-300"
+            >
+              Confirm password <span className="text-red-400">*</span>
+            </label>
+            <input
+              id="confirmPassword"
+              name="confirmPassword"
+              type="password"
+              required
+              minLength={6}
+              value={formData.confirmPassword}
+              onChange={handleChange}
+              className="mt-1 w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-white placeholder-slate-500 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+              placeholder="Repeat password"
+            />
+          </div>
         </div>
 
         <div>
