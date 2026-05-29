@@ -3,6 +3,7 @@ import { prisma, createNotification } from "@/lib/prisma"
 import { apiHandler, unauthorized, badRequest, created, parseId, priorityOrder } from "@/lib/api-utils"
 import { validate, createIssueSchema } from "@/lib/validation"
 import { Prisma } from "@prisma/client"
+import { notifyAdminsOfIssue } from "@/lib/email-helpers"
 
 export async function GET(request: Request) {
   return apiHandler(async () => {
@@ -56,6 +57,7 @@ export async function POST(request: Request) {
         description: data.description,
         priority: data.priority || "MEDIUM",
         status: "OPEN",
+        mediaUrls: JSON.stringify(data.mediaUrls ?? []),
       },
     })
 
@@ -67,6 +69,9 @@ export async function POST(request: Request) {
         : `New issue reported: ${issue.issueType}`,
       `/dashboard/issues/${issue.id}`,
     )
+
+    const workerName = data.workerName || "Anonymous"
+    notifyAdminsOfIssue(workerName, issue.issueType, issue.id, issue.priority)
 
     return created(issue)
   })

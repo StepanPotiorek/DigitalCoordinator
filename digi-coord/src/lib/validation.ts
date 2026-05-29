@@ -58,6 +58,7 @@ export const createIssueSchema = z.object({
   workerId: z.number().int().positive().optional().nullable(),
   workerName: z.string().max(200).optional().or(z.literal("")),
   priority: z.enum(["LOW", "MEDIUM", "HIGH", "URGENT"]).optional(),
+  mediaUrls: z.array(z.string()).optional(),
 })
 
 export const updateIssueSchema = z.object({

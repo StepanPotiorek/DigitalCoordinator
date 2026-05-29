@@ -45,13 +45,13 @@ COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 COPY --from=builder /app/public ./public
 
-# Copy Prisma runtime
-COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
-COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
+# Copy Prisma runtime + CLI (full node_modules needed for prisma db push transitive deps)
+COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/prisma ./prisma
 
-# Create writable data dir for SQLite
+# Create writable data dir for SQLite and uploads
 RUN mkdir -p /app/data && chown nextjs:nodejs /app/data
+RUN mkdir -p /app/public/uploads/issues && chown nextjs:nodejs /app/public/uploads
 
 # Copy entrypoint
 COPY entrypoint.sh /app/entrypoint.sh

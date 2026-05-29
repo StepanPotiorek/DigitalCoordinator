@@ -38,6 +38,13 @@ export default async function IssueDetailPage({
     include: { worker: { select: { name: true, whatsapp: true } } },
   })
 
+  let mediaUrls: string[] = []
+  if (issue?.mediaUrls) {
+    try {
+      mediaUrls = JSON.parse(issue.mediaUrls)
+    } catch { /* ignore */ }
+  }
+
   if (!issue) {
     return <p className="text-slate-400">Issue not found.</p>
   }
@@ -150,6 +157,47 @@ export default async function IssueDetailPage({
           </div>
         </div>
       </div>
+
+      {mediaUrls.length > 0 && (
+        <div className="mt-6 rounded-xl border border-slate-800 bg-slate-900/50 p-6 backdrop-blur-sm">
+          <h2 className="mb-4 text-lg font-semibold text-white">
+            Attachments ({mediaUrls.length})
+          </h2>
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
+            {mediaUrls.map((url, i) => {
+              const isVideo = url.match(/\.(mp4|webm)$/i)
+              return isVideo ? (
+                <video
+                  key={i}
+                  controls
+                  preload="metadata"
+                  className="w-full rounded-lg border border-slate-700"
+                >
+                  <source src={url} />
+                </video>
+              ) : (
+                <a
+                  key={i}
+                  href={url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group relative"
+                >
+                  <img
+                    src={url}
+                    alt={`Attachment ${i + 1}`}
+                    className="w-full rounded-lg border border-slate-700 object-cover transition group-hover:border-blue-500"
+                    style={{ aspectRatio: "4/3" }}
+                  />
+                  <div className="absolute inset-0 flex items-center justify-center rounded-lg bg-black/0 transition group-hover:bg-black/30">
+                    <span className="text-2xl opacity-0 transition group-hover:opacity-100">🔍</span>
+                  </div>
+                </a>
+              )
+            })}
+          </div>
+        </div>
+      )}
     </div>
   )
 }

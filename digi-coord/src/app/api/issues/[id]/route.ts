@@ -2,6 +2,7 @@ import { auth } from "@/lib/auth"
 import { prisma, createNotification } from "@/lib/prisma"
 import { apiHandler, unauthorized, notFound, forbidden, parseId } from "@/lib/api-utils"
 import { validate, updateIssueSchema } from "@/lib/validation"
+import { notifyWorkerOfResolution } from "@/lib/email-helpers"
 
 export async function GET(_request: Request, { params }: { params: Promise<{ id: string }> }) {
   return apiHandler(async () => {
@@ -60,6 +61,14 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
         `Issue resolved: ${issue.issueType}`,
         `/dashboard/issues/${issue.id}`,
       )
+
+      const fullIssue = await prisma.issue.findUnique({
+        where: { id: issue.id },
+        include: { worker: { select: { email: true } } },
+      })
+      if (fullIssue?.worker?.email) {
+        notifyWorkerOfResolution(fullIssue.worker.email, issue.issueType)
+      }
     }
   })
 }

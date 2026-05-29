@@ -22,6 +22,52 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
 
   const navLinks = (
     <>
+      {role === "WORKER" && (
+        <>
+          <Link
+            href="/dashboard/worker/help"
+            className="rounded-lg bg-blue-900/30 px-3 py-2 text-sm font-medium text-blue-300 transition hover:bg-blue-800/40 hover:text-blue-200"
+            onClick={() => setMenuOpen(false)}
+          >
+            🆘 I need help
+          </Link>
+          <Link
+            href="/dashboard/worker"
+            className="rounded-lg px-3 py-2 text-sm text-slate-300 transition hover:bg-slate-800 hover:text-white"
+            onClick={() => setMenuOpen(false)}
+          >
+            Overview
+          </Link>
+          <Link
+            href="/dashboard/worker/onboarding"
+            className="rounded-lg px-3 py-2 text-sm text-slate-300 transition hover:bg-slate-800 hover:text-white"
+            onClick={() => setMenuOpen(false)}
+          >
+            Onboarding
+          </Link>
+          <Link
+            href="/dashboard/worker/issues"
+            className="rounded-lg px-3 py-2 text-sm text-slate-300 transition hover:bg-slate-800 hover:text-white"
+            onClick={() => setMenuOpen(false)}
+          >
+            My Issues
+          </Link>
+          <Link
+            href="/dashboard/worker/documents"
+            className="rounded-lg px-3 py-2 text-sm text-slate-300 transition hover:bg-slate-800 hover:text-white"
+            onClick={() => setMenuOpen(false)}
+          >
+            Documents
+          </Link>
+          <Link
+            href="/dashboard/worker/profile"
+            className="rounded-lg px-3 py-2 text-sm text-slate-300 transition hover:bg-slate-800 hover:text-white"
+            onClick={() => setMenuOpen(false)}
+          >
+            Profile
+          </Link>
+        </>
+      )}
       {role === "ADMIN" && (
         <Link
           href="/dashboard/admin"
@@ -38,6 +84,15 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
           onClick={() => setMenuOpen(false)}
         >
           Users
+        </Link>
+      )}
+      {(role === "ADMIN" || role === "COORDINATOR") && (
+        <Link
+          href="/dashboard/operations"
+          className="rounded-lg px-3 py-2 text-sm text-slate-300 transition hover:bg-slate-800 hover:text-white"
+          onClick={() => setMenuOpen(false)}
+        >
+          Operations
         </Link>
       )}
       {(role === "ADMIN" || role === "COORDINATOR") && (

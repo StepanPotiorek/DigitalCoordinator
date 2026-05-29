@@ -32,6 +32,7 @@ export default async function ClientsPage() {
           select: { issues: { where: { status: { not: "RESOLVED" } } } },
         },
         onboardingItems: { select: { completed: true } },
+        accommodationDetail: { select: { address: true } },
       },
       orderBy: { createdAt: "desc" },
     })
@@ -67,7 +68,9 @@ export default async function ClientsPage() {
             <div className="text-2xl font-bold text-green-400">
               {completedOnboarding}
             </div>
-            <div className="text-sm text-slate-400">Onboarding Complete</div>
+            <div className="text-sm text-slate-400">
+              Onboarding Complete
+            </div>
           </div>
           <div className="rounded-xl border border-slate-800 bg-slate-900/50 p-4 backdrop-blur-sm">
             <div className="text-2xl font-bold text-red-400">
@@ -82,39 +85,58 @@ export default async function ClientsPage() {
           {workers.length === 0 ? (
             <p className="text-sm text-slate-400">No workers assigned yet.</p>
           ) : (
-            <div className="space-y-3">
-              {workers.map((worker) => (
-                <Link
-                  key={worker.id}
-                  href={`/dashboard/workers/${worker.id}`}
-                  className="block rounded-xl border border-slate-800 bg-slate-900/50 p-4 backdrop-blur-sm transition hover:bg-slate-800/50"
-                >
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <div className="font-medium text-white">
-                        {worker.name}
+            <div className="space-y-4">
+              {workers.map((worker) => {
+                const total = worker.onboardingItems.length
+                const completed = worker.onboardingItems.filter((i) => i.completed).length
+                const progress = total === 0 ? 0 : Math.round((completed / total) * 100)
+
+                return (
+                  <Link
+                    key={worker.id}
+                    href={`/dashboard/workers/${worker.id}`}
+                    className="block rounded-xl border border-slate-800 bg-slate-900/50 p-5 backdrop-blur-sm transition hover:bg-slate-800/50"
+                  >
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <div className="font-medium text-white">
+                          {worker.name}
+                        </div>
+                        <div className="mt-0.5 text-sm text-slate-400">
+                          {worker.whatsapp}
+                        </div>
+                        {worker.accommodationDetail && (
+                          <div className="mt-0.5 text-xs text-slate-500">
+                            {worker.accommodationDetail.address}
+                          </div>
+                        )}
                       </div>
-                      <div className="text-sm text-slate-400">
-                        {worker.whatsapp}
+                      <div className="text-right text-sm">
+                        <div className={worker._count.issues > 0 ? "font-medium text-red-400" : "text-xs text-green-400"}>
+                          {worker._count.issues > 0
+                            ? `${worker._count.issues} open issue(s)`
+                            : "No issues"}
+                        </div>
+                        <div className="mt-1 text-xs text-slate-500">
+                          {worker.onboardingStatus.replace("_", " ")}
+                        </div>
                       </div>
                     </div>
-                    <div className="text-right text-sm">
-                      <div
-                        className={`font-medium ${
-                          worker._count.issues > 0
-                            ? "text-red-400"
-                            : "text-green-400"
-                        }`}
-                      >
-                        {worker._count.issues} issues
+                    <div className="mt-3">
+                      <div className="flex items-center justify-between text-xs text-slate-500">
+                        <span>Onboarding</span>
+                        <span>{progress}%</span>
                       </div>
-                      <div className="text-slate-500">
-                        {worker.onboardingStatus.replace("_", " ")}
+                      <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-slate-800">
+                        <div
+                          className="h-full rounded-full bg-blue-600 transition-all"
+                          style={{ width: `${progress}%` }}
+                        />
                       </div>
                     </div>
-                  </div>
-                </Link>
-              ))}
+                  </Link>
+                )
+              })}
             </div>
           )}
         </div>

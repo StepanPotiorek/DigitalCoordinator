@@ -23,26 +23,29 @@ enum Role {
   ADMIN
   COORDINATOR
   CLIENT
+  WORKER
 }
 
 model Worker {
   id                   Int               @id @default(autoincrement())
   name                 String
   whatsapp             String
-  email                String?
+  email                String?  @unique
   employer             String?
   accommodation        String?
   arrivalDate          DateTime?
   emergencyContactName String?
   emergencyContactPhone String?
-  onboardingStatus     OnboardingStatus  @default(PENDING)
-  createdAt            DateTime          @default(now())
+  onboardingStatus     OnboardingStatus     @default(PENDING)
+  employeeCardStatus   EmployeeCardStatus   @default(NOT_STARTED)
+  createdAt            DateTime             @default(now())
   updatedAt            DateTime          @updatedAt
 
   accommodationDetail Accommodation?
   onboardingItems     OnboardingItem[]
   issues              Issue[]
   communications     CommunicationLog[]
+  documents           Document[]
 
   @@index([employer])
   @@index([onboardingStatus])
@@ -53,6 +56,14 @@ enum OnboardingStatus {
   PENDING
   IN_PROGRESS
   COMPLETED
+}
+
+enum EmployeeCardStatus {
+  NOT_STARTED
+  IN_PROGRESS
+  BIOMETRICS_DONE
+  CARD_READY
+  ISSUED
 }
 
 model OnboardingItem {
@@ -91,6 +102,7 @@ model Issue {
   description String
   priority    IssuePriority @default(MEDIUM)
   status      IssueStatus   @default(OPEN)
+  mediaUrls   String        @default("[]")
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
 
@@ -195,4 +207,24 @@ model Notification {
 
   @@index([read])
   @@index([createdAt])
+}
+
+model Document {
+  id           Int      @id @default(autoincrement())
+  workerId     Int
+  type         DocumentType
+  filename     String
+  originalName String
+  uploadedAt   DateTime @default(now())
+
+  worker Worker @relation(fields: [workerId], references: [id], onDelete: Cascade)
+
+  @@index([workerId])
+}
+
+enum DocumentType {
+  PASSPORT
+  VISA
+  CONTRACT
+  OTHER
 }

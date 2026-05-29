@@ -1,7 +1,6 @@
 "use client"
 
-import { useState } from "react"
-import { useRouter } from "next/navigation"
+import { useState, useRef } from "react"
 
 const issueTypes = [
   { value: "Work", label: "Work" },
@@ -19,17 +18,44 @@ type IssueFormData = {
   whatsapp: string
 }
 
+function isVideo(mime: string) {
+  return mime.startsWith("video/")
+}
+
 export function IssueReportForm() {
-  const router = useRouter()
+  const fileInputRef = useRef<HTMLInputElement>(null)
   const [form, setForm] = useState<IssueFormData>({
     issueType: "",
     description: "",
     workerName: "",
     whatsapp: "",
   })
+  const [files, setFiles] = useState<File[]>([])
+  const [previews, setPreviews] = useState<string[]>([])
   const [saving, setSaving] = useState(false)
   const [submitted, setSubmitted] = useState(false)
   const [error, setError] = useState("")
+
+  function handleFileSelect(e: React.ChangeEvent<HTMLInputElement>) {
+    const selected = Array.from(e.target.files || [])
+    setFiles((prev) => [...prev, ...selected])
+
+    for (const file of selected) {
+      if (!isVideo(file.type)) {
+        const url = URL.createObjectURL(file)
+        setPreviews((prev) => [...prev, url])
+      }
+    }
+  }
+
+  function removeFile(index: number) {
+    setFiles((prev) => prev.filter((_, i) => i !== index))
+    setPreviews((prev) => {
+      const url = prev[index]
+      if (url) URL.revokeObjectURL(url)
+      return prev.filter((_, i) => i !== index)
+    })
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -41,6 +67,29 @@ export function IssueReportForm() {
     setError("")
 
     try {
+      let mediaUrls: string[] = []
+
+      if (files.length > 0) {
+        const uploadData = new FormData()
+        for (const file of files) {
+          uploadData.append("files", file)
+        }
+
+        const uploadRes = await fetch("/api/upload", {
+          method: "POST",
+          body: uploadData,
+        })
+
+        if (!uploadRes.ok) {
+          const errData = await uploadRes.json()
+          setError(errData.error || "Upload failed")
+          return
+        }
+
+        const uploadResult = await uploadRes.json()
+        mediaUrls = uploadResult.urls
+      }
+
       const res = await fetch("/api/issues", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -48,6 +97,7 @@ export function IssueReportForm() {
           issueType: form.issueType,
           description: `From: ${form.workerName || "Anonymous"} (${form.whatsapp || "no contact"})\n\n${form.description}`,
           workerName: form.workerName || undefined,
+          mediaUrls,
         }),
       })
 
@@ -58,6 +108,8 @@ export function IssueReportForm() {
       }
 
       setSubmitted(true)
+    } catch {
+      setError("Something went wrong. Please try again.")
     } finally {
       setSaving(false)
     }
@@ -157,12 +209,61 @@ export function IssueReportForm() {
         </div>
       </div>
 
+      {/* File Upload */}
+      <div>
+        <label className="mb-1 block text-sm font-medium text-slate-300">
+          Photos / Videos
+        </label>
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/*,video/*"
+          multiple
+          onChange={handleFileSelect}
+          className="hidden"
+        />
+        <div className="flex flex-wrap gap-2">
+          {files.map((file, i) => (
+            <div key={i} className="relative">
+              {isVideo(file.type) ? (
+                <div className="flex h-20 w-20 items-center justify-center rounded-lg border border-slate-700 bg-slate-800 text-2xl">
+                  🎬
+                </div>
+              ) : (
+                <img
+                  src={previews[i]}
+                  alt=""
+                  className="h-20 w-20 rounded-lg border border-slate-700 object-cover"
+                />
+              )}
+              <button
+                type="button"
+                onClick={() => removeFile(i)}
+                className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-600 text-xs text-white hover:bg-red-700"
+              >
+                ×
+              </button>
+            </div>
+          ))}
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+            className="flex h-20 w-20 items-center justify-center rounded-lg border-2 border-dashed border-slate-700 text-2xl text-slate-500 transition hover:border-slate-500 hover:text-slate-300"
+          >
+            +
+          </button>
+        </div>
+        <p className="mt-1 text-xs text-slate-500">
+          Images (JPG, PNG, WebP) and videos (MP4, WebM). Max 50MB each.
+        </p>
+      </div>
+
       <button
         type="submit"
         disabled={saving || !form.issueType}
         className="w-full rounded-lg bg-blue-600 px-6 py-3 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50 sm:w-auto"
       >
-        {saving ? "Submitting..." : "Submit Issue"}
+        {saving ? "Uploading & Submitting..." : "Submit Issue"}
       </button>
     </form>
   )

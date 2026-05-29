@@ -24,7 +24,7 @@ export default async function WorkerDetailPage({
   const session = await auth()
   if (
     !session?.user ||
-    (session.user.role !== "ADMIN" && session.user.role !== "COORDINATOR")
+    (session.user.role !== "ADMIN" && session.user.role !== "COORDINATOR" && session.user.role !== "CLIENT")
   ) {
     redirect("/login")
   }
@@ -38,6 +38,7 @@ export default async function WorkerDetailPage({
       onboardingItems: true,
       accommodationDetail: true,
       issues: { take: 5, orderBy: { createdAt: "desc" } },
+      documents: { orderBy: { uploadedAt: "desc" } },
     },
   })
 
@@ -241,6 +242,42 @@ export default async function WorkerDetailPage({
           )}
         </div>
       </div>
+
+      {worker.documents.length > 0 && (
+        <div className="mt-6 rounded-xl border border-slate-800 bg-slate-900/50 p-6 backdrop-blur-sm">
+          <h2 className="mb-4 text-lg font-semibold text-white">
+            Documents ({worker.documents.length})
+          </h2>
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {worker.documents.map((doc) => (
+              <div
+                key={doc.id}
+                className="rounded-lg border border-slate-700 bg-slate-800/50 px-3 py-2"
+              >
+                <div className="text-xs font-medium uppercase tracking-wider text-slate-500">
+                  {doc.type}
+                </div>
+                <div className="truncate text-sm text-white">
+                  {doc.originalName}
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-xs text-slate-500">
+                    {new Date(doc.uploadedAt).toLocaleDateString()}
+                  </span>
+                  <a
+                    href={`/api/media/${doc.filename}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-xs text-blue-400 hover:text-blue-300"
+                  >
+                    View
+                  </a>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   )
 }

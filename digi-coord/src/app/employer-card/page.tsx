@@ -18,7 +18,7 @@ const steps = [
   {
     number: 2,
     title: "Apply at Czech Embassy (Manila)",
-    body: "Submit your Employee Card application at the Czech Embassy in Manila. Required documents: valid passport (valid 90+ days beyond the card validity), signed employment contract (min. 15 hrs/week, min. wage), proof of accommodation, passport photo, and proof of education/qualification.",
+    body: "Submit your Employee Card application at the Czech Embassy in Manila. Important: Official Philippine documents submitted for employee card or immigration processes may require an Apostille from the DFA Authentication Division. Always follow the instructions provided by your employer, agency, or legal provider regarding which documents must be apostilled. Required documents: valid passport (valid 90+ days beyond the card validity), signed employment contract (min. 15 hrs/week, min. wage), proof of accommodation, passport photo, and proof of education/qualification.",
     maps: [{ label: "Czech Embassy Manila", address: "30/F Rufino Pacific Tower, 6784 Ayala Avenue, Makati City, Metro Manila, Philippines" }],
   },
   {
@@ -38,8 +38,8 @@ const steps = [
   },
   {
     number: 6,
-    title: "Biometrics at OAMP + Pay the Fee",
-    body: "Visit the OAMP office for your biometric appointment — fingerprints and photo for the biometric card. The fee is 2,500 CZK. Bring your passport and employment contract.",
+    title: "Biometrics at OAMP",
+    body: "Visit the OAMP office for your biometric appointment — fingerprints and photo for the biometric card. Bring your passport and employment contract. A biometric card fee may apply. Please follow the instructions provided by your employer, agency, or legal coordinator regarding payment.",
   },
   {
     number: 7,
@@ -102,6 +102,22 @@ export default async function EmployerCardPage({ searchParams }: Props) {
         <div className="relative space-y-6 before:absolute before:left-6 before:top-0 before:h-full before:w-0.5 before:bg-red-800/50">
           {steps.map((step) => (
             <div key={step.number} className="relative pl-14">
+              {step.number === 2 && (
+                <div className="mb-6 rounded-xl border border-red-800 bg-red-950/50 p-5 backdrop-blur-sm">
+                  <div className="flex items-start gap-3">
+                    <span className="mt-0.5 text-lg">📄</span>
+                    <div>
+                      <h4 className="mb-2 text-sm font-bold uppercase tracking-wider text-red-400">Apostille Required</h4>
+                      <p className="text-xs leading-relaxed text-red-300">
+                        Important: Official Philippine documents submitted for employee card or
+                        immigration processes may require an Apostille from the DFA Authentication
+                        Division. Always follow the instructions provided by your employer, agency,
+                        or legal provider regarding which documents must be apostilled.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
               <div className="absolute left-2 flex h-9 w-9 items-center justify-center rounded-full bg-red-900/50 text-sm font-bold text-red-400 ring-4 ring-slate-950">
                 {step.number}
               </div>

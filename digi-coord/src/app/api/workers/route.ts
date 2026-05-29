@@ -5,6 +5,7 @@ import { validate, createWorkerSchema, updateWorkerSchema } from "@/lib/validati
 import { defaultOnboardingItems } from "@/lib/onboarding-items"
 import { hash } from "bcryptjs"
 import { NextRequest } from "next/server"
+import { notifyAdminsOfNewWorker } from "@/lib/email-helpers"
 
 export async function GET(request: NextRequest) {
   return apiHandler(async () => {
@@ -40,6 +41,7 @@ export async function POST(request: Request) {
         name: data.name,
         email: data.email,
         passwordHash,
+        role: "WORKER",
       },
     })
 
@@ -71,6 +73,8 @@ export async function POST(request: Request) {
       `New worker registered: ${worker.name}`,
       `/dashboard/workers/${worker.id}`,
     )
+
+    notifyAdminsOfNewWorker(worker.name, worker.id)
 
     return created({ worker, user: { id: user.id, name: user.name, email: user.email } })
   })

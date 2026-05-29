@@ -7,6 +7,7 @@ services:
       - "3000:3000"
     volumes:
       - sqlite-data:/app/data
+      - uploads-data:/app/public/uploads
     environment:
       - AUTH_SECRET=McQZE5r3jFE4NxaiuNcYeQpG4NXc36fT0y3VWluVikk=
       - NEXTAUTH_SECRET=McQZE5r3jFE4NxaiuNcYeQpG4NXc36fT0y3VWluVikk=
@@ -18,3 +19,4 @@ services:
 
 volumes:
   sqlite-data:
+  uploads-data:
