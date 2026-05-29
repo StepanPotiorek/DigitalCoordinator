@@ -1,5 +1,5 @@
 import { auth } from "@/lib/auth"
-import { prisma } from "@/lib/prisma"
+import { prisma, createNotification } from "@/lib/prisma"
 import { apiHandler, unauthorized, created, badRequest, conflict, parseId } from "@/lib/api-utils"
 import { validate, createWorkerSchema, updateWorkerSchema } from "@/lib/validation"
 import { defaultOnboardingItems } from "@/lib/onboarding-items"
@@ -65,6 +65,12 @@ export async function POST(request: Request) {
         })),
       })
     }
+
+    await createNotification(
+      "NEW_WORKER",
+      `New worker registered: ${worker.name}`,
+      `/dashboard/workers/${worker.id}`,
+    )
 
     return created({ worker, user: { id: user.id, name: user.name, email: user.email } })
   })

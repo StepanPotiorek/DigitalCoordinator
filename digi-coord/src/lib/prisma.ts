@@ -13,3 +13,13 @@ const globalForPrisma = globalThis as unknown as {
 export const prisma = globalForPrisma.__prisma ?? createPrisma();
 
 if (process.env.NODE_ENV !== "production") globalForPrisma.__prisma = prisma;
+
+export async function createNotification(
+  type: string,
+  message: string,
+  link?: string,
+) {
+  await prisma.notification.create({
+    data: { type, message, link },
+  })
+}

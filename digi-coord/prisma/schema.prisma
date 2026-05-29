@@ -184,3 +184,15 @@ model Faq {
   @@index([category])
   @@index([order])
 }
+
+model Notification {
+  id        Int      @id @default(autoincrement())
+  type      String
+  message   String
+  link      String?
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([read])
+  @@index([createdAt])
+}
