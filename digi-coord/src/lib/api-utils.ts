@@ -15,6 +15,9 @@ export async function apiHandler<T>(
     if (result === undefined || result === null) {
       return NextResponse.json(null, { status: 204 })
     }
+    if (result instanceof Response) {
+      return result as unknown as NextResponse
+    }
     return NextResponse.json(result)
   } catch (error) {
     const message =
