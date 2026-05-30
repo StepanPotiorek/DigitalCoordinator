@@ -170,7 +170,7 @@ export default function WorkersPage() {
                 </td>
                 <td className="px-4 py-3 text-slate-300">
                   {worker.arrivalDate
-                    ? new Date(worker.arrivalDate).toLocaleDateString()
+                    ? new Date(worker.arrivalDate).toISOString().split("T")[0]
                     : "—"}
                 </td>
                 <td className="px-4 py-3">

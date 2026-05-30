@@ -79,10 +79,10 @@ export default async function UsersPage() {
                     {user.company?.name || "—"}
                   </td>
                   <td className="px-4 py-3 text-slate-400">
-                    {new Date(user.createdAt).toLocaleDateString()}
+                    {new Date(user.createdAt).toISOString().split("T")[0]}
                   </td>
                   <td className="px-4 py-3 text-slate-400">
-                    {new Date(user.updatedAt).toLocaleDateString()}
+                    {new Date(user.updatedAt).toISOString().split("T")[0]}
                   </td>
                 </tr>
               ))}

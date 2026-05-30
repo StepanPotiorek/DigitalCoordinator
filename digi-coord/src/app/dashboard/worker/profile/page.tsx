@@ -212,7 +212,7 @@ export default function WorkerProfilePage() {
                 <dt className="text-slate-400">Arrival Date</dt>
                 <dd className="text-white">
                   {worker.arrivalDate
-                    ? new Date(worker.arrivalDate).toLocaleDateString()
+                    ? new Date(worker.arrivalDate).toISOString().split("T")[0]
                     : "\u2014"}
                 </dd>
               </div>

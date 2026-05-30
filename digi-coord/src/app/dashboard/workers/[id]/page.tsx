@@ -118,7 +118,7 @@ export default async function WorkerDetailPage({
             </span>
           </div>
           <p className="mt-1 text-sm text-slate-400">
-            Registered {new Date(worker.createdAt).toLocaleDateString()}
+            Registered {new Date(worker.createdAt).toISOString().split("T")[0]}
           </p>
         </div>
         <div className="flex gap-2">
@@ -165,7 +165,7 @@ export default async function WorkerDetailPage({
               <dt className="text-slate-400">Arrival Date</dt>
               <dd className="text-white">
                 {worker.arrivalDate
-                  ? new Date(worker.arrivalDate).toLocaleDateString()
+                  ? new Date(worker.arrivalDate).toISOString().split("T")[0]
                   : "—"}
               </dd>
             </div>
@@ -305,7 +305,7 @@ export default async function WorkerDetailPage({
                     </span>
                   </div>
                   <p className="text-xs text-slate-400">
-                    {new Date(issue.createdAt).toLocaleDateString()}
+                    {new Date(issue.createdAt).toISOString().split("T")[0]}
                   </p>
                 </div>
               ))}
@@ -337,7 +337,7 @@ export default async function WorkerDetailPage({
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-xs text-slate-500">
-                    {new Date(doc.uploadedAt).toLocaleDateString()}
+                    {new Date(doc.uploadedAt).toISOString().split("T")[0]}
                   </span>
                   <a
                     href={`/api/media/${doc.filename}`}

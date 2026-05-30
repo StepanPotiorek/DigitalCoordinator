@@ -177,7 +177,7 @@ export default async function CompaniesPage() {
                     )}
                     <span>·</span>
                     <span>
-                      {new Date(c.createdAt).toLocaleDateString()}
+                      {new Date(c.createdAt).toISOString().split("T")[0]}
                     </span>
                   </div>
                   <p className="text-sm text-slate-300">{c.message}</p>
@@ -262,7 +262,7 @@ export default async function CompaniesPage() {
                       : 0}
                   </td>
                   <td className="px-4 py-3 text-slate-400">
-                    {new Date(company.createdAt).toLocaleDateString()}
+                    {new Date(company.createdAt).toISOString().split("T")[0]}
                   </td>
                 </tr>
               ))}

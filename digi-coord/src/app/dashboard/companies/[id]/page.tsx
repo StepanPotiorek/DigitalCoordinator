@@ -177,7 +177,7 @@ export default async function CompanyDetailPage({
                   <span>{c.createdBy}</span>
                   <span>·</span>
                   <span>
-                    {new Date(c.createdAt).toLocaleDateString()}
+                    {new Date(c.createdAt).toISOString().split("T")[0]}
                   </span>
                 </div>
                 <p className="whitespace-pre-wrap text-sm text-slate-300">

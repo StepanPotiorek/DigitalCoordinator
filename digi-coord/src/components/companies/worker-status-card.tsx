@@ -43,7 +43,7 @@ export function WorkerStatusCard({ worker }: { worker: Worker }) {
             <span>📞 {worker.whatsapp}</span>
             {worker.arrivalDate && (
               <span>
-                🗓 {new Date(worker.arrivalDate).toLocaleDateString()}
+                🗓 {new Date(worker.arrivalDate).toISOString().split("T")[0]}
               </span>
             )}
             <span className={worker.openIssues > 0 ? "text-red-400" : ""}>

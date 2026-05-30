@@ -77,7 +77,7 @@ export default async function AccommodationsPage() {
                     )}
                   </td>
                   <td className="px-4 py-3 text-slate-400">
-                    {new Date(acc.createdAt).toLocaleDateString()}
+                    {new Date(acc.createdAt).toISOString().split("T")[0]}
                   </td>
                 </tr>
               ))}

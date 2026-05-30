@@ -132,7 +132,7 @@ export default async function AdminDashboardPage() {
               >
                 <span className="text-sm text-white">{w.name}</span>
                 <span className="text-xs text-slate-500">
-                  {new Date(w.createdAt).toLocaleDateString()}
+                  {new Date(w.createdAt).toISOString().split("T")[0]}
                 </span>
               </Link>
             ))}

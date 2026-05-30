@@ -106,7 +106,7 @@ export default function PendingWorkersPage() {
                   <td className="px-4 py-3 text-slate-300">{worker.email || "—"}</td>
                   <td className="px-4 py-3 text-slate-300">{worker.employer || "—"}</td>
                   <td className="px-4 py-3 text-slate-300">
-                    {new Date(worker.createdAt).toLocaleDateString()}
+                    {new Date(worker.createdAt).toISOString().split("T")[0]}
                   </td>
                   <td className="px-4 py-3">
                     <div className="flex gap-2">

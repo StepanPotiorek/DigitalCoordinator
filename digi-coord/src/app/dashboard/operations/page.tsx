@@ -233,7 +233,7 @@ export default function OperationsPage() {
                         <span>🧑 {issue.worker?.name || "Unknown"}</span>
                         {issue.situationId && <span>🆘 Situation: {issue.situationId}</span>}
                         {issue.contacted && <span>📞 Contacted: {issue.contacted}</span>}
-                        <span>📅 {new Date(issue.createdAt).toLocaleDateString()}</span>
+                        <span>📅 {new Date(issue.createdAt).toISOString().split("T")[0]}</span>
                       </div>
                     </div>
                     <svg className="h-4 w-4 shrink-0 text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -275,7 +275,7 @@ export default function OperationsPage() {
                         </span>
                       </div>
                       <div className="mt-1 flex items-center gap-3 text-xs text-slate-500">
-                        <span>Last activity: {new Date(w.updatedAt).toLocaleDateString()}</span>
+                        <span>Last activity: {new Date(w.updatedAt).toISOString().split("T")[0]}</span>
                       </div>
                     </div>
                     <svg className="h-4 w-4 shrink-0 text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -327,7 +327,7 @@ export default function OperationsPage() {
                         {issue.description}
                       </p>
                       <p className="mt-1 text-xs text-slate-500">
-                        {issue.worker?.name || "Unknown worker"} &middot; {new Date(issue.createdAt).toLocaleDateString()}
+                        {issue.worker?.name || "Unknown worker"} &middot; {new Date(issue.createdAt).toISOString().split("T")[0]}
                       </p>
                     </div>
                     <svg className="h-4 w-4 shrink-0 text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>

@@ -84,7 +84,7 @@ export default function WorkerIssuesPage() {
                 </p>
               )}
               <p className="mt-2 text-xs text-slate-500">
-                {new Date(issue.createdAt).toLocaleDateString()}
+                {new Date(issue.createdAt).toISOString().split("T")[0]}
               </p>
             </div>
           ))}

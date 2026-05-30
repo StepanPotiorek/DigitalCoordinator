@@ -130,10 +130,10 @@ export default function ApiKeysPage() {
                   </button>
                 </td>
                 <td className="px-4 py-3 text-slate-500">
-                  {key.lastUsedAt ? new Date(key.lastUsedAt).toLocaleDateString() : "never"}
+                  {key.lastUsedAt ? new Date(key.lastUsedAt).toISOString().split("T")[0] : "never"}
                 </td>
                 <td className="px-4 py-3 text-slate-500">
-                  {new Date(key.createdAt).toLocaleDateString()}
+                  {new Date(key.createdAt).toISOString().split("T")[0]}
                 </td>
                 <td className="px-4 py-3">
                   <button

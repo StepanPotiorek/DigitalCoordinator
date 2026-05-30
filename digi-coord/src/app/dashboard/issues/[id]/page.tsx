@@ -115,13 +115,13 @@ export default async function IssueDetailPage({
               <div className="flex justify-between">
                 <dt className="text-slate-400">Created</dt>
                 <dd className="text-white">
-                  {new Date(issue.createdAt).toLocaleDateString()}
+                  {new Date(issue.createdAt).toISOString().split("T")[0]}
                 </dd>
               </div>
               <div className="flex justify-between">
                 <dt className="text-slate-400">Updated</dt>
                 <dd className="text-white">
-                  {new Date(issue.updatedAt).toLocaleDateString()}
+                  {new Date(issue.updatedAt).toISOString().split("T")[0]}
                 </dd>
               </div>
             </dl>

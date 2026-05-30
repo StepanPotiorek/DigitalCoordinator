@@ -192,10 +192,24 @@ npm run test:e2e      # playwright e2e tests
 # Seed database
 npx tsx prisma/seed.ts
 
-# Kill dev server and restart clean
-kill $(lsof -ti:3000)
+# === Dev Server Reliable Restart ===
+# Always use this sequence — turbopack SST cache corrupts easily
+
+# 1. Kill old server, wait for port release, clean cache
+kill -9 $(lsof -ti:3000) 2>/dev/null
+sleep 2
 rm -rf .next
-setsid sh -c 'npx next dev -H 127.0.0.1 > /tmp/digicoord-dev.log 2>&1'
+
+# 2. Start with nohup (keeps running after shell exits)
+nohup npx next dev -H 127.0.0.1 > /tmp/digicoord-dev.log 2>&1 &
+echo $! > /tmp/digicoord-dev.pid
+
+# 3. Wait and verify
+sleep 5
+fuser 3000/tcp 2>/dev/null && echo "OK" || echo "FAIL"
+
+# Check logs
+tail -20 /tmp/digicoord-dev.log
 ```
 
 ---

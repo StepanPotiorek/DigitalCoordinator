@@ -138,7 +138,7 @@ export default function WorkerDocumentsPage() {
                 {doc.originalName}
               </div>
               <div className="mt-1 text-xs opacity-60">
-                {new Date(doc.uploadedAt).toLocaleDateString()}
+                {new Date(doc.uploadedAt).toISOString().split("T")[0]}
               </div>
               {isImage(doc.filename) ? (
                 <a

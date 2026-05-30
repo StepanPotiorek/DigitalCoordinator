@@ -163,7 +163,7 @@ export default async function IssuesPage({
                     </span>
                   </td>
                   <td className="px-4 py-3 text-slate-400">
-                    {new Date(issue.createdAt).toLocaleDateString()}
+                    {new Date(issue.createdAt).toISOString().split("T")[0]}
                   </td>
                 </tr>
               ))}
