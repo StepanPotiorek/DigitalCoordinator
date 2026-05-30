@@ -53,7 +53,7 @@ const tips = [
 
 export default async function BeforeArrivalPage({ searchParams }: Props) {
   const { lang: langParam } = await searchParams
-  const lang: Lang = langParam === "tl" ? "tl" : "en"
+  const lang: Lang = langParam === "tl" ? "tl" : langParam === "cz" ? "cz" : "en"
 
   return (
     <div className="min-h-screen">

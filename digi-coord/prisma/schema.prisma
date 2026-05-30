@@ -14,7 +14,8 @@ model User {
   email        String    @unique
   passwordHash String
   role         Role      @default(COORDINATOR)
-  client       Client?
+  company      Company?
+  notifications Notification[]
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
 }
@@ -22,7 +23,7 @@ model User {
 enum Role {
   ADMIN
   COORDINATOR
-  CLIENT
+  COMPANY
   WORKER
 }
 
@@ -36,20 +37,30 @@ model Worker {
   arrivalDate          DateTime?
   emergencyContactName String?
   emergencyContactPhone String?
-  onboardingStatus     OnboardingStatus     @default(PENDING)
-  employeeCardStatus   EmployeeCardStatus   @default(NOT_STARTED)
-  createdAt            DateTime             @default(now())
-  updatedAt            DateTime          @updatedAt
+  status               WorkerStatus          @default(PENDING_APPROVAL)
+  onboardingStatus     OnboardingStatus      @default(PENDING)
+  employeeCardStatus   EmployeeCardStatus    @default(NOT_STARTED)
+  createdAt            DateTime              @default(now())
+  updatedAt            DateTime              @updatedAt
 
   accommodationDetail Accommodation?
   onboardingItems     OnboardingItem[]
   issues              Issue[]
   communications     CommunicationLog[]
   documents           Document[]
+  situationFeedback   SituationFeedback[]
+  notes               Note[]
 
   @@index([employer])
+  @@index([status])
   @@index([onboardingStatus])
   @@index([createdAt])
+}
+
+enum WorkerStatus {
+  PENDING_APPROVAL
+  ACTIVE
+  REJECTED
 }
 
 enum OnboardingStatus {
@@ -103,6 +114,8 @@ model Issue {
   priority    IssuePriority @default(MEDIUM)
   status      IssueStatus   @default(OPEN)
   mediaUrls   String        @default("[]")
+  situationId String?
+  contacted   String?
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
 
@@ -112,6 +125,22 @@ model Issue {
   @@index([status])
   @@index([priority])
   @@index([createdAt])
+  @@index([situationId])
+}
+
+model SituationFeedback {
+  id          Int      @id @default(autoincrement())
+  workerId    Int
+  situationId String
+  helped      Boolean
+  contacted   String?
+  createdAt   DateTime @default(now())
+
+  worker Worker @relation(fields: [workerId], references: [id], onDelete: Cascade)
+
+  @@index([workerId])
+  @@index([helped])
+  @@index([situationId])
 }
 
 enum IssuePriority {
@@ -144,7 +173,7 @@ model Accommodation {
   @@index([workerId])
 }
 
-model Client {
+model Company {
   id           Int      @id @default(autoincrement())
   name         String
   contactEmail String?
@@ -163,17 +192,17 @@ model Client {
 model CommunicationLog {
   id        Int               @id @default(autoincrement())
   workerId  Int
-  clientId  Int?
+  companyId Int?
   type      CommunicationType
   message   String
   createdBy String
   createdAt DateTime          @default(now())
 
   worker Worker  @relation(fields: [workerId], references: [id], onDelete: Cascade)
-  client Client? @relation(fields: [clientId], references: [id], onDelete: SetNull)
+  company Company? @relation(fields: [companyId], references: [id], onDelete: SetNull)
 
   @@index([workerId])
-  @@index([clientId])
+  @@index([companyId])
   @@index([createdAt])
 }
 
@@ -197,16 +226,44 @@ model Faq {
   @@index([order])
 }
 
+model PasswordResetToken {
+  id        String   @id @default(cuid())
+  email     String
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  used      Boolean  @default(false)
+
+  @@index([email])
+  @@index([token])
+}
+
 model Notification {
   id        Int      @id @default(autoincrement())
   type      String
+  title     String   @default("")
   message   String
   link      String?
   read      Boolean  @default(false)
+  userId    String?
   createdAt DateTime @default(now())
+
+  user User? @relation(fields: [userId], references: [id])
 
   @@index([read])
   @@index([createdAt])
+  @@index([userId])
+}
+
+model PushSubscription {
+  id            Int      @id @default(autoincrement())
+  endpoint      String   @unique
+  p256dh        String
+  auth          String
+  userAgent     String?
+  subscribedAt  DateTime @default(now())
+
+  @@index([endpoint])
 }
 
 model Document {
@@ -220,6 +277,48 @@ model Document {
   worker Worker @relation(fields: [workerId], references: [id], onDelete: Cascade)
 
   @@index([workerId])
+}
+
+model AuditLog {
+  id        Int      @id @default(autoincrement())
+  userId    String?
+  action    String
+  entity    String
+  entityId  Int?
+  details   String?
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([entity])
+  @@index([action])
+  @@index([userId])
+}
+
+model Note {
+  id        Int      @id @default(autoincrement())
+  workerId  Int
+  content   String
+  createdBy String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  worker Worker @relation(fields: [workerId], references: [id], onDelete: Cascade)
+
+  @@index([workerId])
+  @@index([createdAt])
+}
+
+model ApiKey {
+  id          Int      @id @default(autoincrement())
+  name        String
+  keyHash     String   @unique
+  scopes      String   @default("read")
+  active      Boolean  @default(true)
+  lastUsedAt  DateTime?
+  createdAt   DateTime @default(now())
+
+  @@index([keyHash])
+  @@index([active])
 }
 
 enum DocumentType {

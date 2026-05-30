@@ -3,11 +3,29 @@ import { prisma } from "@/lib/prisma"
 import { redirect } from "next/navigation"
 import Link from "next/link"
 import { AccommodationCard } from "@/components/accommodation/accommodation-card"
+import { NotesSection } from "@/components/notes/notes-section"
+import { PendingAction } from "@/components/admin/pending-action"
 
 const statusColors: Record<string, string> = {
   PENDING: "bg-yellow-900/50 text-yellow-400",
   IN_PROGRESS: "bg-blue-900/50 text-blue-400",
   COMPLETED: "bg-green-900/50 text-green-400",
+}
+
+const ecColors: Record<string, string> = {
+  NOT_STARTED: "bg-slate-900/50 text-slate-400",
+  IN_PROGRESS: "bg-blue-900/50 text-blue-400",
+  BIOMETRICS_DONE: "bg-amber-900/50 text-amber-400",
+  CARD_READY: "bg-emerald-900/50 text-emerald-400",
+  ISSUED: "bg-green-900/50 text-green-400",
+}
+
+const ecLabels: Record<string, string> = {
+  NOT_STARTED: "Not Started",
+  IN_PROGRESS: "In Progress",
+  BIOMETRICS_DONE: "Biometrics Done",
+  CARD_READY: "Card Ready",
+  ISSUED: "Issued",
 }
 
 const issueStatusColors: Record<string, string> = {
@@ -24,7 +42,7 @@ export default async function WorkerDetailPage({
   const session = await auth()
   if (
     !session?.user ||
-    (session.user.role !== "ADMIN" && session.user.role !== "COORDINATOR" && session.user.role !== "CLIENT")
+    (session.user.role !== "ADMIN" && session.user.role !== "COORDINATOR" && session.user.role !== "COMPANY")
   ) {
     redirect("/login")
   }
@@ -51,11 +69,54 @@ export default async function WorkerDetailPage({
   const completedItems = worker.onboardingItems.filter((i) => i.completed).length
   const totalItems = worker.onboardingItems.length
 
+  const accountStatusColors: Record<string, string> = {
+    PENDING_APPROVAL: "bg-yellow-900/50 text-yellow-400",
+    ACTIVE: "bg-green-900/50 text-green-400",
+    REJECTED: "bg-red-900/50 text-red-400",
+  }
+
+  const accountStatusLabels: Record<string, string> = {
+    PENDING_APPROVAL: "Pending Approval",
+    ACTIVE: "Active",
+    REJECTED: "Rejected",
+  }
+
   return (
     <div>
+      {worker.status !== "ACTIVE" && (
+        <div
+          className={`mb-6 rounded-lg border px-4 py-3 text-sm ${
+            worker.status === "PENDING_APPROVAL"
+              ? "border-yellow-700 bg-yellow-900/20 text-yellow-300"
+              : "border-red-700 bg-red-900/20 text-red-300"
+          }`}
+        >
+          <div className="flex items-center justify-between">
+            <span>
+              {worker.status === "PENDING_APPROVAL"
+                ? "This worker is pending approval. They cannot sign in until approved."
+                : "This worker has been rejected."}
+            </span>
+            {session?.user?.role === "ADMIN" && worker.status === "PENDING_APPROVAL" && (
+              <div className="flex gap-2">
+                <PendingAction workerId={worker.id} status="ACTIVE" label="Approve" />
+                <PendingAction workerId={worker.id} status="REJECTED" label="Reject" />
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
       <div className="mb-6 flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-white">{worker.name}</h1>
+          <div className="flex items-center gap-3">
+            <h1 className="text-2xl font-bold text-white">{worker.name}</h1>
+            <span
+              className={`inline-block rounded-full px-2 py-0.5 text-xs font-medium ${accountStatusColors[worker.status]}`}
+            >
+              {accountStatusLabels[worker.status]}
+            </span>
+          </div>
           <p className="mt-1 text-sm text-slate-400">
             Registered {new Date(worker.createdAt).toLocaleDateString()}
           </p>
@@ -109,12 +170,22 @@ export default async function WorkerDetailPage({
               </dd>
             </div>
             <div className="flex justify-between">
-              <dt className="text-slate-400">Status</dt>
+              <dt className="text-slate-400">Onboarding</dt>
               <dd>
                 <span
                   className={`inline-block rounded-full px-2 py-0.5 text-xs font-medium ${statusColors[worker.onboardingStatus]}`}
                 >
                   {worker.onboardingStatus.replace("_", " ")}
+                </span>
+              </dd>
+            </div>
+            <div className="flex justify-between">
+              <dt className="text-slate-400">Employee Card</dt>
+              <dd>
+                <span
+                  className={`inline-block rounded-full px-2 py-0.5 text-xs font-medium ${ecColors[worker.employeeCardStatus]}`}
+                >
+                  {ecLabels[worker.employeeCardStatus] || worker.employeeCardStatus.replace("_", " ")}
                 </span>
               </dd>
             </div>
@@ -241,6 +312,10 @@ export default async function WorkerDetailPage({
             </div>
           )}
         </div>
+      </div>
+
+      <div className="mt-6">
+        <NotesSection workerId={worker.id} />
       </div>
 
       {worker.documents.length > 0 && (

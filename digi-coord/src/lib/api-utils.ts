@@ -1,4 +1,8 @@
 import { NextResponse } from "next/server"
+import { NextRequest } from "next/server"
+import { logger } from "./logger"
+import * as Sentry from "@sentry/nextjs"
+import { checkRateLimit } from "./rate-limit"
 
 export function parseId(id: string): number | null {
   const n = parseInt(id, 10)
@@ -9,8 +13,28 @@ type Handler<T> = () => Promise<T>
 
 export async function apiHandler<T>(
   fn: Handler<T>,
+  req?: NextRequest,
 ): Promise<NextResponse> {
   try {
+    if (req) {
+      const ip = req.headers.get("x-forwarded-for") || req.headers.get("x-real-ip") || "unknown"
+      const key = `api:${ip}`
+      const { allowed, remaining } = checkRateLimit(key, { maxRequests: 100, windowMs: 60000 })
+      if (!allowed) {
+        return NextResponse.json(
+          { error: "Too many requests. Try again later." },
+          {
+            status: 429,
+            headers: {
+              "X-RateLimit-Limit": "100",
+              "X-RateLimit-Remaining": String(remaining),
+              "Retry-After": "60",
+            },
+          },
+        )
+      }
+    }
+
     const result = await fn()
     if (result === undefined || result === null) {
       return NextResponse.json(null, { status: 204 })
@@ -22,7 +46,8 @@ export async function apiHandler<T>(
   } catch (error) {
     const message =
       error instanceof Error ? error.message : "Internal server error"
-    console.error("API Error:", error)
+    logger.error({ err: error }, "API Error")
+    Sentry.captureException(error)
     return NextResponse.json({ error: message }, { status: 500 })
   }
 }
@@ -35,7 +60,8 @@ export async function apiHandlerRaw<T>(
   } catch (error) {
     const message =
       error instanceof Error ? error.message : "Internal server error"
-    console.error("API Error:", error)
+    logger.error({ err: error }, "API Error")
+    Sentry.captureException(error)
     return NextResponse.json({ error: message }, { status: 500 })
   }
 }

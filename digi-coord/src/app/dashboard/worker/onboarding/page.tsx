@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import Link from "next/link"
 
 interface OnboardingItem {
   id: number
@@ -8,6 +9,23 @@ interface OnboardingItem {
   category: string
   completed: boolean
   completedAt: string | null
+}
+
+interface FaqItem {
+  id: number
+  question: string
+  answer: string
+  category: string | null
+}
+
+const faqToOnboardingCategory: Record<string, string> = {
+  Communication: "SIM_CARD",
+  Banking: "BANK_ACCOUNT",
+  Emergency: "EMERGENCY",
+  Workplace: "FIRST_DAY",
+  Legal: "IMMIGRATION",
+  Accommodation: "ACCOMMODATION",
+  Adaptation: "ADAPTATION",
 }
 
 const categoryLabels: Record<string, string> = {
@@ -26,6 +44,8 @@ const categoryLabels: Record<string, string> = {
 export default function WorkerOnboardingPage() {
   const [items, setItems] = useState<OnboardingItem[]>([])
   const [loading, setLoading] = useState(true)
+  const [faqTips, setFaqTips] = useState<FaqItem[]>([])
+  const [faqLoading, setFaqLoading] = useState(true)
 
   async function loadItems() {
     const res = await fetch("/api/worker/me/onboarding")
@@ -35,6 +55,37 @@ export default function WorkerOnboardingPage() {
   }
 
   useEffect(() => { loadItems() }, [])
+
+  useEffect(() => {
+    async function loadFaqTips() {
+      try {
+        const [faqRes, onbRes] = await Promise.all([
+          fetch("/api/faq"),
+          fetch("/api/worker/me/onboarding"),
+        ])
+        const faqs: FaqItem[] = await faqRes.json()
+        const onboarding: OnboardingItem[] = await onbRes.json()
+
+        const incompleteCategories = new Set(
+          onboarding.filter((item) => !item.completed).map((item) => item.category),
+        )
+
+        const relevant = faqs.filter((faq) => {
+          if (!faq.category) return false
+          const mapped = faqToOnboardingCategory[faq.category]
+          return mapped && incompleteCategories.has(mapped)
+        })
+
+        setFaqTips(relevant)
+      } catch {
+        setFaqTips([])
+      } finally {
+        setFaqLoading(false)
+      }
+    }
+
+    loadFaqTips()
+  }, [])
 
   async function toggleItem(item: OnboardingItem) {
     await fetch("/api/worker/me/onboarding", {
@@ -111,6 +162,37 @@ export default function WorkerOnboardingPage() {
             </div>
           </div>
         ))
+      )}
+
+      {!faqLoading && faqTips.length > 0 && (
+        <div className="rounded-xl border border-slate-800 bg-slate-900/50 p-5 backdrop-blur-sm">
+          <div className="mb-3 flex items-center justify-between">
+            <h2 className="flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-slate-400">
+              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z" />
+              </svg>
+              Onboarding tips
+            </h2>
+            <Link href="/faq" className="text-xs text-blue-400 hover:text-blue-300">
+              View all FAQ →
+            </Link>
+          </div>
+          <div className="space-y-2">
+            {faqTips.map((faq) => (
+              <Link
+                key={faq.id}
+                href="/faq"
+                className="flex items-start gap-3 rounded-lg border border-slate-800 bg-slate-800/30 px-4 py-3 transition hover:border-slate-700 hover:bg-slate-800/50"
+              >
+                <span className="mt-0.5 text-sm text-blue-400">💡</span>
+                <div>
+                  <div className="text-sm font-medium text-white">{faq.question}</div>
+                  <div className="mt-0.5 line-clamp-1 text-xs text-slate-500">{faq.answer}</div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
       )}
     </div>
   )

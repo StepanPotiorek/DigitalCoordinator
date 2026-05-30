@@ -10,6 +10,8 @@ export async function GET() {
       return unauthorized()
     }
 
+    const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
+
     const [
       totalWorkers,
       completedOnboarding,
@@ -18,6 +20,9 @@ export async function GET() {
       openIssues,
       accommodationIssues,
       employeeCardStatus,
+      escalatedIssues,
+      totalFeedback,
+      helpedFeedback,
     ] = await Promise.all([
       prisma.worker.count(),
       prisma.worker.count({ where: { onboardingStatus: "COMPLETED" } }),
@@ -29,6 +34,14 @@ export async function GET() {
         by: ["employeeCardStatus"],
         _count: true,
       }),
+      prisma.issue.count({
+        where: {
+          situationId: { not: null },
+          status: { not: "RESOLVED" },
+        },
+      }),
+      prisma.situationFeedback.count(),
+      prisma.situationFeedback.count({ where: { helped: true } }),
     ])
 
     const employeeCardBreakdown: Record<string, number> = {}
@@ -36,6 +49,31 @@ export async function GET() {
       employeeCardBreakdown[row.employeeCardStatus] = row._count
     }
 
+    const selfServiceRate = totalFeedback === 0 ? null : Math.round((helpedFeedback / totalFeedback) * 100)
+
+    // Workers stuck on onboarding (PENDING or IN_PROGRESS with no progress in 7+ days)
+    const stuckWorkers = await prisma.worker.findMany({
+      where: {
+        onboardingStatus: { in: ["PENDING", "IN_PROGRESS"] },
+        updatedAt: { lt: sevenDaysAgo },
+      },
+      select: { id: true, name: true, onboardingStatus: true, updatedAt: true },
+      orderBy: { updatedAt: "asc" },
+      take: 10,
+    })
+
+    // Escalated issues (from help flow, not resolved)
+    const escalatedIssuesList = await prisma.issue.findMany({
+      where: {
+        situationId: { not: null },
+        status: { not: "RESOLVED" },
+      },
+      orderBy: { createdAt: "asc" },
+      take: 10,
+      include: { worker: { select: { name: true } } },
+    })
+
+    // Recent all unresolved issues (for general view)
     const recentIssues = await prisma.issue.findMany({
       where: { status: { not: "RESOLVED" } },
       orderBy: { createdAt: "desc" },
@@ -52,6 +90,12 @@ export async function GET() {
       accommodationIssues,
       employeeCardBreakdown,
       recentIssues,
+      escalatedIssues,
+      escalatedIssuesList,
+      stuckWorkers,
+      selfServiceRate,
+      totalFeedback,
+      helpedFeedback,
     }
   })
 }

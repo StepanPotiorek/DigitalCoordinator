@@ -55,11 +55,19 @@ export default async function IssuesPage({
 
   return (
     <div>
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-white">Issues</h1>
-        <p className="mt-1 text-sm text-slate-400">
-          Track and manage reported issues
-        </p>
+      <div className="mb-6 flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-white">Issues</h1>
+          <p className="mt-1 text-sm text-slate-400">
+            Track and manage reported issues
+          </p>
+        </div>
+        <a
+          href="/api/export/issues"
+          className="rounded-lg border border-slate-700 bg-slate-800/50 px-3 py-1.5 text-xs text-slate-400 transition hover:bg-slate-700/50 hover:text-white"
+        >
+          Export CSV
+        </a>
       </div>
 
       <div className="mb-4 flex flex-wrap gap-2">

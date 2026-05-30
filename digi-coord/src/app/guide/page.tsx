@@ -36,7 +36,7 @@ const guides = [
 
 export default async function GuidePage({ searchParams }: Props) {
   const { lang: langParam } = await searchParams
-  const lang: Lang = langParam === "tl" ? "tl" : "en"
+  const lang: Lang = langParam === "tl" ? "tl" : langParam === "cz" ? "cz" : "en"
 
   return (
     <div className="min-h-screen">

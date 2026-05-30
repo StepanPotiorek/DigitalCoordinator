@@ -3,6 +3,7 @@
 import { useSession } from "next-auth/react"
 import { LogoutButton } from "@/components/auth/logout-button"
 import { NotificationBell } from "@/components/dashboard/notification-bell"
+import { PushSubscribeButton } from "@/components/pwa/push-subscribe-button"
 import Link from "next/link"
 import { useState } from "react"
 
@@ -44,6 +45,13 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
             onClick={() => setMenuOpen(false)}
           >
             Onboarding
+          </Link>
+          <Link
+            href="/dashboard/worker/employee-card"
+            className="rounded-lg px-3 py-2 text-sm text-slate-300 transition hover:bg-slate-800 hover:text-white"
+            onClick={() => setMenuOpen(false)}
+          >
+            Employee Card
           </Link>
           <Link
             href="/dashboard/worker/issues"
@@ -122,13 +130,31 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
           Issues
         </Link>
       )}
-      {(role === "ADMIN" || role === "CLIENT") && (
+      {(role === "ADMIN" || role === "COMPANY") && (
         <Link
-          href="/dashboard/clients"
+          href="/dashboard/companies"
           className="rounded-lg px-3 py-2 text-sm text-slate-300 transition hover:bg-slate-800 hover:text-white"
           onClick={() => setMenuOpen(false)}
         >
-          Clients
+          Companies
+        </Link>
+      )}
+      {role === "ADMIN" && (
+        <Link
+          href="/dashboard/audit"
+          className="rounded-lg px-3 py-2 text-sm text-slate-300 transition hover:bg-slate-800 hover:text-white"
+          onClick={() => setMenuOpen(false)}
+        >
+          Audit Log
+        </Link>
+      )}
+      {role === "ADMIN" && (
+        <Link
+          href="/dashboard/admin/api-keys"
+          className="rounded-lg px-3 py-2 text-sm text-slate-300 transition hover:bg-slate-800 hover:text-white"
+          onClick={() => setMenuOpen(false)}
+        >
+          API Keys
         </Link>
       )}
     </>
@@ -202,7 +228,8 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
       </aside>
 
       <main className="flex-1">
-        <div className="flex items-center justify-end border-b border-slate-800 px-4 py-2 md:px-8">
+        <div className="flex items-center justify-end gap-2 border-b border-slate-800 px-4 py-2 md:px-8">
+          <PushSubscribeButton />
           <NotificationBell />
         </div>
         <div className="p-4 md:p-8">{children}</div>

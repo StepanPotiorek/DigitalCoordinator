@@ -17,7 +17,7 @@ const steps = [
 
 export default async function Home({ searchParams }: Props) {
   const { lang: langParam } = await searchParams
-  const lang: Lang = langParam === "tl" ? "tl" : "en"
+  const lang: Lang = langParam === "tl" ? "tl" : langParam === "cz" ? "cz" : "en"
 
   return (
     <div className="min-h-screen">
@@ -86,18 +86,6 @@ export default async function Home({ searchParams }: Props) {
               </h4>
               <p className="text-xs leading-relaxed text-slate-400">
                 {t("faq.subtitle", lang)}
-              </p>
-            </Link>
-            <Link
-              href="/contact"
-              className="group rounded-xl border border-slate-700/50 bg-slate-800/30 p-5 backdrop-blur-sm transition hover:border-slate-600"
-            >
-              <div className="mb-3 text-2xl">📞</div>
-              <h4 className="mb-1 font-semibold text-white group-hover:text-blue-300">
-                {t("nav.contact", lang)}
-              </h4>
-              <p className="text-xs leading-relaxed text-slate-400">
-                {t("contact.subtitle", lang)}
               </p>
             </Link>
             <Link

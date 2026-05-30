@@ -1,6 +1,7 @@
 import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import { apiHandler, unauthorized, notFound, parseId } from "@/lib/api-utils"
+import { logAction } from "@/lib/audit"
 import { validate, toggleOnboardingSchema } from "@/lib/validation"
 
 export async function PUT(request: Request, { params }: { params: Promise<{ id: string }> }) {
@@ -26,6 +27,8 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
       where: { id: itemId },
       data: { completed, completedAt: completed ? new Date() : null },
     })
+
+    void logAction(session.user.id, "onboarding.toggle", "OnboardingItem", itemId)
 
     return item
   })

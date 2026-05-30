@@ -4,6 +4,7 @@ import { apiHandler, unauthorized, badRequest, created, parseId, priorityOrder }
 import { validate, createIssueSchema } from "@/lib/validation"
 import { Prisma } from "@prisma/client"
 import { notifyAdminsOfIssue } from "@/lib/email-helpers"
+import { logAction } from "@/lib/audit"
 
 export async function GET(request: Request) {
   return apiHandler(async () => {
@@ -58,6 +59,8 @@ export async function POST(request: Request) {
         priority: data.priority || "MEDIUM",
         status: "OPEN",
         mediaUrls: JSON.stringify(data.mediaUrls ?? []),
+        situationId: data.situationId ?? undefined,
+        contacted: data.contacted ?? undefined,
       },
     })
 
@@ -72,6 +75,9 @@ export async function POST(request: Request) {
 
     const workerName = data.workerName || "Anonymous"
     notifyAdminsOfIssue(workerName, issue.issueType, issue.id, issue.priority)
+
+    const session = await auth()
+    void logAction(session?.user?.id, "issue.create", "Issue", issue.id)
 
     return created(issue)
   })

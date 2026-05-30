@@ -26,7 +26,7 @@ export function handleValidation(error: unknown): NextResponse {
 
 export const createWorkerSchema = z.object({
   name: z.string().min(1, "Name is required").max(200),
-  whatsapp: z.string().min(1, "WhatsApp is required").max(50),
+  whatsapp: z.string().min(1, "WhatsApp is required").max(50).regex(/^\+?[0-9\s\-()]{7,20}$/, "Invalid phone number format"),
   email: z.string().email("Valid email is required"),
   password: z.string().min(6, "Password must be at least 6 characters").max(100),
   confirmPassword: z.string().min(1, "Please confirm your password"),
@@ -42,7 +42,7 @@ export const createWorkerSchema = z.object({
 
 export const updateWorkerSchema = z.object({
   name: z.string().min(1).max(200).optional(),
-  whatsapp: z.string().min(1).max(50).optional(),
+  whatsapp: z.string().min(1).max(50).regex(/^\+?[0-9\s\-()]{7,20}$/, "Invalid phone number format").optional(),
   email: z.string().email().optional().nullable(),
   employer: z.string().max(200).optional().nullable(),
   accommodation: z.string().max(500).optional().nullable(),
@@ -50,6 +50,7 @@ export const updateWorkerSchema = z.object({
   emergencyContactName: z.string().max(200).optional().nullable(),
   emergencyContactPhone: z.string().max(50).optional().nullable(),
   onboardingStatus: z.enum(["PENDING", "IN_PROGRESS", "COMPLETED"]).optional(),
+  employeeCardStatus: z.enum(["NOT_STARTED", "IN_PROGRESS", "BIOMETRICS_DONE", "CARD_READY", "ISSUED"]).optional(),
 })
 
 export const createIssueSchema = z.object({
@@ -59,6 +60,8 @@ export const createIssueSchema = z.object({
   workerName: z.string().max(200).optional().or(z.literal("")),
   priority: z.enum(["LOW", "MEDIUM", "HIGH", "URGENT"]).optional(),
   mediaUrls: z.array(z.string()).optional(),
+  situationId: z.string().max(100).optional().nullable(),
+  contacted: z.string().max(100).optional().nullable(),
 })
 
 export const updateIssueSchema = z.object({
@@ -91,7 +94,7 @@ export const toggleOnboardingSchema = z.object({
   completed: z.boolean().optional(),
 })
 
-export const createClientSchema = z.object({
+export const createCompanySchema = z.object({
   name: z.string().min(1, "Name is required").max(200),
   contactEmail: z.string().email().optional().or(z.literal("")),
   contactPhone: z.string().max(50).optional().or(z.literal("")),
@@ -99,7 +102,7 @@ export const createClientSchema = z.object({
   userId: z.string().optional().nullable(),
 })
 
-export const updateClientSchema = z.object({
+export const updateCompanySchema = z.object({
   name: z.string().min(1).max(200).optional(),
   contactEmail: z.string().email().optional().nullable(),
   contactPhone: z.string().max(50).optional().nullable(),
@@ -109,7 +112,7 @@ export const updateClientSchema = z.object({
 
 export const createCommunicationSchema = z.object({
   workerId: z.number().int().positive({ message: "Worker ID is required" }),
-  clientId: z.number().int().positive().optional().nullable(),
+  companyId: z.number().int().positive().optional().nullable(),
   type: z.enum(["NOTE", "ISSUE_UPDATE", "ONBOARDING_UPDATE", "GENERAL"]).optional(),
   message: z.string().min(1, "Message is required").max(10000),
 })

@@ -2,6 +2,7 @@ import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import { apiHandler, unauthorized, badRequest, notFound, conflict, created, parseId } from "@/lib/api-utils"
 import { defaultOnboardingItems } from "@/lib/onboarding-items"
+import { logAction } from "@/lib/audit"
 
 export async function GET(request: Request) {
   return apiHandler(async () => {
@@ -50,6 +51,7 @@ export async function POST(request: Request) {
         category: item.category,
       })),
     })
+    void logAction(session.user.id, "onboarding.create", "OnboardingItem", workerId)
 
     return created({ count: items.count })
   })

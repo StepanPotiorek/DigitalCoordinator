@@ -1,4 +1,6 @@
 import nodemailer from "nodemailer"
+import { logger } from "./logger"
+import * as emailTemplates from "./email-templates"
 
 const FROM = "Digital Coordinator <noreply@digicoord.cz>"
 
@@ -23,52 +25,37 @@ export async function sendEmail(to: string, subject: string, html: string) {
   const transport = getTransport()
 
   if (!transport) {
-    console.log(`[EMAIL] To: ${to} | Subject: ${subject} (SMTP not configured)`)
+    logger.info({ to, subject }, "Email skipped (SMTP not configured)")
     return
   }
 
   try {
     await transport.sendMail({ from: FROM, to, subject, html })
   } catch (error) {
-    console.error(`[EMAIL] Failed to send to ${to}:`, error)
+    logger.error({ err: error, to }, "Failed to send email")
   }
 }
 
 export function sendIssueCreated(to: string, workerName: string, issueType: string, issueId: number) {
-  return sendEmail(
-    to,
-    `New Issue Reported: ${issueType}`,
-    `<p><strong>${workerName}</strong> reported a new issue:</p>
-     <p><strong>Type:</strong> ${issueType}</p>
-     <p><a href="${process.env.NEXTAUTH_URL}/dashboard/issues/${issueId}">View in Dashboard</a></p>`,
-  )
+  return sendEmail(to, `New Issue Reported: ${issueType}`, emailTemplates.newIssueEmail(workerName, issueType, issueId))
 }
 
 export function sendIssueResolved(to: string, issueType: string) {
-  return sendEmail(
-    to,
-    `Issue Resolved: ${issueType}`,
-    `<p>An issue has been marked as resolved:</p>
-     <p><strong>Type:</strong> ${issueType}</p>`,
-  )
+  return sendEmail(to, `Issue Resolved: ${issueType}`, emailTemplates.issueResolvedEmail(issueType))
 }
 
 export function sendUrgentIssueAlert(to: string, workerName: string, issueType: string, issueId: number) {
-  return sendEmail(
-    to,
-    `🚨 URGENT: ${workerName} - ${issueType}`,
-    `<p><strong>URGENT issue reported by ${workerName}:</strong></p>
-     <p><strong>Type:</strong> ${issueType}</p>
-     <p><a href="${process.env.NEXTAUTH_URL}/dashboard/issues/${issueId}">View in Dashboard</a></p>`,
-  )
+  return sendEmail(to, `🚨 URGENT: ${workerName} - ${issueType}`, emailTemplates.urgentIssueEmail(workerName, issueType, issueId))
+}
+
+export function sendWorkerApproved(to: string, name: string) {
+  return sendEmail(to, "Account Approved — Digital Coordinator", emailTemplates.workerApprovedEmail(name, `${process.env.NEXTAUTH_URL}/login`))
 }
 
 export function sendNewWorkerAlert(to: string, workerName: string, workerId: number) {
-  return sendEmail(
-    to,
-    `New Worker Registered: ${workerName}`,
-    `<p>A new worker has registered:</p>
-     <p><strong>Name:</strong> ${workerName}</p>
-     <p><a href="${process.env.NEXTAUTH_URL}/dashboard/workers/${workerId}">View in Dashboard</a></p>`,
-  )
+  return sendEmail(to, `New Worker Registered: ${workerName}`, emailTemplates.newWorkerEmail(workerName, workerId))
+}
+
+export function sendPasswordReset(to: string, resetUrl: string) {
+  return sendEmail(to, "Password Reset — Digital Coordinator", emailTemplates.passwordResetEmail(resetUrl))
 }

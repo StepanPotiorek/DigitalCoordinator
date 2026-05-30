@@ -1,5 +1,5 @@
 import { auth } from "@/lib/auth"
-import { prisma } from "@/lib/prisma"
+import { prisma, createNotification } from "@/lib/prisma"
 import { apiHandler, unauthorized, notFound } from "@/lib/api-utils"
 
 export async function GET() {
@@ -47,10 +47,16 @@ export async function PUT(request: Request) {
     const allDone = allItems.every((i) => i.completed)
 
     if (allDone) {
-      await prisma.worker.update({
+      const updated = await prisma.worker.update({
         where: { id: worker.id },
         data: { onboardingStatus: "COMPLETED" },
       })
+      await createNotification(
+        "ONBOARDING_COMPLETE",
+        `${updated.name} completed all onboarding steps!`,
+        `/dashboard/workers/${worker.id}`,
+        "Onboarding Complete",
+      )
     } else {
       const anyDone = allItems.some((i) => i.completed)
       if (anyDone) {

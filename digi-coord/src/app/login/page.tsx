@@ -1,17 +1,21 @@
 "use client"
 
 import { signIn } from "next-auth/react"
-import { useState } from "react"
-import { useRouter, useSearchParams } from "next/navigation"
+import { useState, use } from "react"
+import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { LanguageToggle } from "@/components/public/language-toggle"
+import { PasswordInput } from "@/components/ui/password-input"
 import { type Lang, t } from "@/lib/translations"
 
-export default function LoginPage() {
+export default function LoginPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ lang?: string }>
+}) {
   const router = useRouter()
-  const searchParams = useSearchParams()
-  const langParam = searchParams.get("lang")
-  const lang: Lang = langParam === "tl" ? "tl" : "en"
+  const { lang: langParam } = use(searchParams)
+  const lang: Lang = langParam === "tl" ? "tl" : langParam === "cz" ? "cz" : "en"
   const [error, setError] = useState<string>("")
   const [loading, setLoading] = useState(false)
 
@@ -73,12 +77,23 @@ export default function LoginPage() {
             </div>
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-slate-300">Password</label>
-              <input id="password" name="password" type="password" required autoComplete="current-password"
-                className="mt-1 w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-white placeholder-slate-500 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-                placeholder="••••••••" />
+              <PasswordInput
+                id="password"
+                name="password"
+                required
+                autoComplete="current-password"
+                placeholder="••••••••"
+                containerClassName="mt-1"
+              />
             </div>
 
             {error && <p className="text-sm text-red-400">{error}</p>}
+
+            <div className="text-right">
+              <Link href="/forgot-password" className="text-xs text-slate-500 hover:text-slate-400">
+                Forgot password?
+              </Link>
+            </div>
 
             <button type="submit" disabled={loading}
               className="w-full rounded-lg bg-blue-600 px-4 py-2 font-medium text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50">

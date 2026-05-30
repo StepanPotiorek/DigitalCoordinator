@@ -15,6 +15,7 @@ export default async function AdminDashboardPage() {
   const [
     totalWorkers,
     workersByStatus,
+    pendingApprovals,
     totalIssues,
     issuesByStatus,
     urgentIssues,
@@ -27,6 +28,7 @@ export default async function AdminDashboardPage() {
       by: ["onboardingStatus"],
       _count: true,
     }),
+    prisma.worker.count({ where: { status: "PENDING_APPROVAL" } }),
     prisma.issue.count(),
     prisma.issue.groupBy({
       by: ["status"],
@@ -83,11 +85,16 @@ export default async function AdminDashboardPage() {
         </p>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
         <StatCard
           title="Total Workers"
           value={totalWorkers}
           accent="blue"
+        />
+        <StatCard
+          title="Pending Approval"
+          value={pendingApprovals}
+          accent="yellow"
         />
         <StatCard
           title="Open Issues"
@@ -162,6 +169,14 @@ export default async function AdminDashboardPage() {
             Quick Actions
           </h2>
           <div className="grid gap-3 sm:grid-cols-2">
+            {pendingApprovals > 0 && (
+              <Link
+                href="/dashboard/admin/pending-workers"
+                className="rounded-lg border border-yellow-700 bg-yellow-900/30 px-4 py-3 text-center text-sm font-medium text-yellow-300 transition hover:bg-yellow-800/40"
+              >
+                Review Approvals ({pendingApprovals})
+              </Link>
+            )}
             <Link
               href="/dashboard/workers"
               className="rounded-lg border border-slate-700 bg-slate-800/50 px-4 py-3 text-center text-sm font-medium text-white transition hover:bg-slate-700/50"
@@ -175,10 +190,10 @@ export default async function AdminDashboardPage() {
               View All Issues
             </Link>
             <Link
-              href="/dashboard/clients"
+              href="/dashboard/companies"
               className="rounded-lg border border-slate-700 bg-slate-800/50 px-4 py-3 text-center text-sm font-medium text-white transition hover:bg-slate-700/50"
             >
-              Manage Clients
+              Manage Companies
             </Link>
             <Link
               href="/dashboard/accommodations"

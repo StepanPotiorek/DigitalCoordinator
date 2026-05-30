@@ -3,6 +3,7 @@ import { prisma, createNotification } from "@/lib/prisma"
 import { apiHandler, unauthorized, notFound, forbidden, parseId } from "@/lib/api-utils"
 import { validate, updateIssueSchema } from "@/lib/validation"
 import { notifyWorkerOfResolution } from "@/lib/email-helpers"
+import { logAction } from "@/lib/audit"
 
 export async function GET(_request: Request, { params }: { params: Promise<{ id: string }> }) {
   return apiHandler(async () => {
@@ -70,6 +71,8 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
         notifyWorkerOfResolution(fullIssue.worker.email, issue.issueType)
       }
     }
+
+    void logAction(session.user.id, "issue.update", "Issue", issueId)
   })
 }
 

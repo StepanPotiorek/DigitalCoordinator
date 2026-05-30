@@ -8,12 +8,24 @@ export async function GET() {
     const session = await auth()
     if (!session?.user) return unauthorized()
 
+    const userId = session.user.id
+
+    const whereFilter = {
+      OR: [
+        { userId: null },
+        { userId },
+      ],
+    }
+
     const [notifications, unreadCount] = await Promise.all([
       prisma.notification.findMany({
+        where: whereFilter,
         orderBy: { createdAt: "desc" },
         take: 20,
       }),
-      prisma.notification.count({ where: { read: false } }),
+      prisma.notification.count({
+        where: { ...whereFilter, read: false },
+      }),
     ])
 
     return { notifications, unreadCount }
@@ -25,11 +37,19 @@ export async function PATCH(request: NextRequest) {
     const session = await auth()
     if (!session?.user) return unauthorized()
 
+    const userId = session.user.id
     const body = await request.json()
+
+    const whereFilter = {
+      OR: [
+        { userId: null },
+        { userId },
+      ],
+    }
 
     if (body.markAllRead) {
       await prisma.notification.updateMany({
-        where: { read: false },
+        where: { ...whereFilter, read: false },
         data: { read: true },
       })
       return { success: true }
@@ -37,6 +57,13 @@ export async function PATCH(request: NextRequest) {
 
     const id = body.id
     if (!id) return notFound("Notification")
+
+    const notification = await prisma.notification.findUnique({ where: { id } })
+    if (!notification) return notFound("Notification")
+
+    if (notification.userId !== null && notification.userId !== userId) {
+      return unauthorized()
+    }
 
     await prisma.notification.update({
       where: { id },

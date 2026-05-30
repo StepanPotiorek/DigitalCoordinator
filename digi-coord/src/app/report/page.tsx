@@ -1,4 +1,5 @@
 import Link from "next/link"
+import { Suspense } from "react"
 import { type Lang, t } from "@/lib/translations"
 import { SiteHeader } from "@/components/public/site-header"
 import { PageContainer, PageHeader } from "@/components/public/page-layout"
@@ -10,7 +11,7 @@ interface Props {
 
 export default async function ReportPage({ searchParams }: Props) {
   const { lang: langParam } = await searchParams
-  const lang: Lang = langParam === "tl" ? "tl" : "en"
+  const lang: Lang = langParam === "tl" ? "tl" : langParam === "cz" ? "cz" : "en"
 
   return (
     <div className="min-h-screen">
@@ -23,7 +24,9 @@ export default async function ReportPage({ searchParams }: Props) {
         />
 
         <div className="rounded-xl border border-slate-800 bg-slate-900/50 p-6 backdrop-blur-sm">
-          <IssueReportForm />
+          <Suspense fallback={<div className="text-sm text-slate-400">Loading form...</div>}>
+            <IssueReportForm />
+          </Suspense>
         </div>
       </PageContainer>
 

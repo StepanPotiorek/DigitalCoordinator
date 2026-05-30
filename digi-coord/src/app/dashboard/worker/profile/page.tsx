@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import { PasswordInput } from "@/components/ui/password-input"
 
 interface WorkerData {
   id: number
@@ -161,22 +162,18 @@ export default function WorkerProfilePage() {
             </div>
             <div>
               <label className="mb-1 block text-sm font-medium text-slate-300">New Password (optional)</label>
-              <input
-                type="password"
+              <PasswordInput
                 value={form.password}
                 onChange={(e) => setForm({ ...form, password: e.target.value })}
                 minLength={6}
-                className="w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-white outline-none focus:border-blue-500"
                 placeholder="Leave blank to keep current"
               />
             </div>
             <div>
               <label className="mb-1 block text-sm font-medium text-slate-300">Confirm Password</label>
-              <input
-                type="password"
+              <PasswordInput
                 value={form.confirmPassword}
                 onChange={(e) => setForm({ ...form, confirmPassword: e.target.value })}
-                className="w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-white outline-none focus:border-blue-500"
                 placeholder="Confirm new password"
               />
             </div>

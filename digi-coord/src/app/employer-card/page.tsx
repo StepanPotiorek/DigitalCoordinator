@@ -77,7 +77,7 @@ function MapLink({ address }: { address: string }) {
 
 export default async function EmployerCardPage({ searchParams }: Props) {
   const { lang: langParam } = await searchParams
-  const lang: Lang = langParam === "tl" ? "tl" : "en"
+  const lang: Lang = langParam === "tl" ? "tl" : langParam === "cz" ? "cz" : "en"
 
   return (
     <div className="min-h-screen">

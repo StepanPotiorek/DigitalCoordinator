@@ -13,7 +13,7 @@ interface Props {
 
 export default async function FAQPage({ searchParams }: Props) {
   const { lang: langParam } = await searchParams
-  const lang: Lang = langParam === "tl" ? "tl" : "en"
+  const lang: Lang = langParam === "tl" ? "tl" : langParam === "cz" ? "cz" : "en"
 
   const faqs = await prisma.faq.findMany({
     orderBy: [{ category: "asc" }, { order: "asc" }],

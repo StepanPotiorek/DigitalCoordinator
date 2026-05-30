@@ -643,502 +643,322 @@ function App() {
   }
 
   function OnboardingPage() {
-  const employeeCardSteps = [
-    {
-      icon: "🛬",
-      title: "Arrival confirmed",
-      text: "Worker confirms safe arrival in Czech Republic.",
-      status: "Completed",
-      color: "text-green-600",
-    },
-    {
-      icon: "🪪",
-      title: "Employee card / immigration priority",
-      text: "Worker must follow the correct registration or OAMP process after arrival.",
-      status: "High priority",
-      color: "text-red-600",
-    },
-    {
-      icon: "🏢",
-      title: "OAMP / immigration visit",
-      text: "Worker needs office address, appointment time, documents, and simple instructions.",
-      status: "Pending",
-      color: "text-amber-600",
-    },
-    {
-      icon: "✋",
-      title: "Biometrics appointment",
-      text: "Worker confirms if biometrics were completed or appointment date was received.",
-      status: "Pending",
-      color: "text-amber-600",
-    },
-    {
-      icon: "📄",
-      title: "Employer confirmation",
-      text: "Worker may need employer confirmation before collecting the employee card.",
-      status: "Pending",
-      color: "text-amber-600",
-    },
-    {
-      icon: "✅",
-      title: "Employee card collected",
-      text: "Worker confirms the physical card was collected.",
-      status: "Pending",
-      color: "text-amber-600",
-    },
-  ];
+  const renderChecklist = (items) => (
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+      {items.map((item) => {
+        const isDone = completedOnboardingItems.includes(item);
+
+        return (
+          <button
+            key={item}
+            onClick={() => toggleOnboardingProgress(item)}
+            className={`text-left rounded-2xl p-4 border font-semibold transition hover:-translate-y-1 ${
+              isDone
+                ? "bg-green-50 border-green-200 text-green-700"
+                : "bg-slate-50 border-slate-200 text-slate-700 hover:bg-blue-50"
+            }`}
+          >
+            <span className="mr-2">{isDone ? "✅" : "⭕"}</span>
+            {item}
+          </button>
+        );
+      })}
+    </div>
+  );
 
   return (
     <section className="pt-10">
       <div className="bg-white text-slate-900 rounded-3xl p-5 sm:p-8 shadow-2xl border border-blue-100">
-        <p className="text-blue-600 font-semibold mb-2">
-          Onboarding Support
-        </p>
+        <p className="text-blue-600 font-semibold mb-2">Onboarding Support</p>
 
         <h2 className="text-3xl sm:text-4xl font-extrabold mb-3">
-          Priority 1: Immigration & Employee Card
+          Remote onboarding system for Filipino workers
         </h2>
 
         <p className="text-slate-600 max-w-3xl mb-6">
-          This module helps workers understand the first important steps after arrival.
-          The system gives clear instructions, reminders, document checks, and status tracking.
+          This module guides workers step by step after arrival and helps the
+          coordinator track what is completed and what still needs attention.
         </p>
 
         <div className="bg-red-50 border border-red-100 rounded-3xl p-5 mb-6">
           <h3 className="font-bold text-red-700 text-xl mb-2">
-            ⚠️ Important reminder
+            ⚠️ Priority 1: Immigration & Employee Card
           </h3>
-          <div className="bg-slate-50 border border-slate-100 rounded-3xl p-5 mb-6">
-  <h3 className="text-xl font-bold text-slate-900 mb-4">
-    📄 Documents Checklist
-  </h3>
-  <div className="bg-blue-50 border border-blue-100 rounded-3xl p-5 mb-6">
-  <h3 className="text-xl font-bold text-blue-900 mb-4">
-    💬 Simple phrases for immigration visit
-  </h3>
-
-  <div className="space-y-3">
-    {[
-      "Hello, I am here for my immigration appointment.",
-      "I am here for my employee card process.",
-      "This is my passport.",
-      "This is my accommodation address.",
-      "I do not understand Czech. Can you please speak English?",
-      "Can I contact my coordinator?",
-    ].map((phrase) => (
-      <div
-        key={phrase}
-        className="bg-white rounded-2xl p-4 border border-blue-100 text-slate-700 font-medium"
-      >
-        “{phrase}”
-      </div>
-    ))}
-  </div>
-</div>
-
-<div className="bg-slate-900 text-white rounded-3xl p-5 sm:p-6 mb-6 border border-white/10">
-  <p className="text-blue-300 font-semibold mb-2">
-    Remote Coordination Flow
-  </p>
-
-  <h3 className="text-2xl font-extrabold mb-4">
-    How the Digital Coordinator supports the worker remotely
-  </h3>
-
-  <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
-    {[
-      {
-        icon: "📍",
-        title: "Send location",
-        text: "Worker receives office address and map before the visit.",
-      },
-      {
-        icon: "⏰",
-        title: "Reminder",
-        text: "Worker gets clear reminder about date, time, and documents.",
-      },
-      {
-        icon: "💬",
-        title: "Simple phrases",
-        text: "Worker can show prepared English phrases at the office.",
-      },
-      {
-        icon: "✅",
-        title: "Confirm result",
-        text: "Worker confirms if the visit, biometrics, or next date is completed.",
-      },
-    ].map((item) => (
-      <div
-        key={item.title}
-        className="bg-white/10 rounded-3xl p-4 border border-white/10 hover:bg-white/15 transition"
-      >
-        <div className="text-3xl mb-3">{item.icon}</div>
-        <h4 className="font-bold mb-2">{item.title}</h4>
-        <p className="text-slate-300 text-sm leading-relaxed">
-          {item.text}
-        </p>
-      </div>
-    ))}
-  </div>
-</div>
-
-  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-    {[
-      "Passport",
-      "Visa / entry document",
-      "Accommodation address",
-      "Employment documents",
-      "Appointment date and time",
-      "Employer confirmation if required",
-    ].map((document) => (
-      <div
-        key={document}
-        className="bg-white rounded-2xl p-4 border border-slate-100 font-semibold text-slate-700"
-      >
-        ✓ {document}
-      </div>
-    ))}
-  </div>
-</div>
           <p className="text-slate-700">
-            Immigration and employee card steps must follow official instructions from the
-            employer, agency, Ministry of Interior, or responsible legal provider. This app
-            provides remote coordination and practical guidance, not legal processing.
+            Immigration and employee card steps must follow official instructions
+            from the employer, agency, Ministry of Interior, or responsible legal
+            provider. This app provides remote coordination and practical
+            guidance, not legal processing.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          {employeeCardSteps.map((step) => (
-            <div
-              key={step.title}
-              className="bg-slate-50 border border-slate-100 rounded-3xl p-5 hover:-translate-y-1 hover:shadow-lg transition"
-            >
-              <div className="flex items-start gap-4">
-                <div className="text-4xl">{step.icon}</div>
-
-                <div className="flex-1">
-                  <div className="flex items-start justify-between gap-3">
-                    <h3 className="text-xl font-bold mb-2">{step.title}</h3>
-                    <span className={`text-sm font-bold whitespace-nowrap ${step.color}`}>
-                      {step.status}
-                    </span>
-                  </div>
-
-                  <p className="text-slate-600 leading-relaxed">
-                    {step.text}
-                  </p>
-                </div>
-              </div>
-            </div>
-          ))}
+        <div className="bg-slate-50 border border-slate-100 rounded-3xl p-5 mb-6">
+          <h3 className="text-xl font-bold mb-4">📄 Documents Checklist</h3>
+          {renderChecklist([
+            "Passport prepared",
+            "Visa / entry document prepared",
+            "Accommodation address prepared",
+            "Employment documents prepared",
+            "Appointment date and time confirmed",
+            "Employer confirmation prepared if required",
+          ])}
         </div>
 
-        <div className="mt-8 bg-blue-50 border border-blue-100 rounded-3xl p-5">
+        <div className="bg-blue-50 border border-blue-100 rounded-3xl p-5 mb-6">
           <h3 className="text-xl font-bold text-blue-900 mb-4">
-            Remote support checklist
+            💬 Simple phrases for immigration visit
           </h3>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="space-y-3">
             {[
-              "Send office address and map",
-              "Confirm appointment date and time",
-              "Prepare document checklist",
-              "Send simple English phrases",
-              "Worker confirms visit completed",
-              "Track pending / completed status",
-            ].map((item) => (
+              {
+                en: "Hello, I am here for my immigration appointment.",
+                cz: "Dobrý den, jsem tady na termín ohledně imigračního procesu.",
+              },
+              {
+                en: "I am here for my employee card process.",
+                cz: "Jsem tady kvůli procesu zaměstnanecké karty.",
+              },
+              {
+                en: "This is my passport.",
+                cz: "Toto je můj pas.",
+              },
+              {
+                en: "This is my accommodation address.",
+                cz: "Toto je moje adresa ubytování.",
+              },
+              {
+                en: "I do not understand Czech. Can you please speak English?",
+                cz: "Nerozumím česky. Můžete prosím mluvit anglicky?",
+              },
+              {
+                en: "Can I contact my coordinator?",
+                cz: "Mohu kontaktovat svého koordinátora?",
+              },
+            ].map((phrase) => (
               <div
-                key={item}
-                className="bg-white rounded-2xl p-4 border border-blue-100 font-semibold text-slate-700"
+                key={phrase.en}
+                className="bg-white rounded-2xl p-4 border border-blue-100"
               >
-                ✓ {item}
+                <p className="font-semibold text-slate-800">💬 {phrase.en}</p>
+                <p className="text-slate-500 mt-1">🇨🇿 {phrase.cz}</p>
               </div>
             ))}
           </div>
         </div>
+
+        <div className="bg-slate-900 text-white rounded-3xl p-5 sm:p-6 mb-6 border border-white/10">
+          <p className="text-blue-300 font-semibold mb-2">
+            Remote Coordination Flow
+          </p>
+
+          <h3 className="text-2xl font-extrabold mb-4">
+            How the Digital Coordinator supports the worker remotely
+          </h3>
+
+          <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
+            {[
+              {
+                icon: "📍",
+                title: "Send location",
+                text: "Worker receives office address and map before the visit.",
+              },
+              {
+                icon: "⏰",
+                title: "Reminder",
+                text: "Worker gets clear reminder about date, time, and documents.",
+              },
+              {
+                icon: "💬",
+                title: "Simple phrases",
+                text: "Worker can show prepared English and Czech phrases.",
+              },
+              {
+                icon: "✅",
+                title: "Confirm result",
+                text: "Worker confirms visit, biometrics, or next appointment.",
+              },
+            ].map((item) => (
+              <div
+                key={item.title}
+                className="bg-white/10 rounded-3xl p-4 border border-white/10 hover:bg-white/15 transition"
+              >
+                <div className="text-3xl mb-3">{item.icon}</div>
+                <h4 className="font-bold mb-2">{item.title}</h4>
+                <p className="text-slate-300 text-sm">{item.text}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="bg-white border border-blue-100 rounded-3xl p-5 mb-6 shadow-lg">
+          <h3 className="text-2xl font-extrabold mb-2">
+            🏠 Priority 2: Accommodation Check
+          </h3>
+          <p className="text-slate-500 mb-5">
+            Worker must understand where they live, who to contact, and what rules to follow.
+          </p>
+          {renderChecklist([
+            "Accommodation address confirmed",
+            "Room / bed confirmed",
+            "Keys received",
+            "Wi-Fi information received",
+            "House rules explained",
+            "Accommodation contact saved",
+            "Problem reporting process explained",
+            "Emergency contact available",
+          ])}
+        </div>
+
+        <div className="bg-white border border-blue-100 rounded-3xl p-5 mb-6 shadow-lg">
+          <h3 className="text-2xl font-extrabold mb-2">
+            📱 Priority 3: SIM Card & WhatsApp
+          </h3>
+          <p className="text-slate-500 mb-5">
+            Worker needs mobile data and WhatsApp for stable communication.
+          </p>
+          {renderChecklist([
+            "SIM card received",
+            "Mobile data working",
+            "WhatsApp active",
+            "Coordinator contact saved",
+            "Employer contact saved",
+            "Accommodation contact saved",
+            "Emergency number saved",
+            "Worker can send location if lost",
+          ])}
+        </div>
+
+        <div className="bg-white border border-blue-100 rounded-3xl p-5 mb-6 shadow-lg">
+          <h3 className="text-2xl font-extrabold mb-2">
+            🏦 Priority 4: Bank Account
+          </h3>
+          <p className="text-slate-500 mb-5">
+            Worker needs clear guidance for opening a bank account and receiving salary safely.
+          </p>
+          {renderChecklist([
+            "Passport prepared for bank",
+            "Employment document prepared for bank",
+            "Accommodation address prepared for bank",
+            "Bank appointment confirmed",
+            "Salary account information shared with employer",
+            "PIN and password kept private",
+            "Mobile banking installed if needed",
+            "Worker understands basic bank safety",
+          ])}
+        </div>
+
+        <div className="bg-white border border-blue-100 rounded-3xl p-5 mb-6 shadow-lg">
+          <h3 className="text-2xl font-extrabold mb-2">
+            👷 Priority 5: First Day at Work
+          </h3>
+          <p className="text-slate-500 mb-5">
+            Worker must know where to go, when to arrive, who to contact, and what to bring.
+          </p>
+          {renderChecklist([
+            "Workplace address confirmed",
+            "Start time confirmed",
+            "Supervisor contact saved",
+            "Transport route checked",
+            "Work clothes prepared",
+            "Documents prepared for first day",
+            "Break rules understood",
+            "Worker knows who to call if lost",
+          ])}
+        </div>
+
+        <div className="bg-red-50 border border-red-100 rounded-3xl p-5 mb-6 shadow-lg">
+          <h3 className="text-2xl font-extrabold text-red-900 mb-2">
+            🚨 Priority 6: Emergency Contacts
+          </h3>
+          <p className="text-slate-600 mb-5">
+            Worker must know who to contact in urgent situations.
+          </p>
+          {renderChecklist([
+            "Emergency number 112 saved",
+            "Coordinator contact saved",
+            "Employer contact saved",
+            "Accommodation contact saved",
+            "Worker knows when to call emergency",
+            "Worker knows when to contact coordinator",
+            "Worker can share location",
+            "Worker understands this is for urgent help",
+          ])}
+        </div>
+
+        <div className="bg-white border border-blue-100 rounded-3xl p-5 mb-6 shadow-lg">
+          <h3 className="text-2xl font-extrabold mb-2">
+            🗣️ Priority 7: Language & Communication
+          </h3>
+          <p className="text-slate-500 mb-5">
+            Worker can show simple English and Czech phrases when they need help.
+          </p>
+
+          <div className="space-y-3">
+            {[
+              {
+                en: "I do not understand Czech. Can you please speak English?",
+                cz: "Nerozumím česky. Můžete prosím mluvit anglicky?",
+              },
+              {
+                en: "Can you please repeat it slowly?",
+                cz: "Můžete to prosím zopakovat pomalu?",
+              },
+              {
+                en: "I need help from my coordinator.",
+                cz: "Potřebuji pomoc od svého koordinátora.",
+              },
+              {
+                en: "I am lost. Can I send my location?",
+                cz: "Ztratil/a jsem se. Mohu poslat svou polohu?",
+              },
+              {
+                en: "I have a problem at accommodation.",
+                cz: "Mám problém na ubytování.",
+              },
+              {
+                en: "I have a problem at work.",
+                cz: "Mám problém v práci.",
+              },
+              {
+                en: "I am sick today.",
+                cz: "Dnes jsem nemocný/nemocná.",
+              },
+              {
+                en: "Can you please write it in a message?",
+                cz: "Můžete mi to prosím napsat do zprávy?",
+              },
+            ].map((phrase) => (
+              <div
+                key={phrase.en}
+                className="bg-slate-50 rounded-2xl p-4 border border-slate-100 hover:bg-blue-50 transition"
+              >
+                <p className="font-semibold text-slate-800">💬 {phrase.en}</p>
+                <p className="text-slate-500 mt-1">🇨🇿 {phrase.cz}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="bg-white border border-blue-100 rounded-3xl p-5 mb-6 shadow-lg">
+          <h3 className="text-2xl font-extrabold mb-2">
+            ❄️ Priority 8: Adaptation / Weather Shock
+          </h3>
+          <p className="text-slate-500 mb-5">
+            Filipino workers may experience cold weather, dry skin, and difficulty adapting to European climate.
+          </p>
+          {renderChecklist([
+            "Wear warm layers during winter",
+            "Use hand cream or body lotion for dry skin",
+            "Keep room warm but ventilated",
+            "Ask if heating is not working",
+            "Drink enough water",
+            "Prepare warm shoes and jacket",
+            "Understand that adaptation can take a few weeks",
+            "Report serious health problems early",
+          ])}
+        </div>
       </div>
-      <div className="bg-white border border-blue-100 rounded-3xl p-5 mb-6 shadow-lg">
-  <div className="mb-5">
-    <p className="text-blue-600 font-semibold mb-1">
-      Priority 2
-    </p>
-
-    <h3 className="text-2xl font-extrabold text-slate-900">
-      🏠 Accommodation Check
-    </h3>
-
-    <p className="text-slate-500 mt-2">
-      Worker must clearly understand where they live, who to contact, and what rules to follow.
-    </p>
-  </div>
-
-  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-    {[
-      "Accommodation address confirmed",
-      "Room / bed confirmed",
-      "Keys received",
-      "Wi-Fi information received",
-      "House rules explained",
-      "Accommodation contact saved",
-      "Problem reporting process explained",
-      "Emergency contact available",
-    ].map((item) => (
-      <div
-        key={item}
-        className="bg-slate-50 rounded-2xl p-4 border border-slate-100 font-semibold text-slate-700 hover:bg-blue-50 transition"
-      >
-        ✓ {item}
-      </div>
-    ))}
-  </div>
-</div>
-
-
-
-<div className="bg-white border border-blue-100 rounded-3xl p-5 mb-6 shadow-lg">
-  <div className="mb-5">
-    <p className="text-blue-600 font-semibold mb-1">
-      Priority 3
-    </p>
-
-    <h3 className="text-2xl font-extrabold text-slate-900">
-      📱 SIM Card & WhatsApp
-    </h3>
-
-    <p className="text-slate-500 mt-2">
-      Worker must have mobile data and WhatsApp active so communication is stable from the first days.
-    </p>
-  </div>
-
-  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-    {[
-      "SIM card received",
-      "Mobile data working",
-      "WhatsApp active",
-      "Coordinator contact saved",
-      "Employer contact saved",
-      "Accommodation contact saved",
-      "Emergency number saved",
-      "Worker can send location if lost",
-    ].map((item) => (
-      <div
-        key={item}
-        className="bg-slate-50 rounded-2xl p-4 border border-slate-100 font-semibold text-slate-700 hover:bg-blue-50 transition"
-      >
-        ✓ {item}
-      </div>
-    ))}
-  </div>
-</div>
-
-<div className="bg-white border border-blue-100 rounded-3xl p-5 mb-6 shadow-lg">
-  <div className="mb-5">
-    <p className="text-blue-600 font-semibold mb-1">
-      Priority 4
-    </p>
-
-    <h3 className="text-2xl font-extrabold text-slate-900">
-      🏦 Bank Account
-    </h3>
-
-    <p className="text-slate-500 mt-2">
-      Worker needs clear guidance for opening a bank account and receiving salary safely.
-    </p>
-  </div>
-
-  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-    {[
-      "Passport prepared",
-      "Employment document prepared",
-      "Accommodation address prepared",
-      "Bank appointment confirmed",
-      "Salary account information shared with employer",
-      "PIN and password kept private",
-      "Mobile banking installed if needed",
-      "Worker understands basic bank safety",
-    ].map((item) => (
-      <div
-        key={item}
-        className="bg-slate-50 rounded-2xl p-4 border border-slate-100 font-semibold text-slate-700 hover:bg-blue-50 transition"
-      >
-        ✓ {item}
-      </div>
-    ))}
-  </div>
-</div>
-
-<div className="bg-white border border-blue-100 rounded-3xl p-5 mb-6 shadow-lg">
-  <div className="mb-5">
-    <p className="text-blue-600 font-semibold mb-1">
-      Priority 5
-    </p>
-
-    <h3 className="text-2xl font-extrabold text-slate-900">
-      👷 First Day at Work
-    </h3>
-
-    <p className="text-slate-500 mt-2">
-      Worker must know where to go, when to arrive, who to contact, and what to bring.
-    </p>
-  </div>
-
-  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-    {[
-      "Workplace address confirmed",
-      "Start time confirmed",
-      "Supervisor contact saved",
-      "Transport route checked",
-      "Work clothes prepared",
-      "Documents prepared",
-      "Break rules understood",
-      "Worker knows who to call if lost",
-    ].map((item) => (
-      <div
-        key={item}
-        className="bg-slate-50 rounded-2xl p-4 border border-slate-100 font-semibold text-slate-700 hover:bg-blue-50 transition"
-      >
-        ✓ {item}
-      </div>
-    ))}
-  </div>
-</div>
-
-<div className="bg-red-50 border border-red-100 rounded-3xl p-5 mb-6 shadow-lg">
-  <div className="mb-5">
-    <p className="text-red-600 font-semibold mb-1">
-      Priority 6
-    </p>
-
-    <h3 className="text-2xl font-extrabold text-red-900">
-      🚨 Emergency Contacts
-    </h3>
-
-    <p className="text-slate-600 mt-2">
-      Worker must know who to contact in urgent situations.
-    </p>
-  </div>
-
-  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-    {[
-      "Emergency number 112 saved",
-      "Coordinator contact saved",
-      "Employer contact saved",
-      "Accommodation contact saved",
-      "Worker knows when to call emergency",
-      "Worker knows when to contact coordinator",
-      "Worker can share location",
-      "Worker understands this is for urgent help",
-    ].map((item) => (
-      <div
-        key={item}
-        className="bg-white rounded-2xl p-4 border border-red-100 font-semibold text-slate-700 hover:bg-red-100 transition"
-      >
-        ✓ {item}
-      </div>
-    ))}
-  </div>
-</div>
-
-<div className="bg-white border border-blue-100 rounded-3xl p-5 mb-6 shadow-lg">
-  <div className="mb-5">
-    <p className="text-blue-600 font-semibold mb-1">
-      Priority 7
-    </p>
-
-    <h3 className="text-2xl font-extrabold text-slate-900">
-      🗣️ Language & Communication
-    </h3>
-
-    <p className="text-slate-500 mt-2">
-      Worker can show simple English and Czech phrases when they need help.
-    </p>
-  </div>
-
-  <div className="space-y-3">
-    {[
-      {
-        en: "I do not understand Czech. Can you please speak English?",
-        cz: "Nerozumím česky. Můžete prosím mluvit anglicky?",
-      },
-      {
-        en: "Can you please repeat it slowly?",
-        cz: "Můžete to prosím zopakovat pomalu?",
-      },
-      {
-        en: "I need help from my coordinator.",
-        cz: "Potřebuji pomoc od svého koordinátora.",
-      },
-      {
-        en: "I am lost. Can I send my location?",
-        cz: "Ztratil/a jsem se. Mohu poslat svou polohu?",
-      },
-      {
-        en: "I have a problem at accommodation.",
-        cz: "Mám problém na ubytování.",
-      },
-      {
-        en: "I have a problem at work.",
-        cz: "Mám problém v práci.",
-      },
-      {
-        en: "I am sick today.",
-        cz: "Dnes jsem nemocný/nemocná.",
-      },
-      {
-        en: "Can you please write it in a message?",
-        cz: "Můžete mi to prosím napsat do zprávy?",
-      },
-    ].map((phrase) => (
-      <div
-        key={phrase.en}
-        className="bg-slate-50 rounded-2xl p-4 border border-slate-100 hover:bg-blue-50 transition"
-      >
-        <p className="font-semibold text-slate-800">
-          💬 {phrase.en}
-        </p>
-        <p className="text-slate-500 mt-1">
-          🇨🇿 {phrase.cz}
-        </p>
-      </div>
-    ))}
-  </div>
-</div>
-
-<div className="bg-white border border-blue-100 rounded-3xl p-5 mb-6 shadow-lg">
-  <div className="mb-5">
-    <p className="text-blue-600 font-semibold mb-1">
-      Priority 8
-    </p>
-
-    <h3 className="text-2xl font-extrabold text-slate-900">
-      ❄️ Adaptation / Weather Shock
-    </h3>
-
-    <p className="text-slate-500 mt-2">
-      Filipino workers may experience cold weather, dry skin, and difficulty adapting to European climate.
-    </p>
-  </div>
-
-  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-    {[
-      "Wear warm layers during winter",
-      "Use hand cream or body lotion for dry skin",
-      "Keep room warm but ventilated",
-      "Ask if heating is not working",
-      "Drink enough water",
-      "Prepare warm shoes and jacket",
-      "Understand that adaptation can take a few weeks",
-      "Report serious health problems early",
-    ].map((item) => (
-      <div
-        key={item}
-        className="bg-slate-50 rounded-2xl p-4 border border-slate-100 font-semibold text-slate-700 hover:bg-blue-50 transition"
-      >
-        ✓ {item}
-      </div>
-    ))}
-  </div>
-</div>
     </section>
   );
 }
@@ -1488,7 +1308,7 @@ function App() {
           </div>
 
         <div className="hidden sm:flex gap-2">
-  {["home", "onboarding", "help", "communication", "operations", "report", "admin"].map((tab) => (
+  {["home", "onboarding", "help", "communication", "report", "admin"].map((tab) => (
     <button
       key={tab}
       onClick={() => setActiveTab(tab)}
@@ -1510,7 +1330,7 @@ function App() {
 {activeTab === "onboarding" && <OnboardingPage />}
 {activeTab === "help" && <QuickHelpPage />}
 {activeTab === "communication" && <GuidePage />}
-{activeTab === "operations" && <AdminPage />}
+
 {activeTab === "report" && <ReportPage />}
 {activeTab === "admin" && <AdminPage />}
       </main>

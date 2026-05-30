@@ -6,7 +6,7 @@ import Link from "next/link"
 const roleColors: Record<string, string> = {
   ADMIN: "bg-red-900/50 text-red-400",
   COORDINATOR: "bg-blue-900/50 text-blue-400",
-  CLIENT: "bg-green-900/50 text-green-400",
+  COMPANY: "bg-green-900/50 text-green-400",
 }
 
 export default async function UsersPage() {
@@ -23,7 +23,7 @@ export default async function UsersPage() {
       role: true,
       createdAt: true,
       updatedAt: true,
-      client: { select: { name: true } },
+      company: { select: { name: true } },
     },
     orderBy: { createdAt: "desc" },
   })
@@ -48,7 +48,7 @@ export default async function UsersPage() {
                 <th className="px-4 py-3 font-medium text-slate-400">Email</th>
                 <th className="px-4 py-3 font-medium text-slate-400">Role</th>
                 <th className="px-4 py-3 font-medium text-slate-400">
-                  Linked Client
+                  Linked Company
                 </th>
                 <th className="px-4 py-3 font-medium text-slate-400">
                   Created
@@ -76,7 +76,7 @@ export default async function UsersPage() {
                     </span>
                   </td>
                   <td className="px-4 py-3 text-slate-300">
-                    {user.client?.name || "—"}
+                    {user.company?.name || "—"}
                   </td>
                   <td className="px-4 py-3 text-slate-400">
                     {new Date(user.createdAt).toLocaleDateString()}

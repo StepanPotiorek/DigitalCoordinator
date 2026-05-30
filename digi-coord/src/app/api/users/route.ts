@@ -15,7 +15,7 @@ export async function GET() {
         role: true,
         createdAt: true,
         updatedAt: true,
-        client: { select: { name: true } },
+        company: { select: { name: true } },
       },
       orderBy: { createdAt: "desc" },
     })

@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { PasswordInput } from "@/components/ui/password-input"
 
 interface FormData {
   name: string
@@ -162,16 +163,15 @@ export function WorkerRegistrationForm() {
             >
               Password <span className="text-red-400">*</span>
             </label>
-            <input
+            <PasswordInput
               id="password"
               name="password"
-              type="password"
               required
               minLength={6}
               value={formData.password}
               onChange={handleChange}
-              className="mt-1 w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-white placeholder-slate-500 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
               placeholder="Min 6 characters"
+              containerClassName="mt-1"
             />
           </div>
           <div>
@@ -181,16 +181,15 @@ export function WorkerRegistrationForm() {
             >
               Confirm password <span className="text-red-400">*</span>
             </label>
-            <input
+            <PasswordInput
               id="confirmPassword"
               name="confirmPassword"
-              type="password"
               required
               minLength={6}
               value={formData.confirmPassword}
               onChange={handleChange}
-              className="mt-1 w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-white placeholder-slate-500 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
               placeholder="Repeat password"
+              containerClassName="mt-1"
             />
           </div>
         </div>
@@ -200,7 +199,7 @@ export function WorkerRegistrationForm() {
             htmlFor="employer"
             className="block text-sm font-medium text-slate-300"
           >
-            Employer / Client
+            Employer / Company
           </label>
           <input
             id="employer"

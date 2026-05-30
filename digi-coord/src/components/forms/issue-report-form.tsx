@@ -1,6 +1,55 @@
 "use client"
 
-import { useState, useRef } from "react"
+import { useState, useRef, useEffect } from "react"
+import { useSearchParams } from "next/navigation"
+
+const situationLabels: Record<string, string> = {
+  "calling-in-sick": "Calling in sick",
+  "late-to-work": "Running late for work",
+  "salary-query": "Salary / payslip question",
+  "asking-day-off": "Requesting a day off",
+  "overtime-query": "Overtime question",
+  "workplace-issue": "Problem at work",
+  "contract-query": "Contract question",
+  "holiday-query": "Holiday / vacation request",
+  "work-accident": "Accident at work",
+  "break-time": "Break time question",
+  "heating-problem": "Heating not working",
+  "water-problem": "Water problem",
+  "electricity-problem": "Electricity problem",
+  "lost-keys": "Lost keys",
+  "roommate-issue": "Problem with roommate",
+  "repair-needed": "Something needs repair",
+  "internet-problem": "Internet not working",
+  "moving-out": "Moving out notification",
+  "open-account": "Opening a bank account",
+  "atm-card-problem": "ATM card not working",
+  "send-money-ph": "Sending money to Philippines",
+  "lost-bank-card": "Lost bank card",
+  "online-banking-help": "Online banking help",
+  "need-doctor": "Need to see a doctor",
+  "emergency-room": "Emergency room",
+  "dentist": "Dentist appointment",
+  "pharmacy": "Pharmacy - need medicine",
+  "sick-leave": "Sick leave certificate",
+  "ec-application": "Employee card application",
+  "ec-renewal": "Employee card renewal",
+  "lost-ec": "Lost employee card",
+  "address-change": "Reporting address change",
+  "biometrics-appointment": "Biometrics appointment",
+  "collect-ec": "Collecting employee card",
+  "foreign-police-registration": "Foreign Police registration",
+  "oamp-appointment": "OAMP appointment",
+  "buy-ticket": "Buying a transport ticket",
+  "lost-ticket": "Lost transport ticket",
+  "missed-bus": "Missed my bus / train",
+  "directions": "Need directions",
+  "ticket-inspection": "Ticket inspection",
+  "sim-card": "Getting a SIM card",
+  "internet-at-home": "Setting up internet at home",
+  "tax-return": "Tax return help",
+  "health-insurance": "Health insurance question",
+}
 
 const issueTypes = [
   { value: "Work", label: "Work" },
@@ -16,6 +65,8 @@ type IssueFormData = {
   description: string
   workerName: string
   whatsapp: string
+  situationId: string
+  contacted: string
 }
 
 function isVideo(mime: string) {
@@ -23,18 +74,32 @@ function isVideo(mime: string) {
 }
 
 export function IssueReportForm() {
+  const searchParams = useSearchParams()
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [form, setForm] = useState<IssueFormData>({
     issueType: "",
     description: "",
     workerName: "",
     whatsapp: "",
+    situationId: searchParams.get("situation") || "",
+    contacted: searchParams.get("contacted") || "",
   })
   const [files, setFiles] = useState<File[]>([])
   const [previews, setPreviews] = useState<string[]>([])
   const [saving, setSaving] = useState(false)
   const [submitted, setSubmitted] = useState(false)
   const [error, setError] = useState("")
+
+  useEffect(() => {
+    const situation = searchParams.get("situation")
+    if (situation && situationLabels[situation]) {
+      setForm((prev) => ({
+        ...prev,
+        situationId: situation,
+        description: `This report is about: ${situationLabels[situation]}\n\n`,
+      }))
+    }
+  }, [searchParams])
 
   function handleFileSelect(e: React.ChangeEvent<HTMLInputElement>) {
     const selected = Array.from(e.target.files || [])
@@ -98,6 +163,8 @@ export function IssueReportForm() {
           description: `From: ${form.workerName || "Anonymous"} (${form.whatsapp || "no contact"})\n\n${form.description}`,
           workerName: form.workerName || undefined,
           mediaUrls,
+          situationId: form.situationId || undefined,
+          contacted: form.contacted || undefined,
         }),
       })
 

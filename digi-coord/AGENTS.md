@@ -176,6 +176,30 @@ Tasks are in `ROADMAP/` directory, numbered and independent. Each task file cont
 
 ---
 
+## Development Commands
+
+```bash
+# Dev server (localhost-only — change -H 0.0.0.0 to share on network)
+npx next dev -H 127.0.0.1
+
+# Production build
+npx next build
+
+# Tests
+npm run test          # vitest unit tests
+npm run test:e2e      # playwright e2e tests
+
+# Seed database
+npx tsx prisma/seed.ts
+
+# Kill dev server and restart clean
+kill $(lsof -ti:3000)
+rm -rf .next
+setsid sh -c 'npx next dev -H 127.0.0.1 > /tmp/digicoord-dev.log 2>&1'
+```
+
+---
+
 ## Current Session Context
 
 - Created Next.js project at `digi-coord/`

@@ -1,7 +1,10 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { SessionProvider } from "@/components/auth/session-provider";
+import { WhatsAppFloat } from "@/components/public/whatsapp-float";
+import { SearchModal } from "@/components/search/search-modal";
+import { PwaProvider } from "@/components/pwa/pwa-provider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -17,6 +20,26 @@ export const metadata: Metadata = {
   title: "Digital Coordinator — Suporta sa Manggagawang Pilipino",
   description:
     "Automated onboarding and worker support for Filipino workers in Czech Republic.",
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "DigiCoord",
+  },
+  icons: {
+    icon: [
+      { url: "/icons/icon-192x192.png", sizes: "192x192", type: "image/png" },
+      { url: "/icons/icon-512x512.png", sizes: "512x512", type: "image/png" },
+      { url: "/icons/icon.svg", type: "image/svg+xml" },
+    ],
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#1e3a5f",
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
 };
 
 export default function RootLayout({
@@ -30,7 +53,12 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full bg-slate-950 text-white">
-        <SessionProvider>{children}</SessionProvider>
+        <SessionProvider>
+          {children}
+          <WhatsAppFloat />
+          <SearchModal />
+          <PwaProvider />
+        </SessionProvider>
       </body>
     </html>
   );

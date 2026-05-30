@@ -2,6 +2,7 @@ import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import { apiHandler, unauthorized, badRequest, notFound, conflict, created, parseId } from "@/lib/api-utils"
 import { validate, createAccommodationSchema } from "@/lib/validation"
+import { logAction } from "@/lib/audit"
 
 export async function GET(request: Request) {
   return apiHandler(async () => {
@@ -45,6 +46,7 @@ export async function POST(request: Request) {
     if (existing) return conflict("Accommodation already exists for this worker")
 
     const accommodation = await prisma.accommodation.create({ data })
+    void logAction(session.user.id, "accommodation.create", "Accommodation", accommodation.id)
     return created(accommodation)
   })
 }

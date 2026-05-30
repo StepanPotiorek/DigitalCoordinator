@@ -18,8 +18,10 @@ export async function createNotification(
   type: string,
   message: string,
   link?: string,
+  title?: string,
+  userId?: string,
 ) {
   await prisma.notification.create({
-    data: { type, message, link },
+    data: { type, message, link, title: title ?? "", userId: userId ?? null },
   })
 }

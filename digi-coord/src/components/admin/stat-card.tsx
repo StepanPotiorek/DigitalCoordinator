@@ -6,7 +6,7 @@ export function StatCard({
 }: {
   title: string
   value: string | number
-  accent: "blue" | "green" | "red" | "amber"
+  accent: "blue" | "green" | "red" | "amber" | "yellow"
   onClick?: () => void
 }) {
   const accentBorders: Record<string, string> = {
@@ -14,6 +14,7 @@ export function StatCard({
     green: "border-l-green-600",
     red: "border-l-red-600",
     amber: "border-l-amber-600",
+    yellow: "border-l-yellow-600",
   }
 
   const accentText: Record<string, string> = {
@@ -21,6 +22,7 @@ export function StatCard({
     green: "text-green-400",
     red: "text-red-400",
     amber: "text-amber-400",
+    yellow: "text-yellow-400",
   }
 
   return (

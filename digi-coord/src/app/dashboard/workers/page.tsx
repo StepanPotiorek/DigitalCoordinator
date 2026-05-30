@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, useMemo } from "react"
 import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
@@ -16,6 +16,7 @@ interface Worker {
   emergencyContactName: string | null
   emergencyContactPhone: string | null
   onboardingStatus: "PENDING" | "IN_PROGRESS" | "COMPLETED"
+  status: "PENDING_APPROVAL" | "ACTIVE" | "REJECTED"
   createdAt: string
 }
 
@@ -25,11 +26,24 @@ const statusColors: Record<string, string> = {
   COMPLETED: "bg-green-900/50 text-green-400",
 }
 
+const accountStatusColors: Record<string, string> = {
+  PENDING_APPROVAL: "bg-yellow-900/50 text-yellow-400",
+  ACTIVE: "bg-green-900/50 text-green-400",
+  REJECTED: "bg-red-900/50 text-red-400",
+}
+
+const accountStatusLabels: Record<string, string> = {
+  PENDING_APPROVAL: "Pending",
+  ACTIVE: "Active",
+  REJECTED: "Rejected",
+}
+
 export default function WorkersPage() {
   const { data: session, status } = useSession()
   const router = useRouter()
   const [workers, setWorkers] = useState<Worker[]>([])
   const [search, setSearch] = useState("")
+  const [statusFilter, setStatusFilter] = useState("")
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -66,24 +80,51 @@ export default function WorkersPage() {
     return null
   }
 
-  const filtered = workers.filter(
-    (w) =>
-      w.name.toLowerCase().includes(search.toLowerCase()) ||
-      (w.employer &&
-        w.employer.toLowerCase().includes(search.toLowerCase()))
+  const filtered = useMemo(
+    () =>
+      workers.filter((w) => {
+        const matchesSearch =
+          !search ||
+          w.name.toLowerCase().includes(search.toLowerCase()) ||
+          (w.employer &&
+            w.employer.toLowerCase().includes(search.toLowerCase()))
+        const matchesStatus = !statusFilter || w.status === statusFilter
+        return matchesSearch && matchesStatus
+      }),
+    [workers, search, statusFilter],
   )
 
   return (
     <div>
-      <h1 className="mb-6 text-2xl font-bold text-white">Workers</h1>
+      <div className="mb-6 flex items-center justify-between">
+        <h1 className="text-2xl font-bold text-white">Workers</h1>
+        <a
+          href="/api/export/workers"
+          className="rounded-lg border border-slate-700 bg-slate-800/50 px-3 py-1.5 text-xs text-slate-400 transition hover:bg-slate-700/50 hover:text-white"
+        >
+          Export CSV
+        </a>
+      </div>
 
-      <input
-        type="text"
-        placeholder="Search by name or employer..."
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-        className="mb-6 w-full max-w-md rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-white placeholder-slate-500 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-      />
+      <div className="mb-6 flex flex-wrap gap-3">
+        <input
+          type="text"
+          placeholder="Search by name or employer..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="w-full max-w-md rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-white placeholder-slate-500 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+        />
+        <select
+          value={statusFilter}
+          onChange={(e) => setStatusFilter(e.target.value)}
+          className="rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-white outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+        >
+          <option value="">All statuses</option>
+          <option value="PENDING_APPROVAL">Pending Approval</option>
+          <option value="ACTIVE">Active</option>
+          <option value="REJECTED">Rejected</option>
+        </select>
+      </div>
 
       <div className="overflow-x-auto rounded-xl border border-slate-800">
         <table className="w-full text-left text-sm">
@@ -92,7 +133,8 @@ export default function WorkersPage() {
               <th className="px-4 py-3 font-medium text-slate-400">Name</th>
               <th className="px-4 py-3 font-medium text-slate-400">WhatsApp</th>
               <th className="px-4 py-3 font-medium text-slate-400">Employer</th>
-              <th className="px-4 py-3 font-medium text-slate-400">Status</th>
+              <th className="px-4 py-3 font-medium text-slate-400">Onboarding</th>
+              <th className="px-4 py-3 font-medium text-slate-400">Account</th>
               <th className="px-4 py-3 font-medium text-slate-400">Arrival</th>
               <th className="px-4 py-3 font-medium text-slate-400">Actions</th>
             </tr>
@@ -100,7 +142,7 @@ export default function WorkersPage() {
           <tbody className="divide-y divide-slate-800">
             {filtered.length === 0 && (
               <tr>
-                <td colSpan={6} className="px-4 py-8 text-center text-slate-500">
+                <td colSpan={7} className="px-4 py-8 text-center text-slate-500">
                   No workers found.
                 </td>
               </tr>
@@ -117,6 +159,13 @@ export default function WorkersPage() {
                     className={`inline-block rounded-full px-2 py-0.5 text-xs font-medium ${statusColors[worker.onboardingStatus]}`}
                   >
                     {worker.onboardingStatus.replace("_", " ")}
+                  </span>
+                </td>
+                <td className="px-4 py-3">
+                  <span
+                    className={`inline-block rounded-full px-2 py-0.5 text-xs font-medium ${accountStatusColors[worker.status] || "bg-slate-900/50 text-slate-400"}`}
+                  >
+                    {accountStatusLabels[worker.status] || worker.status}
                   </span>
                 </td>
                 <td className="px-4 py-3 text-slate-300">

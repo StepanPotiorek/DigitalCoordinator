@@ -6,6 +6,7 @@ import { defaultOnboardingItems } from "@/lib/onboarding-items"
 import { hash } from "bcryptjs"
 import { NextRequest } from "next/server"
 import { notifyAdminsOfNewWorker } from "@/lib/email-helpers"
+import { logAction } from "@/lib/audit"
 
 export async function GET(request: NextRequest) {
   return apiHandler(async () => {
@@ -15,9 +16,17 @@ export async function GET(request: NextRequest) {
     }
 
     const search = request.nextUrl.searchParams.get("search")
-    const where = search
-      ? { OR: [{ name: { contains: search } }, { employer: { contains: search } }] }
-      : {}
+    const status = request.nextUrl.searchParams.get("status") as "PENDING_APPROVAL" | "ACTIVE" | "REJECTED" | null
+
+    let where: Record<string, unknown> = {}
+
+    if (search) {
+      where.OR = [{ name: { contains: search } }, { employer: { contains: search } }]
+    }
+
+    if (status) {
+      where.status = status
+    }
 
     const workers = await prisma.worker.findMany({ where, orderBy: { createdAt: "desc" } })
     return workers
@@ -75,6 +84,9 @@ export async function POST(request: Request) {
     )
 
     notifyAdminsOfNewWorker(worker.name, worker.id)
+
+    const session = await auth()
+    void logAction(session?.user?.id, "worker.create", "Worker", worker.id)
 
     return created({ worker, user: { id: user.id, name: user.name, email: user.email } })
   })

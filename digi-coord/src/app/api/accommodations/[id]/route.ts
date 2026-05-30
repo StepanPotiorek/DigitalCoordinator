@@ -2,6 +2,7 @@ import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import { apiHandler, unauthorized, notFound, forbidden, parseId } from "@/lib/api-utils"
 import { validate, updateAccommodationSchema } from "@/lib/validation"
+import { logAction } from "@/lib/audit"
 
 export async function GET(_request: Request, { params }: { params: Promise<{ id: string }> }) {
   return apiHandler(async () => {
@@ -51,6 +52,7 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
         mapUrl: data.mapUrl !== undefined ? data.mapUrl : existing.mapUrl,
       },
     })
+    void logAction(session.user.id, "accommodation.update", "Accommodation", accommodationId)
 
     return accommodation
   })
@@ -69,6 +71,7 @@ export async function DELETE(_request: Request, { params }: { params: Promise<{ 
     if (!existing) return notFound("Accommodation")
 
     await prisma.accommodation.delete({ where: { id: accommodationId } })
+    void logAction(session.user.id, "accommodation.delete", "Accommodation", accommodationId)
     return null
   })
 }

@@ -1,6 +1,7 @@
 import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import { apiHandler, unauthorized, notFound, forbidden, parseId } from "@/lib/api-utils"
+import { logAction } from "@/lib/audit"
 import { validate, updateWorkerSchema } from "@/lib/validation"
 
 export async function GET(_request: Request, { params }: { params: Promise<{ id: string }> }) {
@@ -52,8 +53,11 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
         emergencyContactName: data.emergencyContactName !== undefined ? data.emergencyContactName : existing.emergencyContactName,
         emergencyContactPhone: data.emergencyContactPhone !== undefined ? data.emergencyContactPhone : existing.emergencyContactPhone,
         onboardingStatus: data.onboardingStatus ?? existing.onboardingStatus,
+        employeeCardStatus: data.employeeCardStatus ?? existing.employeeCardStatus,
       },
     })
+
+    void logAction(session.user.id, "worker.update", "Worker", workerId)
 
     return worker
   })
