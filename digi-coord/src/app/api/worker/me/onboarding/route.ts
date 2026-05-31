@@ -1,5 +1,5 @@
 import { auth } from "@/lib/auth"
-import { prisma, createNotification } from "@/lib/prisma"
+import { prisma, createNotificationForAdmins } from "@/lib/prisma"
 import { apiHandler, unauthorized, notFound } from "@/lib/api-utils"
 
 export async function GET() {
@@ -51,7 +51,7 @@ export async function PUT(request: Request) {
         where: { id: worker.id },
         data: { onboardingStatus: "COMPLETED" },
       })
-      await createNotification(
+      await createNotificationForAdmins(
         "ONBOARDING_COMPLETE",
         `${updated.name} completed all onboarding steps!`,
         `/dashboard/workers/${worker.id}`,

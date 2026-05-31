@@ -98,12 +98,22 @@ export default function WorkersPage() {
     <div>
       <div className="mb-6 flex items-center justify-between">
         <h1 className="text-2xl font-bold text-white">Workers</h1>
-        <a
-          href="/api/export/workers"
-          className="rounded-lg border border-slate-700 bg-slate-800/50 px-3 py-1.5 text-xs text-slate-400 transition hover:bg-slate-700/50 hover:text-white"
-        >
-          Export CSV
-        </a>
+        <div className="flex gap-2">
+          {session?.user?.role === "ADMIN" && (
+            <Link
+              href="/dashboard/workers/new"
+              className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-emerald-700"
+            >
+              + Add Worker
+            </Link>
+          )}
+          <a
+            href="/api/export/workers"
+            className="rounded-lg border border-slate-700 bg-slate-800/50 px-3 py-1.5 text-xs text-slate-400 transition hover:bg-slate-700/50 hover:text-white"
+          >
+            Export CSV
+          </a>
+        </div>
       </div>
 
       <div className="mb-6 flex flex-wrap gap-3">

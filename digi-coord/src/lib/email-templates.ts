@@ -68,6 +68,17 @@ export function newWorkerEmail(workerName: string, workerId: number): string {
   `)
 }
 
+export function registrationConfirmationEmail(name: string): string {
+  return wrap(`
+    <div class="header">
+      <h1>Registration Received</h1>
+      <p>Welcome to Digital Coordinator, ${name}!</p>
+    </div>
+    <p style="color:#94a3b8;font-size:14px;">Your registration has been received. An admin will review your account and you will be notified once approved.</p>
+    <p style="color:#94a3b8;font-size:14px;">If you have any questions, please contact support.</p>
+  `)
+}
+
 export function workerApprovedEmail(name: string, loginUrl: string): string {
   return wrap(`
     <div class="header">

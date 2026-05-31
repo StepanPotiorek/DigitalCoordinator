@@ -1,5 +1,5 @@
 import { auth } from "@/lib/auth"
-import { prisma, createNotification } from "@/lib/prisma"
+import { prisma, createNotificationForAdmins } from "@/lib/prisma"
 import { apiHandler, unauthorized, notFound, forbidden, parseId } from "@/lib/api-utils"
 import { validate, updateIssueSchema } from "@/lib/validation"
 import { notifyWorkerOfResolution } from "@/lib/email-helpers"
@@ -57,7 +57,7 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
     })
 
     if (data.status === "RESOLVED" && existing.status !== "RESOLVED") {
-      await createNotification(
+      await createNotificationForAdmins(
         "ISSUE_RESOLVED",
         `Issue resolved: ${issue.issueType}`,
         `/dashboard/issues/${issue.id}`,

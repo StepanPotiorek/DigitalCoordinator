@@ -179,9 +179,6 @@ Tasks are in `ROADMAP/` directory, numbered and independent. Each task file cont
 ## Development Commands
 
 ```bash
-# Dev server (localhost-only — change -H 0.0.0.0 to share on network)
-npx next dev -H 127.0.0.1
-
 # Production build
 npx next build
 
@@ -193,22 +190,21 @@ npm run test:e2e      # playwright e2e tests
 npx tsx prisma/seed.ts
 
 # === Dev Server Reliable Restart ===
-# Always use this sequence — turbopack SST cache corrupts easily
+# setsid is REQUIRED — nohup does NOT survive bash tool timeout/kill
+# Use these exact commands every time you restart.
 
-# 1. Kill old server, wait for port release, clean cache
-kill -9 $(lsof -ti:3000) 2>/dev/null
-sleep 2
-rm -rf .next
+# One-liner (kill + clean + start):
+kill $(lsof -ti:3000) 2>/dev/null; rm -rf .next; setsid sh -c 'cd /home/stepan/Documents/programming/digital-coordinator/digi-coord && exec npx next dev -H 127.0.0.1 > /tmp/digicoord-dev.log 2>&1' &
 
-# 2. Start with nohup (keeps running after shell exits)
-nohup npx next dev -H 127.0.0.1 > /tmp/digicoord-dev.log 2>&1 &
-echo $! > /tmp/digicoord-dev.pid
+# Step by step:
+kill $(lsof -ti:3000) 2>/dev/null   # kill old server
+rm -rf /home/stepan/Documents/programming/digital-coordinator/digi-coord/.next  # clean turbopack cache
+setsid sh -c 'cd /home/stepan/Documents/programming/digital-coordinator/digi-coord && exec npx next dev -H 127.0.0.1 > /tmp/digicoord-dev.log 2>&1' &  # start detached
 
-# 3. Wait and verify
-sleep 5
-fuser 3000/tcp 2>/dev/null && echo "OK" || echo "FAIL"
+# Verify (poll up to 10s):
+for i in 1 2 3 4 5 6 7 8 9 10; do fuser 3000/tcp 2>/dev/null && echo "OK ($((i))s)" && break; sleep 1; done
 
-# Check logs
+# Check logs:
 tail -20 /tmp/digicoord-dev.log
 ```
 
@@ -216,7 +212,33 @@ tail -20 /tmp/digicoord-dev.log
 
 ## Current Session Context
 
-- Created Next.js project at `digi-coord/`
-- Installed: next, react, react-dom, typescript, tailwindcss, prisma, @prisma/client, next-auth, @auth/prisma-adapter
-- Prisma schema, seed, and ROADMAP tasks are set up
-- Next step: Run task `ROADMAP/00-init.md` to initialize database and config
+### Login flow — definitive version (all tests passing)
+
+**Architecture:**
+- Login page: `src/app/login/page.tsx` (server, reads `searchParams.error`)
+- Login form: `src/app/login/login-form.tsx` (client, form `action="/api/auth/login" method="POST"`)
+- Route handler: `src/app/api/auth/login/route.ts` — calls `signIn("credentials", { redirect: false })` then `NextResponse.redirect("/dashboard", 303)`
+- Auth config: `src/lib/auth.ts` — explicit `secret: process.env.AUTH_SECRET`, JWT strategy, session maxAge 10 years
+
+**Critical insight — proxy.ts was middleware:**
+- `src/proxy.ts` had `export default function` + `export const config = { matcher: ... }` — Next.js 16 detected it as middleware (regardless of filename)
+- `getToken()` in proxy.ts failed to decode the JWT (reason unclear, possibly edge runtime cookie handling), causing ALL dashboard requests to redirect to `/login` even with valid session cookie
+- **Fix**: deleted `proxy.ts` (dashboard layout already calls `auth()` and redirects unauthenticated users)
+
+**Key lessons:**
+- **Never use 307 redirect after POST login** — 307 preserves POST method; browser POSTs to `/dashboard` which fails. Use **303 See Other** instead
+- **Set-Cookie from fetch() or signIn() response is fragile in Playwright** — the proxy.ts middleware was the actual root cause, not cookie handling
+- **Explicit `secret: process.env.AUTH_SECRET`** in NextAuth config prevents issues with auto-detection
+- **`proxy.ts` with middleware signature is discovered by Next.js 16** — rename carefully
+
+### Files changed this session:
+- `src/app/api/auth/login/route.ts`: `NextResponse.redirect(url, 303)` (was 307)
+- `src/lib/auth.ts`: added `secret: process.env.AUTH_SECRET`
+- `src/proxy.ts`: **deleted** (was acting as middleware, blocking valid sessions)
+- `tests/e2e/login.spec.ts`: 3 tests, all passing (page load, wrong password, success login)
+- `tests/e2e/cookie-debug.spec.ts`: deleted (one-time debug)
+- `src/app/api/auth/debug/route.ts`: deleted (one-time debug)
+
+### Known issues:
+- SMTP not configured — emails logged as "skipped" (needs App Password or Brevo)
+- No middleware currently — dashboard layout protects routes, but unauthenticated users still load JS chunks

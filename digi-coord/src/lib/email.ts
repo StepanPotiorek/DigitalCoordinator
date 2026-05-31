@@ -48,6 +48,10 @@ export function sendUrgentIssueAlert(to: string, workerName: string, issueType: 
   return sendEmail(to, `🚨 URGENT: ${workerName} - ${issueType}`, emailTemplates.urgentIssueEmail(workerName, issueType, issueId))
 }
 
+export function sendRegistrationConfirmation(to: string, name: string) {
+  return sendEmail(to, "Registration Received — Digital Coordinator", emailTemplates.registrationConfirmationEmail(name))
+}
+
 export function sendWorkerApproved(to: string, name: string) {
   return sendEmail(to, "Account Approved — Digital Coordinator", emailTemplates.workerApprovedEmail(name, `${process.env.NEXTAUTH_URL}/login`))
 }

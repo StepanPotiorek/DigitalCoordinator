@@ -5,11 +5,23 @@ import { LogoutButton } from "@/components/auth/logout-button"
 import { NotificationBell } from "@/components/dashboard/notification-bell"
 import { PushSubscribeButton } from "@/components/pwa/push-subscribe-button"
 import Link from "next/link"
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { useRouter } from "next/navigation"
 
 export function DashboardShell({ children }: { children: React.ReactNode }) {
   const { data: session, status } = useSession()
+  const router = useRouter()
   const [menuOpen, setMenuOpen] = useState(false)
+
+  useEffect(() => {
+    if (status !== "authenticated") return
+    const ws = session?.user?.workerStatus
+    if (ws === "PENDING_APPROVAL") {
+      router.replace("/dashboard/pending")
+    } else if (ws === "REJECTED") {
+      router.replace("/dashboard/rejected")
+    }
+  }, [status, session, router])
 
   if (status === "loading") {
     return (

@@ -1,12 +1,13 @@
 import { auth } from "@/lib/auth"
-import { prisma, createNotification } from "@/lib/prisma"
+import { prisma, createNotificationForAdmins } from "@/lib/prisma"
 import { apiHandler, unauthorized, created, badRequest, conflict, parseId } from "@/lib/api-utils"
 import { validate, createWorkerSchema, updateWorkerSchema } from "@/lib/validation"
 import { defaultOnboardingItems } from "@/lib/onboarding-items"
 import { hash } from "bcryptjs"
 import { NextRequest } from "next/server"
-import { notifyAdminsOfNewWorker } from "@/lib/email-helpers"
+import { notifyAdminsOfNewWorker, notifyWorkerOfRegistration } from "@/lib/email-helpers"
 import { logAction } from "@/lib/audit"
+import { sendWhatsApp } from "@/lib/whatsapp"
 
 export async function GET(request: NextRequest) {
   return apiHandler(async () => {
@@ -40,7 +41,7 @@ export async function POST(request: Request) {
 
     const existing = await prisma.user.findUnique({ where: { email: data.email } })
     if (existing) {
-      return conflict("This email is already registered. Please sign in instead.")
+      return conflict("This email is already registered. If you cannot sign in, check with your admin. Contact us if the problem persists.")
     }
 
     const passwordHash = await hash(data.password, 12)
@@ -77,13 +78,18 @@ export async function POST(request: Request) {
       })
     }
 
-    await createNotification(
+    await createNotificationForAdmins(
       "NEW_WORKER",
       `New worker registered: ${worker.name}`,
       `/dashboard/workers/${worker.id}`,
     )
 
     notifyAdminsOfNewWorker(worker.name, worker.id)
+    notifyWorkerOfRegistration(worker.email || "", worker.name)
+
+    sendWhatsApp(
+      `🆕 New worker: ${worker.name}\n📱 ${worker.whatsapp}${worker.employer ? `\n🏢 ${worker.employer}` : ""}\n🔗 https://digicoord.cz/dashboard/workers/${worker.id}`,
+    )
 
     const session = await auth()
     void logAction(session?.user?.id, "worker.create", "Worker", worker.id)

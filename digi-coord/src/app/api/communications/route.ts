@@ -58,6 +58,29 @@ export async function POST(request: Request) {
     })
     void logAction(session.user.id, "communication.create", "CommunicationLog", communication.id)
 
+    if (data.workerId) {
+      const worker = await prisma.worker.findUnique({
+        where: { id: data.workerId },
+        select: { name: true, email: true },
+      })
+      if (worker?.email) {
+        const workerUser = await prisma.user.findUnique({
+          where: { email: worker.email },
+          select: { id: true },
+        })
+        if (workerUser) {
+          await prisma.notification.create({
+            data: {
+              type: "MESSAGE",
+              message: `New message: ${data.message.substring(0, 100)}`,
+              link: `/dashboard/worker`,
+              userId: workerUser.id,
+            },
+          })
+        }
+      }
+    }
+
     return created(communication)
   })
 }

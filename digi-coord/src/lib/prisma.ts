@@ -25,3 +25,25 @@ export async function createNotification(
     data: { type, message, link, title: title ?? "", userId: userId ?? null },
   })
 }
+
+export async function createNotificationForAdmins(
+  type: string,
+  message: string,
+  link?: string,
+  title?: string,
+) {
+  const admins = await prisma.user.findMany({
+    where: { role: { in: ["ADMIN", "COORDINATOR"] } },
+    select: { id: true },
+  })
+  if (admins.length === 0) return
+  await prisma.notification.createMany({
+    data: admins.map((a) => ({
+      type,
+      message,
+      link,
+      title: title ?? "",
+      userId: a.id,
+    })),
+  })
+}

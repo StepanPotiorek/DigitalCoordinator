@@ -80,11 +80,8 @@ export function WorkerRegistrationForm() {
         <div className="mb-4 text-4xl">✓</div>
         <h3 className="text-xl font-bold text-white">Registration Submitted</h3>
         <p className="mt-2 text-slate-400">
-          Registration successful! You can now{" "}
-          <a href="/login" className="text-blue-400 hover:text-blue-300">
-            sign in
-          </a>{" "}
-          with your email and password.
+          Registration submitted! An admin will review and activate your
+          account. You will receive an email once approved.
         </p>
       </div>
     )

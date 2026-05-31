@@ -1,5 +1,5 @@
 import { auth } from "@/lib/auth"
-import { prisma, createNotification } from "@/lib/prisma"
+import { prisma, createNotificationForAdmins } from "@/lib/prisma"
 import { apiHandler, unauthorized, notFound, badRequest } from "@/lib/api-utils"
 import { logAction } from "@/lib/audit"
 import { notifyWorkerOfApproval } from "@/lib/email-helpers"
@@ -35,7 +35,7 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
       data: { status },
     })
 
-    await createNotification(
+    await createNotificationForAdmins(
       status === "ACTIVE" ? "WORKER_APPROVED" : "WORKER_REJECTED",
       `${worker.name} was ${status === "ACTIVE" ? "approved" : "rejected"}`,
       `/dashboard/workers/${worker.id}`,

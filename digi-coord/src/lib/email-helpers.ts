@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma"
-import { sendIssueCreated, sendIssueResolved, sendUrgentIssueAlert, sendNewWorkerAlert, sendWorkerApproved } from "@/lib/email"
+import { sendIssueCreated, sendIssueResolved, sendUrgentIssueAlert, sendNewWorkerAlert, sendWorkerApproved, sendRegistrationConfirmation } from "@/lib/email"
 
 export async function notifyAdminsOfIssue(workerName: string, issueType: string, issueId: number, priority: string) {
   const admins = await prisma.user.findMany({
@@ -25,6 +25,12 @@ export async function notifyWorkerOfResolution(workerEmail: string, issueType: s
 export async function notifyWorkerOfApproval(email: string, name: string) {
   if (email) {
     await sendWorkerApproved(email, name)
+  }
+}
+
+export async function notifyWorkerOfRegistration(email: string, name: string) {
+  if (email) {
+    await sendRegistrationConfirmation(email, name)
   }
 }
 

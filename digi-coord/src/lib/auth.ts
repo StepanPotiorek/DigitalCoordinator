@@ -5,8 +5,15 @@ import { prisma } from "@/lib/prisma"
 import { checkRateLimit, resetRateLimit } from "@/lib/rate-limit"
 
 export const { auth, handlers, signIn, signOut } = NextAuth({
-  session: { strategy: "jwt" },
-  pages: { signIn: "/login" },
+  secret: process.env.AUTH_SECRET,
+  session: { strategy: "jwt", maxAge: 60 * 60 * 24 * 365 * 10 },
+  pages: { signIn: "/login", error: "/login" },
+  cookies: {
+    sessionToken: {
+      name: "next-auth.session-token",
+      options: { maxAge: 60 * 60 * 24 * 365 * 10 },
+    },
+  },
   providers: [
     Credentials({
       credentials: {
@@ -22,9 +29,7 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
         if (!email || !password) return null
 
         const { allowed, remaining } = checkRateLimit(`login:${email.toLowerCase()}`)
-        if (!allowed) {
-          throw new Error(`Too many attempts. Try again in 15 minutes.`)
-        }
+        if (!allowed) return null
 
         const user = await prisma.user.findUnique({ where: { email } })
         if (!user) return null
@@ -32,14 +37,10 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
         const isValid = await compare(password, user.passwordHash)
         if (!isValid) return null
 
+        let workerStatus: string | undefined
         if (user.role === "WORKER") {
           const worker = await prisma.worker.findUnique({ where: { email } })
-          if (!worker || worker.status === "PENDING_APPROVAL") {
-            throw new Error("Your account is pending approval. Please wait for an admin to activate it.")
-          }
-          if (worker.status === "REJECTED") {
-            throw new Error("Your account has been rejected. Contact support for assistance.")
-          }
+          workerStatus = worker?.status
         }
 
         resetRateLimit(`login:${email.toLowerCase()}`)
@@ -49,6 +50,7 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
           name: user.name,
           email: user.email,
           role: user.role,
+          workerStatus,
         }
       },
     }),
@@ -58,13 +60,22 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
       if (user) {
         token.id = user.id!
         token.role = user.role
+        token.workerStatus = user.workerStatus
       }
       return token
     },
-    session({ session, token }) {
+    async session({ session, token }) {
       if (token) {
         session.user.id = token.id
         session.user.role = token.role
+        session.user.workerStatus = token.workerStatus
+        if (token.role === "WORKER" && token.email) {
+          const worker = await prisma.worker.findUnique({
+            where: { email: token.email },
+            select: { status: true },
+          })
+          session.user.workerStatus = worker?.status ?? "PENDING_APPROVAL"
+        }
       }
       return session
     },

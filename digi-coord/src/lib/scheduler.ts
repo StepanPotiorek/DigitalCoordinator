@@ -1,4 +1,4 @@
-import { prisma, createNotification } from "@/lib/prisma"
+import { prisma, createNotificationForAdmins } from "@/lib/prisma"
 import { sendEmail } from "@/lib/email"
 
 let initialized = false
@@ -41,7 +41,7 @@ export async function runDailyChecks() {
   })
 
   for (const worker of staleWorkers) {
-    await createNotification(
+    await createNotificationForAdmins(
       "ONBOARDING_REMINDER",
       `${worker.name} hasn't updated onboarding in 7+ days`,
       `/dashboard/workers/${worker.id}`,
@@ -73,7 +73,7 @@ export async function runDailyChecks() {
   })
 
   for (const issue of staleIssues) {
-    await createNotification(
+    await createNotificationForAdmins(
       "STALE_ISSUE",
       `${issue.worker?.name || "Unknown"} issue "${issue.issueType}" open for 3+ days`,
       `/dashboard/issues/${issue.id}`,

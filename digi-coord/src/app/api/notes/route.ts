@@ -49,6 +49,27 @@ export async function POST(req: NextRequest) {
 
     void logAction(session.user.id, "note.create", "Note", note.id)
 
+    const worker = await prisma.worker.findUnique({
+      where: { id: workerId },
+      select: { name: true, email: true },
+    })
+    if (worker?.email) {
+      const workerUser = await prisma.user.findUnique({
+        where: { email: worker.email },
+        select: { id: true },
+      })
+      if (workerUser) {
+        await prisma.notification.create({
+          data: {
+            type: "NOTE",
+            message: `New note: ${body.content.trim().substring(0, 100)}`,
+            link: `/dashboard/worker`,
+            userId: workerUser.id,
+          },
+        })
+      }
+    }
+
     return new Response(JSON.stringify(note), { status: 201 })
   })
 }

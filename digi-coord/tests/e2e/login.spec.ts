@@ -14,4 +14,13 @@ test.describe("Login flow", () => {
     await page.click('button[type="submit"]')
     await expect(page.getByRole("heading", { name: /invalid/i }).or(page.getByText("Invalid email or password"))).toBeVisible({ timeout: 10000 })
   })
+
+  test("logs in with valid credentials and redirects to dashboard", async ({ page }) => {
+    await page.goto("/login")
+    await page.fill('input[name="email"]', "admin@digicoord.cz")
+    await page.fill('input[name="password"]', "admin123")
+    await page.click('button[type="submit"]')
+    await page.waitForURL(/\/dashboard/, { timeout: 10000 })
+    expect(page.url()).toContain("/dashboard")
+  })
 })

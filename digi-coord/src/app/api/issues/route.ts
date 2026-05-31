@@ -1,5 +1,5 @@
 import { auth } from "@/lib/auth"
-import { prisma, createNotification } from "@/lib/prisma"
+import { prisma, createNotificationForAdmins } from "@/lib/prisma"
 import { apiHandler, unauthorized, badRequest, created, parseId, priorityOrder } from "@/lib/api-utils"
 import { validate, createIssueSchema } from "@/lib/validation"
 import { Prisma } from "@prisma/client"
@@ -65,7 +65,7 @@ export async function POST(request: Request) {
     })
 
     const isUrgent = data.priority === "URGENT" || issue.priority === "URGENT"
-    await createNotification(
+    await createNotificationForAdmins(
       isUrgent ? "URGENT_ISSUE" : "NEW_ISSUE",
       isUrgent
         ? `URGENT issue reported: ${issue.issueType}`
