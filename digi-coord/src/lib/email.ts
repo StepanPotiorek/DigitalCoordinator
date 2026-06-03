@@ -2,7 +2,7 @@ import nodemailer from "nodemailer"
 import { logger } from "./logger"
 import * as emailTemplates from "./email-templates"
 
-const FROM = "Digital Coordinator <noreply@digicoord.cz>"
+const FROM = "Digital Coordinator <stepan.potiorek@seznam.cz>"
 
 function getTransport() {
   if (

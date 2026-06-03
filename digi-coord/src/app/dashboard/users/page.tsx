@@ -65,7 +65,12 @@ export default async function UsersPage() {
                   className="border-b border-slate-800 last:border-0 hover:bg-slate-800/30"
                 >
                   <td className="px-4 py-3 font-medium text-white">
-                    {user.name || "—"}
+                    <Link
+                      href={`/dashboard/users/${user.id}`}
+                      className="text-blue-400 hover:text-blue-300"
+                    >
+                      {user.name || "—"}
+                    </Link>
                   </td>
                   <td className="px-4 py-3 text-slate-300">{user.email}</td>
                   <td className="px-4 py-3">

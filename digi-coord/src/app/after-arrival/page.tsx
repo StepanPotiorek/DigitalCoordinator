@@ -1,12 +1,9 @@
 import Link from "next/link"
-import { type Lang, t } from "@/lib/translations"
+import { getLang } from "@/lib/i18n"
+import { t } from "@/lib/translations"
 import { SiteHeader } from "@/components/public/site-header"
 import { PageContainer, PageHeader, InfoBox, ChecklistItem } from "@/components/public/page-layout"
 import { NearbySearchButton } from "@/components/location/nearby-search-button"
-
-interface Props {
-  searchParams: Promise<{ lang?: string }>
-}
 
 const steps = [
   {
@@ -64,16 +61,15 @@ const steps = [
     items: [
       "Weather changes frequently — dress in layers",
       "A friendly 'Dobrý den' (hello) goes a long way",
-      "Download PID Lítačka app for public transport tickets",
+      "Download IDOS app — nationwide public transport information system",
       "Try local food — Asian shops are available in bigger cities",
       "Join Filipino community groups on Facebook for support",
     ],
   },
 ]
 
-export default async function AfterArrivalPage({ searchParams }: Props) {
-  const { lang: langParam } = await searchParams
-  const lang: Lang = langParam === "tl" ? "tl" : langParam === "cz" ? "cz" : "en"
+export default async function AfterArrivalPage() {
+  const lang = await getLang()
 
   return (
     <div className="min-h-screen">

@@ -1,17 +1,13 @@
 import Link from "next/link"
+import { getLang } from "@/lib/i18n"
 import { Suspense } from "react"
-import { type Lang, t } from "@/lib/translations"
+import { t } from "@/lib/translations"
 import { SiteHeader } from "@/components/public/site-header"
 import { PageContainer, PageHeader } from "@/components/public/page-layout"
 import { IssueReportForm } from "@/components/forms/issue-report-form"
 
-interface Props {
-  searchParams: Promise<{ lang?: string }>
-}
-
-export default async function ReportPage({ searchParams }: Props) {
-  const { lang: langParam } = await searchParams
-  const lang: Lang = langParam === "tl" ? "tl" : langParam === "cz" ? "cz" : "en"
+export default async function ReportPage() {
+  const lang = await getLang()
 
   return (
     <div className="min-h-screen">

@@ -1,11 +1,8 @@
 import Link from "next/link"
-import { type Lang, t } from "@/lib/translations"
+import { getLang } from "@/lib/i18n"
+import { t } from "@/lib/translations"
 import { SiteHeader } from "@/components/public/site-header"
 import { PageContainer, PageHeader } from "@/components/public/page-layout"
-
-interface Props {
-  searchParams: Promise<{ lang?: string }>
-}
 
 const guides = [
   {
@@ -29,14 +26,17 @@ const guides = [
     color: "bg-blue-500/10 border-blue-700/30 hover:border-blue-500/50",
   },
   {
+    key: "templates", href: "/templates", icon: "💬",
+    color: "bg-emerald-500/10 border-emerald-700/30 hover:border-emerald-500/50",
+  },
+  {
     key: "contact", href: "/contact", icon: "📞",
     color: "bg-slate-500/10 border-slate-700/30 hover:border-slate-500/50",
   },
 ]
 
-export default async function GuidePage({ searchParams }: Props) {
-  const { lang: langParam } = await searchParams
-  const lang: Lang = langParam === "tl" ? "tl" : langParam === "cz" ? "cz" : "en"
+export default async function GuidePage() {
+  const lang = await getLang()
 
   return (
     <div className="min-h-screen">
@@ -52,7 +52,7 @@ export default async function GuidePage({ searchParams }: Props) {
           {guides.map((g) => (
             <Link
               key={g.href}
-              href={`${g.href}?lang=${lang}`}
+              href={g.href}
               className={`group rounded-xl border p-5 backdrop-blur-sm transition ${g.color}`}
             >
               <div className="mb-3 text-2xl">{g.icon}</div>

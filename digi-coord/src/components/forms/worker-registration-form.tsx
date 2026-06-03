@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { PasswordInput } from "@/components/ui/password-input"
+import { type Lang, t } from "@/lib/translations"
 
 interface FormData {
   name: string
@@ -29,17 +30,17 @@ const initialState: FormData = {
   emergencyContactPhone: "",
 }
 
-function validatePasswords(password: string, confirmPassword: string): string | null {
-  if (password.length < 6) return "Password must be at least 6 characters"
-  if (password !== confirmPassword) return "Passwords do not match"
-  return null
-}
-
-export function WorkerRegistrationForm() {
+export function WorkerRegistrationForm({ lang }: { lang: Lang }) {
   const [formData, setFormData] = useState<FormData>(initialState)
   const [submitted, setSubmitted] = useState(false)
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
+
+  function validatePasswords(password: string, confirmPassword: string): string | null {
+    if (password.length < 6) return t("form.passwordMin", lang)
+    if (password !== confirmPassword) return t("form.passwordMatch", lang)
+    return null
+  }
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }))
@@ -78,10 +79,9 @@ export function WorkerRegistrationForm() {
     return (
       <div className="mx-auto max-w-lg rounded-xl border border-slate-800 bg-slate-900/50 p-8 text-center backdrop-blur-sm">
         <div className="mb-4 text-4xl">✓</div>
-        <h3 className="text-xl font-bold text-white">Registration Submitted</h3>
+        <h3 className="text-xl font-bold text-white">{t("register.success.title", lang)}</h3>
         <p className="mt-2 text-slate-400">
-          Registration submitted! An admin will review and activate your
-          account. You will receive an email once approved.
+          {t("register.success.desc", lang)}
         </p>
       </div>
     )
@@ -100,7 +100,7 @@ export function WorkerRegistrationForm() {
             htmlFor="name"
             className="block text-sm font-medium text-slate-300"
           >
-            Full name <span className="text-red-400">*</span>
+            {t("form.name", lang)} <span className="text-red-400">*</span>
           </label>
           <input
             id="name"
@@ -119,7 +119,7 @@ export function WorkerRegistrationForm() {
             htmlFor="whatsapp"
             className="block text-sm font-medium text-slate-300"
           >
-            WhatsApp number <span className="text-red-400">*</span>
+            {t("form.whatsapp", lang)} <span className="text-red-400">*</span>
           </label>
           <input
             id="whatsapp"
@@ -138,7 +138,7 @@ export function WorkerRegistrationForm() {
             htmlFor="email"
             className="block text-sm font-medium text-slate-300"
           >
-            Email address <span className="text-red-400">*</span>
+            {t("form.email", lang)} <span className="text-red-400">*</span>
           </label>
           <input
             id="email"
@@ -158,7 +158,7 @@ export function WorkerRegistrationForm() {
               htmlFor="password"
               className="block text-sm font-medium text-slate-300"
             >
-              Password <span className="text-red-400">*</span>
+              {t("form.password", lang)} <span className="text-red-400">*</span>
             </label>
             <PasswordInput
               id="password"
@@ -167,7 +167,7 @@ export function WorkerRegistrationForm() {
               minLength={6}
               value={formData.password}
               onChange={handleChange}
-              placeholder="Min 6 characters"
+              placeholder={t("form.passwordMin", lang)}
               containerClassName="mt-1"
             />
           </div>
@@ -176,7 +176,7 @@ export function WorkerRegistrationForm() {
               htmlFor="confirmPassword"
               className="block text-sm font-medium text-slate-300"
             >
-              Confirm password <span className="text-red-400">*</span>
+              {t("form.confirmPassword", lang)} <span className="text-red-400">*</span>
             </label>
             <PasswordInput
               id="confirmPassword"
@@ -185,7 +185,7 @@ export function WorkerRegistrationForm() {
               minLength={6}
               value={formData.confirmPassword}
               onChange={handleChange}
-              placeholder="Repeat password"
+              placeholder={t("form.confirmPassword", lang)}
               containerClassName="mt-1"
             />
           </div>
@@ -196,7 +196,7 @@ export function WorkerRegistrationForm() {
             htmlFor="employer"
             className="block text-sm font-medium text-slate-300"
           >
-            Employer / Company
+            {t("form.employer", lang)}
           </label>
           <input
             id="employer"
@@ -214,7 +214,7 @@ export function WorkerRegistrationForm() {
             htmlFor="accommodation"
             className="block text-sm font-medium text-slate-300"
           >
-            Accommodation address
+            {t("form.accommodation", lang)}
           </label>
           <input
             id="accommodation"
@@ -232,7 +232,7 @@ export function WorkerRegistrationForm() {
             htmlFor="arrivalDate"
             className="block text-sm font-medium text-slate-300"
           >
-            Arrival date
+            {t("form.arrivalDate", lang)}
           </label>
           <input
             id="arrivalDate"
@@ -249,7 +249,7 @@ export function WorkerRegistrationForm() {
             htmlFor="emergencyContactName"
             className="block text-sm font-medium text-slate-300"
           >
-            Emergency contact name
+            {t("form.emergencyName", lang)}
           </label>
           <input
             id="emergencyContactName"
@@ -267,7 +267,7 @@ export function WorkerRegistrationForm() {
             htmlFor="emergencyContactPhone"
             className="block text-sm font-medium text-slate-300"
           >
-            Emergency contact phone
+            {t("form.emergencyPhone", lang)}
           </label>
           <input
             id="emergencyContactPhone"
@@ -285,7 +285,7 @@ export function WorkerRegistrationForm() {
           disabled={loading}
           className="w-full rounded-lg bg-blue-600 px-4 py-2 font-medium text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
         >
-          {loading ? "Submitting..." : "Register"}
+          {loading ? t("form.submitting", lang) : t("form.submit", lang)}
         </button>
       </form>
     </div>

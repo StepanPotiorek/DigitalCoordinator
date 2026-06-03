@@ -22,6 +22,9 @@ export default async function AdminDashboardPage() {
     recentWorkers,
     recentIssues,
     onboardingItems,
+    totalFeedback,
+    helpedFeedback,
+    issuesFromHelp,
   ] = await Promise.all([
     prisma.worker.count(),
     prisma.worker.groupBy({
@@ -49,6 +52,9 @@ export default async function AdminDashboardPage() {
     prisma.onboardingItem.findMany({
       select: { completed: true },
     }),
+    prisma.situationFeedback.count(),
+    prisma.situationFeedback.count({ where: { helped: true } }),
+    prisma.issue.count({ where: { situationId: { not: null } } }),
   ])
 
   const workersByStatusMap: Record<string, number> = {}
@@ -76,6 +82,14 @@ export default async function AdminDashboardPage() {
       ? 0
       : Math.round((resolvedIssues / totalIssues) * 100)
 
+  const selfServiceRate =
+    totalFeedback === 0
+      ? null
+      : Math.round((helpedFeedback / totalFeedback) * 100)
+  const issuesAvoided = totalFeedback > 0
+    ? Math.round(helpedFeedback * (totalFeedback / (issuesFromHelp || 1)))
+    : 0
+
   return (
     <div className="space-y-8">
       <div>
@@ -85,7 +99,7 @@ export default async function AdminDashboardPage() {
         </p>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-6">
         <StatCard
           title="Total Workers"
           value={totalWorkers}
@@ -105,6 +119,11 @@ export default async function AdminDashboardPage() {
           title="Urgent Issues"
           value={urgentIssues}
           accent="red"
+        />
+        <StatCard
+          title="Self-Service Rate"
+          value={selfServiceRate !== null ? `${selfServiceRate}%` : "—"}
+          accent="emerald"
         />
         <StatCard
           title="Onboarding Rate"
@@ -227,6 +246,29 @@ export default async function AdminDashboardPage() {
             <div className="flex items-center justify-between">
               <span className="text-slate-400">Issue Resolution Rate</span>
               <span className="font-medium text-white">{resolutionRate}%</span>
+            </div>
+            <div className="border-t border-slate-800 pt-3">
+              <h3 className="mb-2 text-xs font-bold uppercase tracking-wider text-emerald-400">Self-Service</h3>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-slate-400">Help Flow Interactions</span>
+                  <span className="font-medium text-white">{totalFeedback}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-slate-400">Resolved via Self-Service</span>
+                  <span className="font-medium text-green-400">{helpedFeedback}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-slate-400">Issues Escalated (from help)</span>
+                  <span className="font-medium text-amber-400">{issuesFromHelp}</span>
+                </div>
+                {selfServiceRate !== null && (
+                  <div className="flex items-center justify-between">
+                    <span className="text-slate-400">Self-Service Rate</span>
+                    <span className="font-medium text-emerald-400">{selfServiceRate}%</span>
+                  </div>
+                )}
+              </div>
             </div>
             <div className="flex items-center justify-between">
               <span className="text-slate-400">Onboarding Completion</span>

@@ -1,12 +1,9 @@
 import Link from "next/link"
-import { type Lang, t } from "@/lib/translations"
+import { getLang } from "@/lib/i18n"
+import { t } from "@/lib/translations"
 import { SiteHeader } from "@/components/public/site-header"
 import { PageContainer, PageHeader, InfoBox } from "@/components/public/page-layout"
 import { IssueReportForm } from "@/components/forms/issue-report-form"
-
-interface Props {
-  searchParams: Promise<{ lang?: string }>
-}
 
 const coordinator = {
   name: "Štěpán Potiorek",
@@ -24,9 +21,8 @@ const quickHelp = [
   { title: "Bank Account Help", text: "Visit your bank with passport and contract.", icon: "🏦" },
 ]
 
-export default async function ContactPage({ searchParams }: Props) {
-  const { lang: langParam } = await searchParams
-  const lang: Lang = langParam === "tl" ? "tl" : langParam === "cz" ? "cz" : "en"
+export default async function ContactPage() {
+  const lang = await getLang()
 
   return (
     <div className="min-h-screen">

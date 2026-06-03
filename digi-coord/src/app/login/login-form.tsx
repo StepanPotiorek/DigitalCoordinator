@@ -12,7 +12,7 @@ export function LoginForm({ lang }: { lang: Lang }) {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
     if (params.get("error")) {
-      setError("Invalid email or password")
+      setError(t("auth.error", lang))
     }
   }, [])
 
@@ -23,7 +23,7 @@ export function LoginForm({ lang }: { lang: Lang }) {
       </div>
 
       <div className="w-full max-w-sm">
-        <Link href={`/?lang=${lang}`} className="mb-6 inline-flex items-center gap-1.5 text-sm text-slate-400 transition hover:text-white">
+          <Link href="/" className="mb-6 inline-flex items-center gap-1.5 text-sm text-slate-400 transition hover:text-white">
           <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
           </svg>
@@ -35,7 +35,7 @@ export function LoginForm({ lang }: { lang: Lang }) {
             <span className="text-3xl">🇵🇭</span>
           </div>
           <h1 className="mb-2 text-center text-2xl font-bold text-white">
-            Sign In
+            {t("auth.signin", lang)}
           </h1>
           <p className="mb-6 text-center text-sm text-slate-400">
             {t("site.tagline", lang)}
@@ -43,13 +43,13 @@ export function LoginForm({ lang }: { lang: Lang }) {
 
           <form action="/api/auth/login" method="POST" className="space-y-4">
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-slate-300">Email</label>
+              <label htmlFor="email" className="block text-sm font-medium text-slate-300">{t("form.email", lang)}</label>
               <input id="email" name="email" type="email" required autoComplete="email"
                 className="mt-1 w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-white placeholder-slate-500 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
                 placeholder="you@example.com" />
             </div>
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-slate-300">Password</label>
+              <label htmlFor="password" className="block text-sm font-medium text-slate-300">{t("form.password", lang)}</label>
               <PasswordInput
                 id="password"
                 name="password"
@@ -64,13 +64,13 @@ export function LoginForm({ lang }: { lang: Lang }) {
 
             <div className="text-right">
               <Link href="/forgot-password" className="text-xs text-slate-500 hover:text-slate-400">
-                Forgot password?
+                {t("auth.forgot", lang)}
               </Link>
             </div>
 
             <button type="submit"
               className="w-full rounded-lg bg-blue-600 px-4 py-2 font-medium text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50">
-              Sign In
+              {t("auth.signin", lang)}
             </button>
           </form>
         </div>

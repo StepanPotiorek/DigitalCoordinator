@@ -1,11 +1,8 @@
 import Link from "next/link"
-import { type Lang, t } from "@/lib/translations"
+import { getLang } from "@/lib/i18n"
+import { t } from "@/lib/translations"
 import { SiteHeader } from "@/components/public/site-header"
 import { PageContainer, PageHeader, InfoBox, ChecklistItem } from "@/components/public/page-layout"
-
-interface Props {
-  searchParams: Promise<{ lang?: string }>
-}
 
 const checklist = [
   "Valid passport (minimum 6 months validity)",
@@ -51,9 +48,8 @@ const tips = [
   },
 ]
 
-export default async function BeforeArrivalPage({ searchParams }: Props) {
-  const { lang: langParam } = await searchParams
-  const lang: Lang = langParam === "tl" ? "tl" : langParam === "cz" ? "cz" : "en"
+export default async function BeforeArrivalPage() {
+  const lang = await getLang()
 
   return (
     <div className="min-h-screen">

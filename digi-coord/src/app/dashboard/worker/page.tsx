@@ -117,6 +117,20 @@ export default function WorkerDashboardPage() {
   const openIssues = issues.filter((i) => i.status === "OPEN" || i.status === "IN_PROGRESS")
   const nextStep = onboarding.find((i) => !i.completed)
   const uncompletedCount = onboarding.filter((i) => !i.completed).length
+  const incompleteCategories = [...new Set(onboarding.filter((i) => !i.completed).map((i) => i.category))]
+
+  const categoryGuides: Record<string, { href: string; label: string }[]> = {
+    BEFORE_ARRIVAL: [{ href: "/before-arrival", label: "📋 Before Arrival guide" }],
+    AFTER_ARRIVAL: [{ href: "/after-arrival", label: "📋 After Arrival guide" }],
+    FIRST_DAY: [{ href: "/first-day", label: "💼 First Day at Work guide" }],
+    SIM_CARD: [{ href: "/dashboard/worker/help?category=other", label: "📱 Getting a SIM card" }],
+    BANK_ACCOUNT: [{ href: "/dashboard/worker/help?category=bank", label: "🏦 Bank help" }],
+    ACCOMMODATION: [{ href: "/dashboard/worker/help?category=accommodation", label: "🏠 Accommodation help" }],
+    EMERGENCY: [{ href: "/dashboard/worker/help?category=doctor", label: "🚑 Emergency info" }],
+    LANGUAGE: [{ href: "/dashboard/worker/help", label: "💬 Find translations" }],
+    ADAPTATION: [{ href: "/guide", label: "🌍 Adaptation guide" }],
+    IMMIGRATION: [{ href: "/employer-card", label: "🛂 Employee Card guide" }],
+  }
 
   return (
     <div className="space-y-6">
@@ -274,6 +288,29 @@ export default function WorkerDashboardPage() {
           ))}
         </div>
       </div>
+
+      {/* Personalized suggestions based on incomplete categories */}
+      {incompleteCategories.length > 0 && (
+        <div>
+          <h2 className="mb-3 text-sm font-bold uppercase tracking-wider text-slate-500">
+            You might need
+          </h2>
+          <div className="flex flex-wrap gap-2">
+            {incompleteCategories.map((cat) => {
+              const guides = categoryGuides[cat] || []
+              return guides.map((g, i) => (
+                <Link
+                  key={`${cat}-${i}`}
+                  href={g.href}
+                  className="rounded-lg border border-slate-800 bg-slate-900/50 px-3 py-2 text-xs text-slate-300 transition hover:border-blue-700 hover:bg-slate-800/50 hover:text-blue-300"
+                >
+                  {g.label}
+                </Link>
+              ))
+            })}
+          </div>
+        </div>
+      )}
 
       {/* Stats row */}
       <div className="grid gap-3 sm:grid-cols-3">

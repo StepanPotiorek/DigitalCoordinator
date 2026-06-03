@@ -1,11 +1,8 @@
 import Link from "next/link"
-import { type Lang, t } from "@/lib/translations"
+import { getLang } from "@/lib/i18n"
+import { t } from "@/lib/translations"
 import { SiteHeader } from "@/components/public/site-header"
 import { PageContainer, InfoBox } from "@/components/public/page-layout"
-
-interface Props {
-  searchParams: Promise<{ lang?: string }>
-}
 
 const steps = [
   { key: "register", href: "/register", icon: "📝", color: "bg-blue-500/10 border-blue-700/30 hover:border-blue-500/50" },
@@ -15,9 +12,8 @@ const steps = [
   { key: "firstday", href: "/first-day", icon: "💼", color: "bg-amber-500/10 border-amber-700/30 hover:border-amber-500/50" },
 ]
 
-export default async function Home({ searchParams }: Props) {
-  const { lang: langParam } = await searchParams
-  const lang: Lang = langParam === "tl" ? "tl" : langParam === "cz" ? "cz" : "en"
+export default async function Home() {
+  const lang = await getLang()
 
   return (
     <div className="min-h-screen">

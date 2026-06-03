@@ -9,11 +9,11 @@ async function main() {
   // ⚠️ Change this password after first login — do not keep "admin123" in production
 
   const admin = await prisma.user.upsert({
-    where: { email: "admin@digicoord.cz" },
+    where: { email: "stepan.potiorek@seznam.cz" },
     update: {},
     create: {
-      name: "Admin",
-      email: "admin@digicoord.cz",
+      name: "Štěpán Potiorek",
+      email: "stepan.potiorek@seznam.cz",
       passwordHash: adminPassword,
       role: Role.ADMIN,
     },

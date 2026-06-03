@@ -25,6 +25,7 @@ export function PageHeader({ title, subtitle, badge, badgeColor = "blue" }: Page
     red: "bg-red-900/50 text-red-400",
     purple: "bg-purple-900/50 text-purple-400",
     amber: "bg-amber-900/50 text-amber-400",
+    emerald: "bg-emerald-900/50 text-emerald-400",
   }
 
   return (

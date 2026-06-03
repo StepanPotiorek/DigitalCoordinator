@@ -50,6 +50,8 @@ export default function OperationsPage() {
   const [loading, setLoading] = useState(true)
   const [tab, setTab] = useState<"escalated" | "stuck" | "all">("escalated")
   const [lastRefresh, setLastRefresh] = useState<Date | null>(null)
+  const [cronRunning, setCronRunning] = useState(false)
+  const [cronResult, setCronResult] = useState<string | null>(null)
 
   const fetchStats = useCallback(async () => {
     try {
@@ -120,6 +122,26 @@ export default function OperationsPage() {
             >
               Refresh
             </button>
+            <button
+              onClick={async () => {
+                setCronRunning(true)
+                setCronResult(null)
+                try {
+                  const res = await fetch("/api/cron", { method: "POST" })
+                  const data = await res.json()
+                  setCronResult(`✅ ${data.staleWorkers} stale workers, ${data.staleIssues} stale issues, ${data.emailsSent} emails sent`)
+                  fetchStats()
+                } catch {
+                  setCronResult("❌ Failed to run checks")
+                } finally {
+                  setCronRunning(false)
+                }
+              }}
+              disabled={cronRunning}
+              className="rounded-lg border border-purple-700 bg-purple-900/30 px-3 py-1.5 text-xs text-purple-300 transition hover:bg-purple-800/40 disabled:opacity-50"
+            >
+              {cronRunning ? "Running..." : "Run Daily Checks"}
+            </button>
           </div>
         </div>
       </div>
@@ -165,6 +187,42 @@ export default function OperationsPage() {
                 ({stats.helpedFeedback}/{stats.totalFeedback})
               </span>
             )}
+          </div>
+        </div>
+      </div>
+
+      {/* Cron result */}
+      {cronResult && (
+        <div className="rounded-xl border border-purple-800/50 bg-purple-950/20 p-3 text-center text-sm text-purple-300 backdrop-blur-sm">
+          {cronResult}
+        </div>
+      )}
+
+      {/* Automation status */}
+      <div className="rounded-xl border border-slate-800 bg-slate-900/50 p-4 backdrop-blur-sm">
+        <div className="flex items-center justify-between text-xs">
+          <div className="flex items-center gap-2">
+            <span className="h-2 w-2 rounded-full bg-green-500" />
+            <span className="text-slate-400">
+              Automated reminders run daily at 8:00 AM
+            </span>
+          </div>
+          <Link href="/dashboard/workers" className="text-blue-400 hover:text-blue-300">
+            Manage workers →
+          </Link>
+        </div>
+        <div className="mt-2 grid grid-cols-3 gap-4 text-xs">
+          <div>
+            <span className="text-slate-500">Stale worker alert</span>
+            <div className="text-slate-300">No onboarding progress &gt;7 days → email + notification</div>
+          </div>
+          <div>
+            <span className="text-slate-500">Stale issue alert</span>
+            <div className="text-slate-300">Issue open &gt;3 days → notification</div>
+          </div>
+          <div>
+            <span className="text-slate-500">WhatsApp activation</span>
+            <div className="text-slate-300">Send "I allow callmebot" to bot number</div>
           </div>
         </div>
       </div>

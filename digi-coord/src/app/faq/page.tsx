@@ -1,5 +1,6 @@
 import Link from "next/link"
-import { type Lang, t } from "@/lib/translations"
+import { getLang } from "@/lib/i18n"
+import { t } from "@/lib/translations"
 import { SiteHeader } from "@/components/public/site-header"
 import { PageContainer, PageHeader } from "@/components/public/page-layout"
 import { prisma } from "@/lib/prisma"
@@ -7,13 +8,8 @@ import { FAQList } from "./faq-list"
 
 export const dynamic = "force-dynamic"
 
-interface Props {
-  searchParams: Promise<{ lang?: string }>
-}
-
-export default async function FAQPage({ searchParams }: Props) {
-  const { lang: langParam } = await searchParams
-  const lang: Lang = langParam === "tl" ? "tl" : langParam === "cz" ? "cz" : "en"
+export default async function FAQPage() {
+  const lang = await getLang()
 
   const faqs = await prisma.faq.findMany({
     orderBy: [{ category: "asc" }, { order: "asc" }],

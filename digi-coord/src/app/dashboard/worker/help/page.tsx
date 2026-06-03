@@ -550,52 +550,6 @@ export default function WorkerHelpPage() {
               </ol>
             </div>
 
-            {/* Prepared message */}
-            <div className="rounded-xl border border-slate-800 bg-slate-900/50 p-5 backdrop-blur-sm">
-              <h2 className="mb-3 flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-emerald-400">
-                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
-                </svg>
-                Prepared message
-              </h2>
-              <div className="space-y-3">
-                <div>
-                  <div className="mb-1 flex items-center gap-2">
-                    <span className="text-xs font-medium text-slate-500">🇬🇧 English</span>
-                    <button
-                      onClick={() => {
-                        navigator.clipboard.writeText(selectedSituation.message.en)
-                        setToastMessage("✅ Copied to clipboard")
-                      }}
-                      className="text-xs text-blue-400 hover:text-blue-300 transition"
-                    >
-                      Copy
-                    </button>
-                  </div>
-                  <div className="rounded-lg border border-slate-700 bg-slate-800/50 px-4 py-3 text-sm text-slate-200">
-                    {selectedSituation.message.en}
-                  </div>
-                </div>
-                <div>
-                  <div className="mb-1 flex items-center gap-2">
-                    <span className="text-xs font-medium text-slate-500">🇨🇿 Czech</span>
-                    <button
-                      onClick={() => {
-                        navigator.clipboard.writeText(selectedSituation.message.cz)
-                        setToastMessage("✅ Copied to clipboard")
-                      }}
-                      className="text-xs text-blue-400 hover:text-blue-300 transition"
-                    >
-                      Copy
-                    </button>
-                  </div>
-                  <div className="rounded-lg border border-slate-700 bg-slate-800/50 px-4 py-3 text-sm text-slate-200">
-                    {selectedSituation.message.cz}
-                  </div>
-                </div>
-              </div>
-            </div>
-
             {/* Contact info */}
             <div className="rounded-xl border border-slate-800 bg-slate-700/30 p-5 backdrop-blur-sm">
               <p className="flex items-start gap-2 text-sm text-slate-300">

@@ -1,16 +1,12 @@
 import Link from "next/link"
-import { type Lang, t } from "@/lib/translations"
+import { getLang } from "@/lib/i18n"
+import { t } from "@/lib/translations"
 import { SiteHeader } from "@/components/public/site-header"
 import { PageContainer, PageHeader } from "@/components/public/page-layout"
 import { WorkerRegistrationForm } from "@/components/forms/worker-registration-form"
 
-interface Props {
-  searchParams: Promise<{ lang?: string }>
-}
-
-export default async function RegisterPage({ searchParams }: Props) {
-  const { lang: langParam } = await searchParams
-  const lang: Lang = langParam === "tl" ? "tl" : langParam === "cz" ? "cz" : "en"
+export default async function RegisterPage() {
+  const lang = await getLang()
 
   return (
     <div className="min-h-screen">
@@ -23,11 +19,11 @@ export default async function RegisterPage({ searchParams }: Props) {
           badge="STEP 1"
         />
 
-        <WorkerRegistrationForm />
+        <WorkerRegistrationForm lang={lang} />
 
         <p className="mt-6 text-center text-xs text-slate-500">
           {t("register.already", lang)}{" "}
-          <Link href={`/guide?lang=${lang}`} className="text-blue-400 hover:text-blue-300">
+          <Link href="/guide" className="text-blue-400 hover:text-blue-300">
             {t("register.guide", lang)}
           </Link>
         </p>

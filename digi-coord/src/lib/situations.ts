@@ -1043,8 +1043,8 @@ export const situations: Situation[] = [
       ],
     },
     message: {
-      en: "Hello, I lost my Lítačka / transport pass. How do I get a replacement?",
-      cz: "Dobrý den, ztratil/a jsem Lítačku / průkazku na dopravu. Jak získám náhradu?",
+      en: "Hello, I lost my transport pass. How do I get a replacement?",
+      cz: "Dobrý den, ztratil/a jsem průkazku na dopravu. Jak získám náhradu?",
     },
     contactTo: "coordinator",
     reportCategory: "Transport",

@@ -1,11 +1,8 @@
 import Link from "next/link"
-import { type Lang, t } from "@/lib/translations"
+import { getLang } from "@/lib/i18n"
+import { t } from "@/lib/translations"
 import { SiteHeader } from "@/components/public/site-header"
 import { PageContainer, PageHeader, InfoBox, ChecklistItem } from "@/components/public/page-layout"
-
-interface Props {
-  searchParams: Promise<{ lang?: string }>
-}
 
 const sections = [
   {
@@ -63,9 +60,8 @@ const phrases = [
   { english: "See you tomorrow", czech: "Na shledanou zítra", pronunciation: "Na-SHLE-da-no ZEE-tra" },
 ]
 
-export default async function FirstDayPage({ searchParams }: Props) {
-  const { lang: langParam } = await searchParams
-  const lang: Lang = langParam === "tl" ? "tl" : langParam === "cz" ? "cz" : "en"
+export default async function FirstDayPage() {
+  const lang = await getLang()
 
   return (
     <div className="min-h-screen">

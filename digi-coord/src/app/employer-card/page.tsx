@@ -1,13 +1,10 @@
 import Link from "next/link"
-import { type Lang, t } from "@/lib/translations"
+import { getLang } from "@/lib/i18n"
+import { t } from "@/lib/translations"
 import { SiteHeader } from "@/components/public/site-header"
 import { PageContainer, PageHeader, InfoBox, StepCard } from "@/components/public/page-layout"
 import { NearestLocation } from "@/components/location/nearest-location"
 import { oampLocations, foreignPoliceLocations } from "@/lib/locations"
-
-interface Props {
-  searchParams: Promise<{ lang?: string }>
-}
 
 const steps = [
   {
@@ -75,9 +72,8 @@ function MapLink({ address }: { address: string }) {
   )
 }
 
-export default async function EmployerCardPage({ searchParams }: Props) {
-  const { lang: langParam } = await searchParams
-  const lang: Lang = langParam === "tl" ? "tl" : langParam === "cz" ? "cz" : "en"
+export default async function EmployerCardPage() {
+  const lang = await getLang()
 
   return (
     <div className="min-h-screen">
@@ -202,7 +198,7 @@ export default async function EmployerCardPage({ searchParams }: Props) {
 
         <InfoBox title={t("employer.help", lang)} color="blue" className="mt-8">
           <p className="mb-4 text-sm text-slate-300">{t("employer.help.desc", lang)}</p>
-          <Link href={`/contact?lang=${lang}`} className="inline-block rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700">
+          <Link href="/contact" className="inline-block rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700">
             {t("nav.contact", lang)}
           </Link>
         </InfoBox>
