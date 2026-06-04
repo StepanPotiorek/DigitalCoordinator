@@ -3,7 +3,7 @@
 import { useSession } from "next-auth/react"
 import { useEffect, useState } from "react"
 import Link from "next/link"
-import { categories, situations, type Situation } from "@/lib/situations"
+import { JourneyCard } from "./journey-card"
 
 interface WorkerData {
   id: number
@@ -11,6 +11,25 @@ interface WorkerData {
   onboardingStatus: string
   progress: number
   openIssues: number
+  arrivalDate: string | null
+  accommodation: string | null
+  employeeCardStatus: string
+  accommodationDetail: {
+    address: string
+    room: string | null
+    rules: string | null
+    contactName: string | null
+    contactPhone: string | null
+    mapUrl: string | null
+  } | null
+}
+
+interface OnboardingItem {
+  id: number
+  label: string
+  category: string
+  completed: boolean
+  completedAt: string | null
 }
 
 interface IssueItem {
@@ -21,90 +40,57 @@ interface IssueItem {
   createdAt: string
 }
 
-interface OnboardingItem {
-  id: number
-  label: string
-  category: string
-  completed: boolean
+const EMPLOYEE_CARD_SUBTASKS: Record<string, { label: string; doneKey: string }[]> = {
+  NOT_STARTED: [
+    { label: "Appointment booked", doneKey: "NOT_STARTED" },
+  ],
+  IN_PROGRESS: [
+    { label: "Appointment booked", doneKey: "IN_PROGRESS" },
+    { label: "Documents prepared", doneKey: "IN_PROGRESS" },
+  ],
+  BIOMETRICS_DONE: [
+    { label: "Appointment booked", doneKey: "BIOMETRICS_DONE" },
+    { label: "Documents prepared", doneKey: "BIOMETRICS_DONE" },
+    { label: "Biometrics completed", doneKey: "BIOMETRICS_DONE" },
+  ],
+  CARD_READY: [
+    { label: "Appointment booked", doneKey: "CARD_READY" },
+    { label: "Documents prepared", doneKey: "CARD_READY" },
+    { label: "Biometrics completed", doneKey: "CARD_READY" },
+    { label: "Card ready for pickup", doneKey: "CARD_READY" },
+  ],
+  ISSUED: [
+    { label: "Employee card issued", doneKey: "ISSUED" },
+  ],
 }
 
-const HISTORY_KEY = "help-history"
-
-function triggerConfetti() {
-  const container = document.createElement("div")
-  container.className = "fixed inset-0 pointer-events-none z-50"
-  document.body.appendChild(container)
-
-  const colors = ["#22c55e", "#3b82f6", "#eab308", "#ec4899", "#a855f7", "#f97316"]
-  for (let i = 0; i < 40; i++) {
-    const piece = document.createElement("div")
-    const color = colors[Math.floor(Math.random() * colors.length)]
-    const left = Math.random() * 100
-    const size = 6 + Math.random() * 6
-    const rotation = Math.random() * 720
-    const drift = (Math.random() - 0.5) * 200
-    piece.style.cssText = `
-      position: absolute; top: -10px; left: ${left}%;
-      width: ${size}px; height: ${size * 0.6}px;
-      background: ${color}; border-radius: 2px;
-      animation: confettiFall ${0.8 + Math.random() * 0.6}s ease-out forwards;
-      --drift: ${drift}px;
-      transform: rotate(${rotation}deg);
-    `
-    container.appendChild(piece)
-  }
-  setTimeout(() => container.remove(), 1500)
-}
-const CATEGORY_MAP: Record<string, string> = {
-  BEFORE_ARRIVAL: "📋 Before Arrival",
-  AFTER_ARRIVAL: "📋 After Arrival",
-  FIRST_DAY: "💼 First Day",
-  SIM_CARD: "📱 SIM Card",
-  BANK_ACCOUNT: "🏦 Bank Account",
-  ACCOMMODATION: "🏠 Accommodation",
-  EMERGENCY: "🚨 Emergency",
-  LANGUAGE: "💬 Language",
-  ADAPTATION: "🌍 Adaptation",
-  IMMIGRATION: "🛂 Immigration",
+const EMPLOYEE_CARD_NEXT_ACTION: Record<string, { label: string; href: string } | null> = {
+  NOT_STARTED: { label: "Book biometrics appointment", href: "/dashboard/worker/employee-card" },
+  IN_PROGRESS: { label: "Complete biometrics", href: "/dashboard/worker/employee-card" },
+  BIOMETRICS_DONE: { label: "Wait for card to be ready", href: "/dashboard/worker/employee-card" },
+  CARD_READY: { label: "Collect your employee card", href: "/dashboard/worker/employee-card" },
+  ISSUED: null,
 }
 
 export default function WorkerDashboardPage() {
   const { data: session } = useSession()
   const [worker, setWorker] = useState<WorkerData | null>(null)
-  const [issues, setIssues] = useState<IssueItem[]>([])
   const [onboarding, setOnboarding] = useState<OnboardingItem[]>([])
-  const [history, setHistory] = useState<Situation[]>([])
+  const [issues, setIssues] = useState<IssueItem[]>([])
   const [loading, setLoading] = useState(true)
-  const [hasCelebrated, setHasCelebrated] = useState(false)
 
   useEffect(() => {
     Promise.all([
       fetch("/api/worker/me").then((r) => r.json()),
       fetch("/api/worker/me/issues").then((r) => r.json()),
-      fetch("/api/worker/me/onboarding").then((r) => r.json()),
     ])
-      .then(([workerData, issuesData, onboardingData]) => {
+      .then(([workerData, issuesData]) => {
         setWorker(workerData)
+        setOnboarding(workerData.onboardingItems || [])
         setIssues(issuesData || [])
-        setOnboarding(onboardingData || [])
       })
       .finally(() => setLoading(false))
-
-    const stored = localStorage.getItem(HISTORY_KEY)
-    if (stored) {
-      try {
-        const ids = JSON.parse(stored) as string[]
-        setHistory(ids.map((id) => situations.find((s) => s.id === id)).filter(Boolean) as Situation[])
-      } catch {}
-    }
   }, [])
-
-  useEffect(() => {
-    if (worker?.progress === 100 && !hasCelebrated) {
-      setHasCelebrated(true)
-      triggerConfetti()
-    }
-  }, [worker?.progress, hasCelebrated])
 
   if (loading) {
     return <div className="text-sm text-slate-400">Loading...</div>
@@ -114,63 +100,60 @@ export default function WorkerDashboardPage() {
     return <div className="text-sm text-slate-400">Worker profile not found.</div>
   }
 
-  const openIssues = issues.filter((i) => i.status === "OPEN" || i.status === "IN_PROGRESS")
-  const nextStep = onboarding.find((i) => !i.completed)
-  const uncompletedCount = onboarding.filter((i) => !i.completed).length
-  const incompleteCategories = [...new Set(onboarding.filter((i) => !i.completed).map((i) => i.category))]
-
-  const categoryGuides: Record<string, { href: string; label: string }[]> = {
-    BEFORE_ARRIVAL: [{ href: "/before-arrival", label: "📋 Before Arrival guide" }],
-    AFTER_ARRIVAL: [{ href: "/after-arrival", label: "📋 After Arrival guide" }],
-    FIRST_DAY: [{ href: "/first-day", label: "💼 First Day at Work guide" }],
-    SIM_CARD: [{ href: "/dashboard/worker/help?category=other", label: "📱 Getting a SIM card" }],
-    BANK_ACCOUNT: [{ href: "/dashboard/worker/help?category=bank", label: "🏦 Bank help" }],
-    ACCOMMODATION: [{ href: "/dashboard/worker/help?category=accommodation", label: "🏠 Accommodation help" }],
-    EMERGENCY: [{ href: "/dashboard/worker/help?category=doctor", label: "🚑 Emergency info" }],
-    LANGUAGE: [{ href: "/dashboard/worker/help", label: "💬 Find translations" }],
-    ADAPTATION: [{ href: "/guide", label: "🌍 Adaptation guide" }],
-    IMMIGRATION: [{ href: "/employer-card", label: "🛂 Employee Card guide" }],
+  function itemsForCategory(cat: string) {
+    return onboarding.filter((i) => i.category === cat)
   }
+
+  function categoryStatus(cat: string): "completed" | "in-progress" | "not-started" {
+    const items = itemsForCategory(cat)
+    if (items.length === 0) return "not-started"
+    const allDone = items.every((i) => i.completed)
+    const anyDone = items.some((i) => i.completed)
+    if (allDone) return "completed"
+    if (anyDone) return "in-progress"
+    return "not-started"
+  }
+
+  const arrivalDone = !!worker.arrivalDate
+  const totalSteps = 7
+  const completedSteps = [
+    arrivalDone,
+    categoryStatus("ACCOMMODATION") === "completed",
+    worker.employeeCardStatus === "ISSUED",
+    categoryStatus("SIM_CARD") === "completed",
+    categoryStatus("BANK_ACCOUNT") === "completed",
+    categoryStatus("FIRST_DAY") === "completed",
+    categoryStatus("ADAPTATION") === "completed",
+  ].filter(Boolean).length
+
+  const progress = Math.round((completedSteps / totalSteps) * 100)
+  const openIssues = issues.filter((i) => i.status === "OPEN" || i.status === "IN_PROGRESS")
+
+  const ecSubtasks = EMPLOYEE_CARD_SUBTASKS[worker.employeeCardStatus] || []
+  const ecNextAction = EMPLOYEE_CARD_NEXT_ACTION[worker.employeeCardStatus]
 
   return (
     <div className="space-y-6">
-      <style>{`
-        @keyframes confettiFall {
-          0%   { transform: translateY(0) rotate(0deg) scale(1); opacity: 1; }
-          100% { transform: translateY(100vh) rotate(720deg) scale(0.3) translateX(var(--drift)); opacity: 0; }
-        }
-      `}</style>
-      {/* Welcome + summary */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-white">
-            {worker.progress < 100 ? `What's next, ${worker.name}?` : `Good job, ${worker.name}!`}
-          </h1>
-          <p className="mt-1 text-sm text-slate-400">
-            {worker.progress < 100
-              ? `${uncompletedCount} onboarding steps remaining`
-              : "Onboarding complete"}
-          </p>
+      {/* Header */}
+      <div>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-white">
+              {progress < 100 ? `What's next, ${worker.name}?` : `Good job, ${worker.name}!`}
+            </h1>
+            <p className="mt-1 text-sm text-slate-400">
+              {completedSteps} of {totalSteps} steps completed
+            </p>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-bold text-white">{progress}%</span>
+          </div>
         </div>
-        <div className="relative flex h-20 w-20 items-center justify-center">
-          <svg className="h-20 w-20 -rotate-90" viewBox="0 0 36 36">
-            <circle cx="18" cy="18" r="15.5" fill="none" stroke="#1e293b" strokeWidth="3" />
-            <circle
-              cx="18" cy="18" r="15.5"
-              fill="none"
-              stroke="url(#progressGrad)"
-              strokeWidth="3"
-              strokeDasharray={`${worker.progress * 0.97} 97`}
-              strokeLinecap="round"
-            />
-            <defs>
-              <linearGradient id="progressGrad" x1="0" y1="0" x2="1" y2="0">
-                <stop offset="0%" stopColor="#3b82f6" />
-                <stop offset="100%" stopColor="#22c55e" />
-              </linearGradient>
-            </defs>
-          </svg>
-          <span className="absolute text-sm font-bold text-white">{worker.progress}%</span>
+        <div className="mt-2 h-2 overflow-hidden rounded-full bg-slate-800">
+          <div
+            className="h-full rounded-full bg-gradient-to-r from-blue-600 to-emerald-500 transition-all"
+            style={{ width: `${progress}%` }}
+          />
         </div>
       </div>
 
@@ -197,164 +180,117 @@ export default function WorkerDashboardPage() {
         </Link>
       )}
 
-      {/* Main action buttons */}
-      <div className="grid gap-4 sm:grid-cols-2">
-        {/* I need help */}
+      {/* Journey Steps */}
+      <div className="space-y-3">
+        <JourneyCard
+          icon="✈️"
+          title="Arrival"
+          status={arrivalDone ? "completed" : "not-started"}
+          items={[
+            { label: "Arrived in Czech Republic", done: arrivalDone },
+          ]}
+          nextAction={arrivalDone ? undefined : "Track your arrival"}
+          nextActionHref={arrivalDone ? undefined : "/after-arrival"}
+        />
+
+        <JourneyCard
+          icon="🏠"
+          title="Accommodation"
+          status={categoryStatus("ACCOMMODATION")}
+          items={itemsForCategory("ACCOMMODATION").map((i) => ({
+            label: i.label,
+            done: i.completed,
+          }))}
+          nextAction={categoryStatus("ACCOMMODATION") === "completed" ? undefined : "View accommodation details"}
+          nextActionHref={categoryStatus("ACCOMMODATION") === "completed" ? undefined : "/dashboard/worker/help?category=accommodation"}
+        />
+
+        <JourneyCard
+          icon="🪪"
+          title="Employee Card"
+          status={
+            worker.employeeCardStatus === "ISSUED"
+              ? "completed"
+              : worker.employeeCardStatus === "NOT_STARTED"
+                ? "not-started"
+                : "in-progress"
+          }
+          items={ecSubtasks.map((t) => ({ label: t.label, done: true }))}
+          nextAction={ecNextAction?.label}
+          nextActionHref={ecNextAction?.href}
+        />
+
+        <JourneyCard
+          icon="📱"
+          title="SIM Card"
+          status={categoryStatus("SIM_CARD")}
+          items={itemsForCategory("SIM_CARD").map((i) => ({
+            label: i.label,
+            done: i.completed,
+          }))}
+        />
+
+        <JourneyCard
+          icon="🏦"
+          title="Bank Account"
+          status={categoryStatus("BANK_ACCOUNT")}
+          items={itemsForCategory("BANK_ACCOUNT").map((i) => ({
+            label: i.label,
+            done: i.completed,
+          }))}
+        />
+
+        <JourneyCard
+          icon="👷"
+          title="First Day at Work"
+          status={categoryStatus("FIRST_DAY")}
+          items={itemsForCategory("FIRST_DAY").map((i) => ({
+            label: i.label,
+            done: i.completed,
+          }))}
+        />
+
+        <JourneyCard
+          icon="🌦️"
+          title="Adaptation"
+          status={categoryStatus("ADAPTATION")}
+          items={itemsForCategory("ADAPTATION").map((i) => ({
+            label: i.label,
+            done: i.completed,
+          }))}
+        />
+      </div>
+
+      {/* Need help */}
+      <div className="grid gap-3 sm:grid-cols-2">
         <Link
           href="/dashboard/worker/help"
-          className="group rounded-xl border border-blue-800 bg-gradient-to-br from-blue-900/30 to-slate-900/50 p-5 backdrop-blur-sm transition hover:from-blue-800/40 hover:to-slate-800/50"
+          className="rounded-xl border border-blue-800 bg-gradient-to-br from-blue-900/30 to-slate-900/50 p-4 backdrop-blur-sm transition hover:from-blue-800/40 hover:to-slate-800/50"
         >
-          <div className="flex items-start gap-4">
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-900/50 text-2xl">
-              🆘
-            </div>
-            <div className="min-w-0">
-              <h2 className="font-bold text-white group-hover:text-blue-300 transition">I need help</h2>
-              <p className="mt-0.5 text-xs text-slate-400">Step-by-step guidance for any situation</p>
+          <div className="flex items-center gap-3">
+            <span className="text-xl">🆘</span>
+            <div>
+              <div className="font-medium text-white">Need help?</div>
+              <div className="text-xs text-slate-400">Self-service guides for any situation</div>
             </div>
           </div>
         </Link>
 
-        {/* Next onboarding step */}
-        {nextStep && (
-          <Link
-            href="/dashboard/worker/onboarding"
-            className="group rounded-xl border border-emerald-800 bg-gradient-to-br from-emerald-900/30 to-slate-900/50 p-5 backdrop-blur-sm transition hover:from-emerald-800/40 hover:to-slate-800/50"
-          >
-            <div className="flex items-start gap-4">
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-900/50 text-2xl">
-                📋
-              </div>
-              <div className="min-w-0">
-                <h2 className="font-bold text-white group-hover:text-emerald-300 transition">
-                  {nextStep.label}
-                </h2>
-                <p className="mt-0.5 text-xs text-slate-400">
-                  {CATEGORY_MAP[nextStep.category] || nextStep.category}
-                </p>
-              </div>
-            </div>
-          </Link>
-        )}
-
-        {/* All done - show stats instead */}
-        {!nextStep && worker.progress >= 100 && (
-          <div className="rounded-xl border border-green-800 bg-green-950/30 p-5 backdrop-blur-sm">
-            <div className="flex items-center gap-3">
-              <span className="text-2xl">🎉</span>
-              <div>
-                <div className="font-bold text-green-400">Onboarding Complete</div>
-                <p className="text-xs text-slate-400">All steps finished</p>
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* Quick help + history */}
-      <div>
-        <div className="mb-3 flex items-center justify-between">
-          <h2 className="text-sm font-bold uppercase tracking-wider text-slate-500">Quick Help</h2>
-          <Link href="/dashboard/worker/help" className="text-xs text-blue-400 hover:text-blue-300 transition">
-            Browse all →
-          </Link>
-        </div>
-
-        {history.length > 0 && (
-          <div className="mb-3 flex flex-wrap gap-2">
-            {history.map((sit) => (
-              <Link
-                key={sit.id}
-                href={`/dashboard/worker/help?category=${sit.categoryId}`}
-                className="flex items-center gap-1.5 rounded-lg border border-slate-800 bg-slate-900/50 px-3 py-1.5 text-xs text-slate-300 transition hover:border-slate-700 hover:bg-slate-800/50"
-              >
-                <span>{sit.icon}</span>
-                <span>{sit.title.en}</span>
-              </Link>
-            ))}
-          </div>
-        )}
-
-        <div className="grid grid-cols-4 gap-2 sm:grid-cols-7">
-          {categories.slice(0, 7).map((cat) => (
-            <Link
-              key={cat.id}
-              href={`/dashboard/worker/help?category=${cat.id}`}
-              className="flex flex-col items-center gap-1 rounded-xl border border-slate-800 bg-slate-900/50 p-3 text-center backdrop-blur-sm transition hover:border-blue-800 hover:bg-slate-800/50"
-            >
-              <span className="text-xl">{cat.icon}</span>
-              <span className="text-[9px] leading-tight text-slate-400">{cat.title.en}</span>
-            </Link>
-          ))}
-        </div>
-      </div>
-
-      {/* Personalized suggestions based on incomplete categories */}
-      {incompleteCategories.length > 0 && (
-        <div>
-          <h2 className="mb-3 text-sm font-bold uppercase tracking-wider text-slate-500">
-            You might need
-          </h2>
-          <div className="flex flex-wrap gap-2">
-            {incompleteCategories.map((cat) => {
-              const guides = categoryGuides[cat] || []
-              return guides.map((g, i) => (
-                <Link
-                  key={`${cat}-${i}`}
-                  href={g.href}
-                  className="rounded-lg border border-slate-800 bg-slate-900/50 px-3 py-2 text-xs text-slate-300 transition hover:border-blue-700 hover:bg-slate-800/50 hover:text-blue-300"
-                >
-                  {g.label}
-                </Link>
-              ))
-            })}
-          </div>
-        </div>
-      )}
-
-      {/* Stats row */}
-      <div className="grid gap-3 sm:grid-cols-3">
         <Link
           href="/dashboard/worker/onboarding"
           className="rounded-xl border border-slate-800 bg-slate-900/50 p-4 backdrop-blur-sm transition hover:bg-slate-800/50"
         >
-          <div className="flex items-center justify-between">
-            <span className="text-sm text-slate-400">Onboarding</span>
-            <span className="text-xs text-slate-600">
-              {onboarding.filter((i) => i.completed).length}/{onboarding.length}
-            </span>
+          <div className="flex items-center gap-3">
+            <span className="text-xl">📋</span>
+            <div>
+              <div className="font-medium text-white">Onboarding details</div>
+              <div className="text-xs text-slate-400">View all onboarding items</div>
+            </div>
           </div>
-          <div className="mt-2 h-2 overflow-hidden rounded-full bg-slate-800">
-            <div
-              className="h-full rounded-full bg-gradient-to-r from-blue-600 to-emerald-500 transition-all"
-              style={{ width: `${worker.progress}%` }}
-            />
-          </div>
-        </Link>
-
-        <Link
-          href="/dashboard/worker/issues"
-          className="rounded-xl border border-slate-800 bg-slate-900/50 p-4 backdrop-blur-sm transition hover:bg-slate-800/50"
-        >
-          <div className="text-sm text-slate-400">Issues</div>
-          <div className="mt-1 flex items-baseline gap-2">
-            <span className={`text-2xl font-bold ${openIssues.length > 0 ? "text-amber-400" : "text-green-400"}`}>
-              {worker.openIssues}
-            </span>
-            <span className="text-xs text-slate-500">open</span>
-          </div>
-        </Link>
-
-        <Link
-          href="/dashboard/worker/profile"
-          className="rounded-xl border border-slate-800 bg-slate-900/50 p-4 backdrop-blur-sm transition hover:bg-slate-800/50"
-        >
-          <div className="text-sm text-slate-400">Documents</div>
-          <div className="mt-1 text-xs text-blue-400">View & upload →</div>
         </Link>
       </div>
 
-      {/* Bottom utility links */}
+      {/* Bottom links */}
       <div className="flex gap-4 text-xs text-slate-500">
         <Link href="/dashboard/worker/documents" className="hover:text-white transition">📄 Documents</Link>
         <Link href="/dashboard/worker/profile" className="hover:text-white transition">👤 Profile</Link>

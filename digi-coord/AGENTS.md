@@ -206,6 +206,12 @@ for i in 1 2 3 4 5 6 7 8 9 10; do fuser 3000/tcp 2>/dev/null && echo "OK ($((i))
 
 # Check logs:
 tail -20 /tmp/digicoord-dev.log
+
+# === Deploy to production server ===
+# Server: root@rdev.buq.cz, project: /opt/digi-coord/
+# Builds locally, rsyncs files, rebuilds Docker container
+cd /home/stepan/Documents/programming/digital-coordinator/digi-coord
+bash deploy.sh
 ```
 
 ---

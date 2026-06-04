@@ -1,4 +1,4 @@
-.PHONY: dev build start lint db-generate db-push db-seed db-reset db-init setup clean deploy backup
+.PHONY: dev build start lint db-generate db-push db-seed db-reset db-init setup clean deploy deploy-rsync backup
 
 # ─── Development ───────────────────────────────────────────────
 
@@ -49,10 +49,35 @@ setup:
 
 # ─── Deployment ────────────────────────────────────────────────
 
-# Build for production
+# Deploy to production server via rsync + docker compose
+SSH_HOST = root@rdev.buq.cz
+REMOTE_DIR = /opt/digi-coord/
+
 deploy: build
-	@echo "Build complete. Start with: make start"
-	@echo "For production: pm2 start npm --name digi-coord -- start"
+	rsync -avz --delete \
+	  --exclude .git \
+	  --exclude node_modules \
+	  --exclude .next \
+	  --exclude prisma/dev.db \
+	  --exclude backups \
+	  --exclude .env \
+	  --exclude .env.local \
+	  ./ $(SSH_HOST):$(REMOTE_DIR)
+	ssh $(SSH_HOST) "cd $(REMOTE_DIR) && docker compose up --build -d"
+	@echo "Deploy complete."
+
+deploy-rsync:
+	rsync -avz --delete \
+	  --exclude .git \
+	  --exclude node_modules \
+	  --exclude .next \
+	  --exclude prisma/dev.db \
+	  --exclude backups \
+	  --exclude .env \
+	  --exclude .env.local \
+	  ./ $(SSH_HOST):$(REMOTE_DIR)
+	ssh $(SSH_HOST) "cd $(REMOTE_DIR) && docker compose up --build -d"
+	@echo "Deploy complete (rsync only, no build)."
 
 # ─── Cleanup ───────────────────────────────────────────────────
 

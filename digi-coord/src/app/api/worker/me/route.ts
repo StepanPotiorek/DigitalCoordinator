@@ -13,7 +13,8 @@ export async function GET() {
       where: { email: session.user.email! },
       include: {
         _count: { select: { issues: { where: { status: { not: "RESOLVED" } } } } },
-        onboardingItems: { select: { completed: true } },
+        onboardingItems: { orderBy: [{ category: "asc" }, { id: "asc" }] },
+        accommodationDetail: true,
       },
     })
 
