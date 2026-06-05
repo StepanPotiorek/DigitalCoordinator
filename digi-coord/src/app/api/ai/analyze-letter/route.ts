@@ -1,6 +1,6 @@
 import { auth } from "@/lib/auth"
 import { apiHandler, unauthorized, badRequest } from "@/lib/api-utils"
-import { analyzeLetterWithGemini } from "@/lib/gemini"
+import { analyzeLetterWithAI } from "@/lib/openai"
 
 export async function POST(request: Request) {
   return apiHandler(async () => {
@@ -10,7 +10,7 @@ export async function POST(request: Request) {
     const { image, mimeType } = await request.json()
     if (!image || !mimeType) return badRequest("Missing image or mimeType")
 
-    const result = await analyzeLetterWithGemini(image, mimeType)
+    const result = await analyzeLetterWithAI(image, mimeType)
     if (!result) return { error: "AI analysis failed. Check that the image is clear and try again." }
 
     return result

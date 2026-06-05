@@ -1,7 +1,7 @@
 import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import { apiHandler, unauthorized, badRequest } from "@/lib/api-utils"
-import { analyzeLetterWithGemini } from "@/lib/gemini"
+import { analyzeLetterWithAI } from "@/lib/openai"
 import { writeFile } from "fs/promises"
 import path from "path"
 import { randomUUID } from "crypto"
@@ -67,7 +67,7 @@ export async function POST(request: Request) {
     const isImage = mimeType.startsWith("image/")
     if (isImage) {
       const base64 = Buffer.from(bytes).toString("base64")
-      const aiResult = await analyzeLetterWithGemini(base64, mimeType)
+      const aiResult = await analyzeLetterWithAI(base64, mimeType)
 
       if (aiResult) {
         const deadline = aiResult.deadline ? new Date(aiResult.deadline) : null
