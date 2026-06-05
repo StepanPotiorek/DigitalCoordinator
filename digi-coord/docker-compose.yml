@@ -8,13 +8,8 @@ services:
     volumes:
       - sqlite-data:/app/data
       - uploads-data:/app/public/uploads
-    environment:
-      - AUTH_SECRET=McQZE5r3jFE4NxaiuNcYeQpG4NXc36fT0y3VWluVikk=
-      - NEXTAUTH_SECRET=McQZE5r3jFE4NxaiuNcYeQpG4NXc36fT0y3VWluVikk=
-      - AUTH_URL=http://rdev.buq.cz:3000
-      - NEXTAUTH_URL=http://rdev.buq.cz:3000
-      - DATABASE_URL=file:/app/data/prod.db
-      - NEXT_TELEMETRY_DISABLED=1
+    env_file:
+      - .env.production
     restart: unless-stopped
 
 volumes:

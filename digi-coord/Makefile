@@ -47,6 +47,17 @@ setup:
 	npx tsx prisma/seed.ts
 	@echo "Setup complete. Run 'make dev' to start."
 
+# Reliable dev server restart (kills, cleans Turbopack cache, restarts)
+dev-restart:
+	@echo "Killing old server..."
+	@-kill $$(lsof -ti:3000) 2>/dev/null || true
+	@echo "Cleaning Turbopack cache..."
+	@rm -rf .next
+	@echo "Starting dev server (background)..."
+	setsid sh -c 'exec npx next dev -H 127.0.0.1 > /tmp/digicoord-dev.log 2>&1' &
+	@echo "Waiting for server..."
+	@for i in 1 2 3 4 5 6 7 8 9 10; do fuser 3000/tcp 2>/dev/null && echo "OK ($${i}s)" && break; sleep 1; done
+
 # ─── Deployment ────────────────────────────────────────────────
 
 # Deploy to production server via rsync + docker compose
