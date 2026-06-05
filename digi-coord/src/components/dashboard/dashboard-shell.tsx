@@ -73,6 +73,13 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
             My Issues
           </Link>
           <Link
+            href="/dashboard/worker/letters"
+            className="rounded-lg px-3 py-2 text-sm text-slate-300 transition hover:bg-slate-800 hover:text-white"
+            onClick={() => setMenuOpen(false)}
+          >
+            📬 My Letters
+          </Link>
+          <Link
             href="/dashboard/worker/documents"
             className="rounded-lg px-3 py-2 text-sm text-slate-300 transition hover:bg-slate-800 hover:text-white"
             onClick={() => setMenuOpen(false)}

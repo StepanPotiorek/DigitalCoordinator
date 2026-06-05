@@ -277,6 +277,19 @@ export default function WorkerDashboardPage() {
         </Link>
 
         <Link
+          href="/dashboard/worker/letters"
+          className="rounded-xl border border-emerald-800/50 bg-gradient-to-br from-emerald-900/20 to-slate-900/50 p-4 backdrop-blur-sm transition hover:from-emerald-800/30 hover:to-slate-800/50"
+        >
+          <div className="flex items-center gap-3">
+            <span className="text-xl">📬</span>
+            <div>
+              <div className="font-medium text-white">My Letters</div>
+              <div className="text-xs text-slate-400">Understand official letters and upload photos</div>
+            </div>
+          </div>
+        </Link>
+
+        <Link
           href="/dashboard/worker/onboarding"
           className="rounded-xl border border-slate-800 bg-slate-900/50 p-4 backdrop-blur-sm transition hover:bg-slate-800/50"
         >
@@ -292,6 +305,7 @@ export default function WorkerDashboardPage() {
 
       {/* Bottom links */}
       <div className="flex gap-4 text-xs text-slate-500">
+        <Link href="/dashboard/worker/letters" className="hover:text-white transition">📬 My Letters</Link>
         <Link href="/dashboard/worker/documents" className="hover:text-white transition">📄 Documents</Link>
         <Link href="/dashboard/worker/profile" className="hover:text-white transition">👤 Profile</Link>
         <Link href="/faq" className="hover:text-white transition">❓ FAQ</Link>

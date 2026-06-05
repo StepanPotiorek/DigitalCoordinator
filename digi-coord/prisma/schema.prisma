@@ -51,6 +51,7 @@ model Worker {
   documents           Document[]
   situationFeedback   SituationFeedback[]
   notes               Note[]
+  letters             Letter[]
 
   @@index([employer])
   @@index([status])
@@ -327,4 +328,24 @@ enum DocumentType {
   VISA
   CONTRACT
   OTHER
+}
+
+model Letter {
+  id             Int      @id @default(autoincrement())
+  workerId       Int
+  sender         String?  // AI-detected: MINISTRY_OF_INTERIOR | HEALTH_INSURANCE | BANK | EMPLOYER | ACCOMMODATION | OTHER
+  purpose        String?  // AI-detected
+  actionRequired String?  // AI-detected
+  deadline       DateTime?
+  explanation    String?  // AI explanation in simple English
+  photoPath      String   // /uploads/letters/uuid.ext
+  mimeType       String
+  aiRaw          String?  // raw AI response JSON
+  aiConfidence   Float?   // AI confidence score 0-1
+  createdAt      DateTime @default(now())
+
+  worker Worker @relation(fields: [workerId], references: [id], onDelete: Cascade)
+
+  @@index([workerId])
+  @@index([workerId, createdAt])
 }
