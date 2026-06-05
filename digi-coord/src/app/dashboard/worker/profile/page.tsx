@@ -9,6 +9,7 @@ interface WorkerData {
   whatsapp: string
   email: string | null
   employer: string | null
+  city: string | null
   accommodation: string | null
   arrivalDate: string | null
   emergencyContactName: string | null
@@ -207,6 +208,10 @@ export default function WorkerProfilePage() {
               <div className="flex justify-between">
                 <dt className="text-slate-400">Employer</dt>
                 <dd className="text-white">{worker.employer || "\u2014"}</dd>
+              </div>
+              <div className="flex justify-between">
+                <dt className="text-slate-400">City</dt>
+                <dd className="text-white">{worker.city || "\u2014"}</dd>
               </div>
               <div className="flex justify-between">
                 <dt className="text-slate-400">Arrival Date</dt>

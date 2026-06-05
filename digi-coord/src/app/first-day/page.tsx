@@ -31,8 +31,8 @@ const sections = [
     title: "Getting to Work",
     items: [
       "Leave with plenty of time — arrive 15 minutes early",
-      "Use PID Lítačka app for public transport tickets",
-      "Check Google Maps for the best route",
+      "Use Google Maps to find the best route and buy tickets",
+      "Download your regional transit app (e.g., PID Lítačka for Prague)",
       "If you get lost, contact your supervisor or coordinator immediately",
     ],
   },

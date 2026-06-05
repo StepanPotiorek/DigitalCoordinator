@@ -38,7 +38,7 @@ export async function PUT(request: Request) {
     if (!session?.user) return unauthorized()
 
     const body = await request.json()
-    const { name, whatsapp, emergencyContactName, emergencyContactPhone, password } = body
+    const { name, whatsapp, city, emergencyContactName, emergencyContactPhone, password } = body
 
     const worker = await prisma.worker.findUnique({
       where: { email: session.user.email! },
@@ -48,6 +48,7 @@ export async function PUT(request: Request) {
     const updateData: Record<string, any> = {}
     if (name) updateData.name = name
     if (whatsapp) updateData.whatsapp = whatsapp
+    if (city !== undefined) updateData.city = city
     if (emergencyContactName !== undefined) updateData.emergencyContactName = emergencyContactName
     if (emergencyContactPhone !== undefined) updateData.emergencyContactPhone = emergencyContactPhone
 

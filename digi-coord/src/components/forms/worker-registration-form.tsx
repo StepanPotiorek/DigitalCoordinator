@@ -11,6 +11,7 @@ interface FormData {
   password: string
   confirmPassword: string
   employer: string
+  city: string
   accommodation: string
   arrivalDate: string
   emergencyContactName: string
@@ -24,6 +25,7 @@ const initialState: FormData = {
   password: "",
   confirmPassword: "",
   employer: "",
+  city: "",
   accommodation: "",
   arrivalDate: "",
   emergencyContactName: "",
@@ -206,6 +208,24 @@ export function WorkerRegistrationForm({ lang }: { lang: Lang }) {
             onChange={handleChange}
             className="mt-1 w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-white placeholder-slate-500 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
             placeholder="Company name"
+          />
+        </div>
+
+        <div>
+          <label
+            htmlFor="city"
+            className="block text-sm font-medium text-slate-300"
+          >
+            {t("form.city", lang)}
+          </label>
+          <input
+            id="city"
+            name="city"
+            type="text"
+            value={formData.city}
+            onChange={handleChange}
+            className="mt-1 w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-white placeholder-slate-500 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+            placeholder="Prague"
           />
         </div>
 

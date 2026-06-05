@@ -48,6 +48,7 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
         whatsapp: data.whatsapp ?? existing.whatsapp,
         email: data.email !== undefined ? data.email : existing.email,
         employer: data.employer !== undefined ? data.employer : existing.employer,
+        city: data.city !== undefined ? data.city : existing.city,
         accommodation: data.accommodation !== undefined ? data.accommodation : existing.accommodation,
         arrivalDate: data.arrivalDate !== undefined ? (data.arrivalDate ? new Date(data.arrivalDate) : null) : existing.arrivalDate,
         emergencyContactName: data.emergencyContactName !== undefined ? data.emergencyContactName : existing.emergencyContactName,

@@ -1003,14 +1003,14 @@ export const situations: Situation[] = [
     steps: {
       en: [
         "You can buy tickets at ticket machines (most stops have them)",
-        "Or use mobile apps like PID Lítačka or ČD Můj vlak",
+        "Or use mobile apps like Google Maps or your regional transit app",
         "At a ticket machine - select your destination zone, pay by card or cash",
         "Validate your ticket before you board (stamp it in the machine)",
         "Always keep your ticket with you during the journey",
       ],
       cz: [
         "Jízdenky lze koupit v automatech (většina zastávek je má)",
-        "Nebo použijte mobilní aplikace jako PID Lítačka nebo ČD Můj vlak",
+        "Nebo použijte mobilní aplikace jako Google Maps nebo aplikaci vašeho dopravního podniku",
         "V automatu - vyberte cílovou zónu, zaplaťte kartou nebo hotově",
         "Označte jízdenku před nástupem (vložte do označovacího strojku)",
         "Během cesty mějte jízdenku vždy u sebe",
@@ -1031,14 +1031,14 @@ export const situations: Situation[] = [
     steps: {
       en: [
         "If you bought a single ticket and lost it, you need a new one",
-        "If you have a long-term pass (Lítačka), contact the transport company",
-        "You can get a replacement Lítačka card at a Customer Service Center",
+        "If you have a long-term pass, contact the transport company",
+        "You can get a replacement pass at a Customer Service Center",
         "If you are caught without a valid ticket, you will get a fine (1,000+ CZK)",
       ],
       cz: [
         "Pokud jste ztratil/a jednorázovou jízdenku, kupte si novou",
-        "Pokud máte dlouhodobý kupón (Lítačka), kontaktujte dopravní podnik",
-        "Náhradní kartu Lítačka můžete získat v zákaznickém centru",
+        "Pokud máte dlouhodobý kupón, kontaktujte dopravní podnik",
+        "Náhradní kartu můžete získat v zákaznickém centru",
         "Pokud vás chytí bez platné jízdenky, dostanete pokutu (1 000+ Kč)",
       ],
     },
@@ -1057,13 +1057,13 @@ export const situations: Situation[] = [
     steps: {
       en: [
         "Stay calm - the next bus/train will come (check the schedule)",
-        "Use the PID Lítačka app or Google Maps to find the next connection",
+        "Use Google Maps to find the next connection",
         "Inform your employer if you will be late for work",
         "Your single ticket is usually valid for a certain time - you can use the next one",
       ],
       cz: [
         "Zachovejte klid - další autobus/vlak přijede (zkontrolujte jízdní řád)",
-        "Použijte aplikaci PID Lítačka nebo Google Maps pro další spojení",
+        "Použijte Google Maps pro další spojení",
         "Informujte zaměstnavatele, pokud budete mít zpoždění do práce",
         "Jednorázová jízdenka obvykle platí určitou dobu - můžete použít další spoj",
       ],
@@ -1082,13 +1082,13 @@ export const situations: Situation[] = [
     title: { en: "Need directions", cz: "Potřebuji navigaci" },
     steps: {
       en: [
-        "Use Google Maps or Mapy.cz - enter your destination address",
+        "Use Google Maps - enter your destination address",
         "Select public transport option to see bus/train connections",
         "The app will show you which stop to get off at and any transfers",
         "If you get lost, ask a passerby or transport staff for help",
       ],
       cz: [
-        "Použijte Google Maps nebo Mapy.cz - zadejte cílovou adresu",
+        "Použijte Google Maps - zadejte cílovou adresu",
         "Vyberte možnost veřejné dopravy pro zobrazení spojů",
         "Aplikace ukáže, na které zastávce vystoupit a případné přestupy",
         "Pokud se ztratíte, zeptejte se kolemjdoucích nebo personálu dopravy",

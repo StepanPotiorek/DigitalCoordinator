@@ -9,6 +9,7 @@ interface WorkerForm {
   whatsapp: string
   email: string
   employer: string
+  city: string
   accommodation: string
   arrivalDate: string
   emergencyContactName: string
@@ -51,6 +52,7 @@ export function EditWorkerForm({ session }: { session: SessionProp }) {
       whatsapp: data.whatsapp,
       email: data.email || "",
       employer: data.employer || "",
+      city: data.city || "",
       accommodation: data.accommodation || "",
       arrivalDate: data.arrivalDate
         ? data.arrivalDate.split("T")[0]
@@ -187,6 +189,23 @@ export function EditWorkerForm({ session }: { session: SessionProp }) {
             name="employer"
             type="text"
             value={formData.employer}
+            onChange={handleChange}
+            className="mt-1 w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-white outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+          />
+        </div>
+
+        <div>
+          <label
+            htmlFor="city"
+            className="block text-sm font-medium text-slate-300"
+          >
+            City
+          </label>
+          <input
+            id="city"
+            name="city"
+            type="text"
+            value={formData.city}
             onChange={handleChange}
             className="mt-1 w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-white outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
           />

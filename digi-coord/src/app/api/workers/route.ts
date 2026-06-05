@@ -61,6 +61,7 @@ export async function POST(request: Request) {
         whatsapp: data.whatsapp,
         email: data.email,
         employer: data.employer || null,
+        city: data.city || null,
         accommodation: data.accommodation || null,
         arrivalDate: data.arrivalDate ? new Date(data.arrivalDate) : null,
         emergencyContactName: data.emergencyContactName || null,

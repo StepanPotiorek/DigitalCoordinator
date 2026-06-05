@@ -35,15 +35,13 @@ const steps = [
     title: "Open a Bank Account",
     items: [
       "Bring your passport and employment contract to a bank",
-      "Popular banks: Česká spořitelna, ČSOB, KB, Moneta",
-      "Some banks allow online application",
+      "Popular banks in CZ: AirBank, Česká spořitelna, ČSOB, KB, Moneta, Raiffeisenbank",
+      "Some banks allow online application if you have a Czech phone number",
       "Request a debit card (will be sent by mail)",
       "Ask about mobile banking app setup",
     ],
     nearby: [
-      { query: "Česká spořitelna", label: "Česká spořitelna nearby" },
-      { query: "ČSOB banka", label: "ČSOB nearby" },
-      { query: "Komerční banka KB", label: "KB nearby" },
+      { query: "bank pobočka", label: "Find banks nearby on Google Maps" },
     ],
   },
   {
@@ -61,7 +59,7 @@ const steps = [
     items: [
       "Weather changes frequently — dress in layers",
       "A friendly 'Dobrý den' (hello) goes a long way",
-      "Download IDOS app — nationwide public transport information system",
+      "Download IDOS app or use Google Maps — nationwide public transport information",
       "Try local food — Asian shops are available in bigger cities",
       "Join Filipino community groups on Facebook for support",
     ],

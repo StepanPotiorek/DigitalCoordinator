@@ -15,6 +15,16 @@
 - Practical tool for Czech clients to see coordination in action
 - Positions the role as "coordination + systems," not just personal support
 
+### Target Audience & Content Strategy (Universal + Local)
+
+The app is designed for **Filipino workers across all of Czech Republic** — not tied to any single city.
+
+- **~80 % universal content** — works for every Filipino in CZ (Employee Card, Bank Account, SIM, Healthcare, Workplace Culture, Communication, Worker Help)
+- **~20 % local/city-specific content** — each worker selects their city (Prague, Brno, Ostrava, Plzeň, etc.) during registration. In future, content like "transport apps per region" or "local OAMP office" can adapt based on city field.
+- City field (`Worker.city`) stored in database, displayed on profile, used in registration/edit forms
+- Transport: **IDOS** + **Google Maps** are nationwide; removed app-specific refs (PID Lítačka, ČD Můj vlak, Mapy.cz)
+- Banks: generic list (AirBank, Česká spořitelna, ČSOB, KB, Moneta, Raiffeisenbank) — no branch-specific nearby search
+
 ### What the App Does NOT Handle
 
 - Visas and immigration legal processing
@@ -248,6 +258,28 @@ bash deploy.sh
 - `src/app/dashboard/audit/page.tsx`: simplified UI — no filters, card layout, readable action names
 - `.gitignore`: added root `dev.db`
 
+### Session 2 — City field + Content universalization
+
+**Vision:** 80 % universal content for all Filipinos in CZ, 20 % local/city-specific via `Worker.city` field.
+
+**Changes:**
+- `prisma/schema.prisma`: added `city String?` to Worker model
+- `src/lib/validation.ts`: added `city` to both `createWorkerSchema` and `updateWorkerSchema`
+- `src/components/forms/worker-registration-form.tsx`: added city input field
+- `src/app/dashboard/workers/new/new-worker-form.tsx`: added city input
+- `src/app/dashboard/workers/[id]/edit/edit-worker-form.tsx`: added city field
+- `src/app/api/workers/route.ts`: save city on worker create
+- `src/app/api/workers/[id]/route.ts`: save city on worker update
+- `src/app/api/worker/me/route.ts`: return city in GET, accept city in PUT
+- `src/app/dashboard/worker/profile/page.tsx`: display city
+- `src/app/after-arrival/page.tsx`: banks → generic list (AirBank, ČS, ČSOB, KB, Moneta, RB); nearby search → "Find banks nearby on Google Maps"; transport → IDOS + Google Maps
+- `src/app/first-day/page.tsx`: "Use PID Lítačka app" → "Use Google Maps to find the best route and buy tickets / Download your regional transit app"
+- `src/lib/situations.ts`: PID Lítačka/ČD Můj vlak/Mapy.cz → Google Maps / your regional transit app (8 edits across buy-ticket, lost-ticket, missed-bus, directions)
+- `src/i18n/en.json`, `cz.json`, `tl.json`: added `form.city` translations
+- `prisma/migrations/`: fresh initial migration (squashed drift). NOTE: prisma dev database was reset — seed re-run (`npx tsx prisma/seed.ts`)
+- `AGENTS.md`: added "Target Audience & Content Strategy (Universal + Local)" section
+
 ### Known issues:
 - WhatsApp Callmebot not activated — send "I allow callmebot" from +420777654279 to +34 644 45 70 57
 - Seed DB in Dockerfile (`db-init` stage) always runs `prisma seed`, could overwrite fresh data on first volume creation
+- **Migration reset on dev:** old migrations were squashed into single `20260605121859_init` — production database must be handled with care (backup before deploy)

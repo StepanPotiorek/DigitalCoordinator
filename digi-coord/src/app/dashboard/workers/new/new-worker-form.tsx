@@ -16,6 +16,7 @@ export function NewWorkerForm() {
     email: "",
     password: "",
     employer: "",
+    city: "",
     accommodation: "",
     arrivalDate: "",
     emergencyContactName: "",
@@ -73,7 +74,7 @@ export function NewWorkerForm() {
                 setSuccess(false)
                 setForm({
                   name: "", whatsapp: "", email: "", password: "",
-                  employer: "", accommodation: "", arrivalDate: "",
+                  employer: "", city: "", accommodation: "", arrivalDate: "",
                   emergencyContactName: "", emergencyContactPhone: "",
                 })
               }}
@@ -167,6 +168,18 @@ export function NewWorkerForm() {
             value={form.employer} onChange={handleChange}
             className="mt-1 w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-white placeholder-slate-500 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
             placeholder="Company name"
+          />
+        </div>
+
+        <div>
+          <label htmlFor="city" className="block text-sm font-medium text-slate-300">
+            City
+          </label>
+          <input
+            id="city" name="city" type="text"
+            value={form.city} onChange={handleChange}
+            className="mt-1 w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-white placeholder-slate-500 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+            placeholder="Prague"
           />
         </div>
 

@@ -89,6 +89,7 @@
   "form.confirmPassword": "Confirm password",
   "form.employer": "Employer / Company",
   "form.accommodation": "Accommodation address",
+  "form.city": "City",
   "form.arrivalDate": "Arrival date",
   "form.emergencyName": "Emergency contact name",
   "form.emergencyPhone": "Emergency contact phone",

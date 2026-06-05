@@ -33,6 +33,7 @@ model Worker {
   whatsapp             String
   email                String?  @unique
   employer             String?
+  city                 String?
   accommodation        String?
   arrivalDate          DateTime?
   emergencyContactName String?
