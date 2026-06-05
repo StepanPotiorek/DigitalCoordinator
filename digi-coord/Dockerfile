@@ -32,9 +32,8 @@ FROM node:22-alpine AS runner
 WORKDIR /app
 
 RUN apk add --no-cache openssl && \
-    addgroup --system --gid 1001 nodejs 2>/dev/null; \
-    deluser nextjs 2>/dev/null; \
-    adduser --uid 1001 --disabled-password --shell /bin/sh nextjs
+    addgroup --system --gid 1001 nodejs && \
+    adduser --system --uid 1001 nextjs
 
 # Copy initialized database (will be used as seed for the volume)
 COPY --from=db-init /app/data/init.db /app/initial-data/prod.db
