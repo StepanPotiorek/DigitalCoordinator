@@ -17,7 +17,7 @@ const publicRoutes = [
   "/_not-found",
 ]
 
-export function middleware(req: NextRequest) {
+export function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl
 
   if (pathname.startsWith("/_next") || pathname.startsWith("/api") || pathname.startsWith("/icons") || pathname.startsWith("/favicon") || pathname === "/manifest.json" || pathname === "/sw.js") {
