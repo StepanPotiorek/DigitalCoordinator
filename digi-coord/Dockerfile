@@ -33,7 +33,7 @@ WORKDIR /app
 
 RUN apk add --no-cache openssl && \
     addgroup --system --gid 1001 nodejs && \
-    adduser --system --uid 1001 nextjs
+    adduser --uid 1001 --disabled-password --shell /bin/sh nextjs
 
 # Copy initialized database (will be used as seed for the volume)
 COPY --from=db-init /app/data/init.db /app/initial-data/prod.db
