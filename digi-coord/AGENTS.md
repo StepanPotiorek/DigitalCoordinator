@@ -226,25 +226,28 @@ bash deploy.sh
 - Route handler: `src/app/api/auth/login/route.ts` — calls `signIn("credentials", { redirect: false })` then `NextResponse.redirect("/dashboard", 303)`
 - Auth config: `src/lib/auth.ts` — explicit `secret: process.env.AUTH_SECRET`, JWT strategy, session maxAge 10 years
 
-**Critical insight — proxy.ts was middleware:**
-- `src/proxy.ts` had `export default function` + `export const config = { matcher: ... }` — Next.js 16 detected it as middleware (regardless of filename)
-- `getToken()` in proxy.ts failed to decode the JWT (reason unclear, possibly edge runtime cookie handling), causing ALL dashboard requests to redirect to `/login` even with valid session cookie
-- **Fix**: deleted `proxy.ts` (dashboard layout already calls `auth()` and redirects unauthenticated users)
+**Critical insight — proxy.ts is middleware:**
+- `src/proxy.ts` with `export function proxy()` + `export const config` is detected as middleware/proxy by Next.js 16
+- Old `proxy.ts` used `getToken()` from `next-auth/jwt` which failed in edge runtime — **deleted**
+- New `proxy.ts` (re-created) uses a simpler approach: checks for cookie `next-auth.session-token` existence, no JWT decode needed
+- Auth still verified server-side by `dashboard/layout.tsx` calling `auth()` — proxy just prevents unnecessary JS downloads for unauthenticated visitors
 
 **Key lessons:**
 - **Never use 307 redirect after POST login** — 307 preserves POST method; browser POSTs to `/dashboard` which fails. Use **303 See Other** instead
-- **Set-Cookie from fetch() or signIn() response is fragile in Playwright** — the proxy.ts middleware was the actual root cause, not cookie handling
+- **Set-Cookie from fetch() or signIn() response is fragile in Playwright** — the old proxy.ts middleware was the actual root cause, not cookie handling
 - **Explicit `secret: process.env.AUTH_SECRET`** in NextAuth config prevents issues with auto-detection
-- **`proxy.ts` with middleware signature is discovered by Next.js 16** — rename carefully
+- **Next.js 16 uses `proxy.ts` convention** (not `middleware.ts`) with `export function proxy`
+- **Service worker caches JS** — `public/sw.js` cached JS/CSS with `digicoord-v1`, never invalidated on deploy. Fixed by bumping to v2 and removing `js|css` from fetch regex
 
 ### Files changed this session:
-- `src/app/api/auth/login/route.ts`: `NextResponse.redirect(url, 303)` (was 307)
-- `src/lib/auth.ts`: added `secret: process.env.AUTH_SECRET`
-- `src/proxy.ts`: **deleted** (was acting as middleware, blocking valid sessions)
-- `tests/e2e/login.spec.ts`: 3 tests, all passing (page load, wrong password, success login)
-- `tests/e2e/cookie-debug.spec.ts`: deleted (one-time debug)
-- `src/app/api/auth/debug/route.ts`: deleted (one-time debug)
+- `src/proxy.ts`: **recreated** — auth proxy, cookie-check based (no JWT decode), early redirect to `/login`
+- `src/app/dashboard/layout.tsx`: redirect `/` → `/login`
+- `docker-compose.yml`: `environment:` → `env_file: .env.production`
+- `Makefile`: added `dev-restart` target
+- `public/sw.js`: cache version `v2`, removed `js|css` from fetch-cache regex
+- `src/app/dashboard/audit/page.tsx`: simplified UI — no filters, card layout, readable action names
+- `.gitignore`: added root `dev.db`
 
 ### Known issues:
-- SMTP not configured — emails logged as "skipped" (needs App Password or Brevo)
-- No middleware currently — dashboard layout protects routes, but unauthenticated users still load JS chunks
+- WhatsApp Callmebot not activated — send "I allow callmebot" from +420777654279 to +34 644 45 70 57
+- Seed DB in Dockerfile (`db-init` stage) always runs `prisma seed`, could overwrite fresh data on first volume creation
