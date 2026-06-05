@@ -57,8 +57,6 @@ RUN mkdir -p /app/public/uploads/issues && chown nextjs:nodejs /app/public/uploa
 COPY entrypoint.sh /app/entrypoint.sh
 RUN chmod +x /app/entrypoint.sh
 
-USER nextjs
-
 ENV NODE_ENV=production
 ENV DATABASE_URL="file:/app/data/prod.db"
 ENV AUTH_TRUST_HOST=true
