@@ -279,7 +279,39 @@ bash deploy.sh
 - `prisma/migrations/`: fresh initial migration (squashed drift). NOTE: prisma dev database was reset — seed re-run (`npx tsx prisma/seed.ts`)
 - `AGENTS.md`: added "Target Audience & Content Strategy (Universal + Local)" section
 
+### Session 3 — 📬 My Letters (V1 + V2 combined)
+
+**Feature:** Workers can browse a static letter category guide or upload a photo for AI analysis.
+- Only for logged-in workers (`/dashboard/worker/letters/`)
+- V1: 6 categories (🏛️ Ministry of Interior, 🏥 Health Insurance, 🏦 Bank, 🏢 Employer, 🏠 Accommodation, 📮 Other)
+- V2: Upload photo → Gemini 2.0 Flash Vision API → JSON with sender, purpose, actionRequired, deadline, explanation
+- "Other / Unknown" category → "Contact your coordinator immediately"
+- AI is optional (via `GEMINI_API_KEY` env var; if not set, static guide still works)
+- Letter history with delete support
+
+**New files:**
+- `prisma/schema.prisma`: added `Letter` model (`id, workerId, sender?, purpose?, actionRequired?, deadline?, explanation?, photoPath, mimeType, aiRaw?, aiConfidence?, createdAt`)
+- `src/lib/letter-guides.ts`: static guide data for 6 categories
+- `src/lib/gemini.ts`: Gemini REST API client (`analyzeLetterWithGemini`)
+- `src/app/api/worker/me/letters/route.ts`: GET (list) + POST (upload + AI analyze)
+- `src/app/api/worker/me/letters/[id]/route.ts`: GET (detail) + DELETE
+- `src/app/api/ai/analyze-letter/route.ts`: standalone AI analyze endpoint
+- `src/app/dashboard/worker/letters/page.tsx`: full client component (grid/category/upload/result/history views)
+
+**Modified files:**
+- `src/components/dashboard/dashboard-shell.tsx`: added "📬 My Letters" nav link for WORKER role
+- `src/app/dashboard/worker/page.tsx`: added "📬 My Letters" journey card + bottom link
+- `src/app/api/media/[filename]/route.ts`: added "letters" to search dirs
+
+**AI integration:**
+- Provider: Google Gemini 2.0 Flash (REST API, no SDK needed)
+- Env: `GEMINI_API_KEY` (optional)
+- Prompt asks for structured JSON output
+- Only images (not PDF) are sent to Gemini for analysis
+- Falls back gracefully if API key not set
+
 ### Known issues:
 - WhatsApp Callmebot not activated — send "I allow callmebot" from +420777654279 to +34 644 45 70 57
 - Seed DB in Dockerfile (`db-init` stage) always runs `prisma seed`, could overwrite fresh data on first volume creation
 - **Migration reset on dev:** old migrations were squashed into single `20260605121859_init` — production database must be handled with care (backup before deploy)
+- Gemini only analyzes images (not PDFs) — PDF uploads are stored but not analyzed
