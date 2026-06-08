@@ -15,6 +15,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
   const { data: session, status } = useSession()
   const router = useRouter()
   const [menuOpen, setMenuOpen] = useState(false)
+  const lang = useLang()
 
   useEffect(() => {
     if (status !== "authenticated") return
@@ -35,7 +36,6 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
   }
 
   const role = session?.user?.role
-  const lang = useLang()
 
   const navLinks = (
     <>
