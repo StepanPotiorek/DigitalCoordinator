@@ -4,9 +4,12 @@ import { useSession } from "next-auth/react"
 import { LogoutButton } from "@/components/auth/logout-button"
 import { NotificationBell } from "@/components/dashboard/notification-bell"
 import { PushSubscribeButton } from "@/components/pwa/push-subscribe-button"
+import { LanguageToggle } from "@/components/public/language-toggle"
 import Link from "next/link"
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
+import { useLang } from "@/lib/use-lang"
+import { t } from "@/lib/translations"
 
 export function DashboardShell({ children }: { children: React.ReactNode }) {
   const { data: session, status } = useSession()
@@ -32,6 +35,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
   }
 
   const role = session?.user?.role
+  const lang = useLang()
 
   const navLinks = (
     <>
@@ -42,56 +46,70 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
             className="rounded-lg bg-blue-900/30 px-3 py-2 text-sm font-medium text-blue-300 transition hover:bg-blue-800/40 hover:text-blue-200"
             onClick={() => setMenuOpen(false)}
           >
-            🆘 I need help
+            {t("dashboard.needHelp", lang)}
           </Link>
           <Link
             href="/dashboard/worker"
             className="rounded-lg px-3 py-2 text-sm text-slate-300 transition hover:bg-slate-800 hover:text-white"
             onClick={() => setMenuOpen(false)}
           >
-            Overview
+            {t("dashboard.overview", lang)}
           </Link>
           <Link
             href="/dashboard/worker/onboarding"
             className="rounded-lg px-3 py-2 text-sm text-slate-300 transition hover:bg-slate-800 hover:text-white"
             onClick={() => setMenuOpen(false)}
           >
-            Onboarding
+            {t("dashboard.onboarding", lang)}
           </Link>
           <Link
             href="/dashboard/worker/employee-card"
             className="rounded-lg px-3 py-2 text-sm text-slate-300 transition hover:bg-slate-800 hover:text-white"
             onClick={() => setMenuOpen(false)}
           >
-            Employee Card
+            {t("dashboard.employeeCard", lang)}
           </Link>
           <Link
             href="/dashboard/worker/issues"
             className="rounded-lg px-3 py-2 text-sm text-slate-300 transition hover:bg-slate-800 hover:text-white"
             onClick={() => setMenuOpen(false)}
           >
-            My Issues
+            {t("dashboard.myIssues", lang)}
           </Link>
           <Link
             href="/dashboard/worker/letters"
             className="rounded-lg px-3 py-2 text-sm text-slate-300 transition hover:bg-slate-800 hover:text-white"
             onClick={() => setMenuOpen(false)}
           >
-            📬 My Letters
+            {t("dashboard.myLetters", lang)}
           </Link>
           <Link
             href="/dashboard/worker/documents"
             className="rounded-lg px-3 py-2 text-sm text-slate-300 transition hover:bg-slate-800 hover:text-white"
             onClick={() => setMenuOpen(false)}
           >
-            Documents
+            {t("dashboard.documents", lang)}
           </Link>
           <Link
             href="/dashboard/worker/profile"
             className="rounded-lg px-3 py-2 text-sm text-slate-300 transition hover:bg-slate-800 hover:text-white"
             onClick={() => setMenuOpen(false)}
           >
-            Profile
+            {t("dashboard.profile", lang)}
+          </Link>
+          <Link
+            href="/dashboard/worker/messages"
+            className="rounded-lg px-3 py-2 text-sm text-slate-300 transition hover:bg-slate-800 hover:text-white"
+            onClick={() => setMenuOpen(false)}
+          >
+            {t("dashboard.messageCoordinator", lang)}
+          </Link>
+          <Link
+            href="/dashboard/worker/change-password"
+            className="rounded-lg px-3 py-2 text-sm text-slate-300 transition hover:bg-slate-800 hover:text-white"
+            onClick={() => setMenuOpen(false)}
+          >
+            {t("dashboard.changePassword", lang)}
           </Link>
         </>
       )}
@@ -176,6 +194,15 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
           API Keys
         </Link>
       )}
+      {role === "ADMIN" && (
+        <Link
+          href="/dashboard/worker/change-password"
+          className="rounded-lg px-3 py-2 text-sm text-slate-300 transition hover:bg-slate-800 hover:text-white"
+          onClick={() => setMenuOpen(false)}
+        >
+          {t("dashboard.changePassword", lang)}
+        </Link>
+      )}
     </>
   )
 
@@ -248,6 +275,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
 
       <main className="flex-1">
         <div className="flex items-center justify-end gap-2 border-b border-slate-800 px-4 py-2 md:px-8">
+          <LanguageToggle lang={lang} />
           <PushSubscribeButton />
           <NotificationBell />
         </div>
