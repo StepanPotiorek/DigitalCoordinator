@@ -93,7 +93,7 @@ export default async function FirstDayPage() {
 
         <section className="mt-10">
           <h2 className="mb-4 text-xl font-semibold text-white">{t("firstday.phrases", lang)}</h2>
-          <div className="overflow-x-auto rounded-xl border border-slate-800">
+          <div className="hidden sm:block overflow-x-auto rounded-xl border border-slate-800">
             <table className="w-full text-left text-sm">
               <thead>
                 <tr className="border-b border-slate-800 bg-slate-900/50">
@@ -112,6 +112,15 @@ export default async function FirstDayPage() {
                 ))}
               </tbody>
             </table>
+          </div>
+          <div className="grid gap-3 sm:hidden">
+            {phrases.map((p) => (
+              <div key={p.english} className="rounded-xl border border-slate-800 bg-slate-900/30 p-4">
+                <div className="text-sm font-semibold text-white">{p.english}</div>
+                <div className="mt-1 text-sm text-blue-300">{p.czech}</div>
+                <div className="mt-0.5 text-xs text-slate-500">/{p.pronunciation}/</div>
+              </div>
+            ))}
           </div>
         </section>
 
