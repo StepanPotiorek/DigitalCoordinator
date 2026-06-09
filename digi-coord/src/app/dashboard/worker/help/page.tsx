@@ -5,6 +5,8 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useSession } from "next-auth/react"
 import { categories, situations, type Situation } from "@/lib/situations"
+import { RippleButton } from "@/components/ui/ripple-button"
+import { SkeletonCard } from "@/components/ui/skeleton-card"
 
 type FlowStep = "category" | "situation" | "detail" | "feedback-yes" | "feedback-no"
 
@@ -50,73 +52,6 @@ function triggerConfetti() {
   }
 
   setTimeout(() => container.remove(), 1500)
-}
-
-function RippleButton({
-  onClick,
-  className,
-  children,
-}: {
-  onClick: () => void
-  className: string
-  children: React.ReactNode
-}) {
-  const [ripples, setRipples] = useState<{ id: number; x: number; y: number }[]>([])
-
-  function handlePointerDown(e: React.PointerEvent<HTMLButtonElement>) {
-    const rect = e.currentTarget.getBoundingClientRect()
-    const x = e.clientX - rect.left
-    const y = e.clientY - rect.top
-    const id = Date.now()
-    setRipples((prev) => [...prev, { id, x, y }])
-    setTimeout(() => setRipples((prev) => prev.filter((r) => r.id !== id)), 600)
-  }
-
-  return (
-    <button
-      onClick={onClick}
-      onPointerDown={handlePointerDown}
-      className={`relative overflow-hidden ${className}`}
-    >
-      {ripples.map((r) => (
-        <span
-          key={r.id}
-          className="absolute rounded-full bg-white/20 animate-ripple pointer-events-none"
-          style={{
-            left: r.x - 10,
-            top: r.y - 10,
-            width: 20,
-            height: 20,
-          }}
-        />
-      ))}
-      {children}
-    </button>
-  )
-}
-
-function SkeletonCard() {
-  return (
-    <div className="space-y-4 animate-pulse">
-      <div className="flex items-center gap-4">
-        <div className="h-12 w-12 rounded-xl bg-slate-800" />
-        <div className="space-y-2">
-          <div className="h-5 w-48 rounded bg-slate-800" />
-          <div className="h-3 w-32 rounded bg-slate-800/50" />
-        </div>
-      </div>
-      {[1, 2, 3].map((i) => (
-        <div key={i} className="rounded-xl border border-slate-800 bg-slate-900/50 p-5 backdrop-blur-sm">
-          <div className="mb-3 h-4 w-40 rounded bg-slate-800" />
-          <div className="space-y-2">
-            <div className="h-4 w-full rounded bg-slate-800/50" />
-            <div className="h-4 w-3/4 rounded bg-slate-800/50" />
-            <div className="h-4 w-1/2 rounded bg-slate-800/50" />
-          </div>
-        </div>
-      ))}
-    </div>
-  )
 }
 
 export default function WorkerHelpPage() {

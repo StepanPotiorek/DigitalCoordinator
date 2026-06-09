@@ -1,5 +1,6 @@
 "use client"
 
+import { TextField, SelectField } from "@/components/ui/text-field"
 import { useEffect, useState } from "react"
 import { useRouter, useParams } from "next/navigation"
 import Link from "next/link"
@@ -124,181 +125,28 @@ export function EditWorkerForm({ session }: { session: SessionProp }) {
         onSubmit={handleSubmit}
         className="max-w-lg space-y-4 rounded-xl border border-slate-800 bg-slate-900/50 p-6 backdrop-blur-sm"
       >
-        <div>
-          <label
-            htmlFor="name"
-            className="block text-sm font-medium text-slate-300"
-          >
-            Full name <span className="text-red-400">*</span>
-          </label>
-          <input
-            id="name"
-            name="name"
-            type="text"
-            required
-            value={formData.name}
-            onChange={handleChange}
-            className="mt-1 w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-white outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-          />
-        </div>
-
-        <div>
-          <label
-            htmlFor="whatsapp"
-            className="block text-sm font-medium text-slate-300"
-          >
-            WhatsApp number <span className="text-red-400">*</span>
-          </label>
-          <input
-            id="whatsapp"
-            name="whatsapp"
-            type="text"
-            required
-            value={formData.whatsapp}
-            onChange={handleChange}
-            className="mt-1 w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-white outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-          />
-        </div>
-
-        <div>
-          <label
-            htmlFor="email"
-            className="block text-sm font-medium text-slate-300"
-          >
-            Email
-          </label>
-          <input
-            id="email"
-            name="email"
-            type="email"
-            value={formData.email}
-            onChange={handleChange}
-            className="mt-1 w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-white outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-          />
-        </div>
-
-        <div>
-          <label
-            htmlFor="employer"
-            className="block text-sm font-medium text-slate-300"
-          >
-            Employer
-          </label>
-          <input
-            id="employer"
-            name="employer"
-            type="text"
-            value={formData.employer}
-            onChange={handleChange}
-            className="mt-1 w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-white outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-          />
-        </div>
-
-        <div>
-          <label
-            htmlFor="city"
-            className="block text-sm font-medium text-slate-300"
-          >
-            City
-          </label>
-          <input
-            id="city"
-            name="city"
-            type="text"
-            value={formData.city}
-            onChange={handleChange}
-            className="mt-1 w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-white outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-          />
-        </div>
-
-        <div>
-          <label
-            htmlFor="accommodation"
-            className="block text-sm font-medium text-slate-300"
-          >
-            Accommodation
-          </label>
-          <input
-            id="accommodation"
-            name="accommodation"
-            type="text"
-            value={formData.accommodation}
-            onChange={handleChange}
-            className="mt-1 w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-white outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-          />
-        </div>
-
-        <div>
-          <label
-            htmlFor="arrivalDate"
-            className="block text-sm font-medium text-slate-300"
-          >
-            Arrival date
-          </label>
-          <input
-            id="arrivalDate"
-            name="arrivalDate"
-            type="date"
-            value={formData.arrivalDate}
-            onChange={handleChange}
-            className="mt-1 w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-white outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-          />
-        </div>
-
-        <div>
-          <label
-            htmlFor="emergencyContactName"
-            className="block text-sm font-medium text-slate-300"
-          >
-            Emergency contact name
-          </label>
-          <input
-            id="emergencyContactName"
-            name="emergencyContactName"
-            type="text"
-            value={formData.emergencyContactName}
-            onChange={handleChange}
-            className="mt-1 w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-white outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-          />
-        </div>
-
-        <div>
-          <label
-            htmlFor="emergencyContactPhone"
-            className="block text-sm font-medium text-slate-300"
-          >
-            Emergency contact phone
-          </label>
-          <input
-            id="emergencyContactPhone"
-            name="emergencyContactPhone"
-            type="text"
-            value={formData.emergencyContactPhone}
-            onChange={handleChange}
-            className="mt-1 w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-white outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-          />
-        </div>
+        <TextField id="name" label="Full name" value={formData.name} onChange={handleChange} required />
+        <TextField id="whatsapp" label="WhatsApp number" value={formData.whatsapp} onChange={handleChange} required />
+        <TextField id="email" label="Email" value={formData.email} onChange={handleChange} type="email" />
+        <TextField id="employer" label="Employer" value={formData.employer} onChange={handleChange} />
+        <TextField id="city" label="City" value={formData.city} onChange={handleChange} />
+        <TextField id="accommodation" label="Accommodation" value={formData.accommodation} onChange={handleChange} />
+        <TextField id="arrivalDate" label="Arrival date" value={formData.arrivalDate} onChange={handleChange} type="date" />
+        <TextField id="emergencyContactName" label="Emergency contact name" value={formData.emergencyContactName} onChange={handleChange} />
+        <TextField id="emergencyContactPhone" label="Emergency contact phone" value={formData.emergencyContactPhone} onChange={handleChange} />
 
         {isAdmin && (
-          <div>
-            <label
-              htmlFor="onboardingStatus"
-              className="block text-sm font-medium text-slate-300"
-            >
-              Onboarding Status
-            </label>
-            <select
-              id="onboardingStatus"
-              name="onboardingStatus"
-              value={formData.onboardingStatus}
-              onChange={handleChange}
-              className="mt-1 w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-white outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-            >
-              <option value="PENDING">PENDING</option>
-              <option value="IN_PROGRESS">IN PROGRESS</option>
-              <option value="COMPLETED">COMPLETED</option>
-            </select>
-          </div>
+          <SelectField
+            id="onboardingStatus"
+            label="Onboarding Status"
+            value={formData.onboardingStatus}
+            onChange={handleChange}
+            options={[
+              { value: "PENDING", label: "PENDING" },
+              { value: "IN_PROGRESS", label: "IN PROGRESS" },
+              { value: "COMPLETED", label: "COMPLETED" },
+            ]}
+          />
         )}
 
         <button

@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { TextField } from "@/components/ui/text-field"
 import { PasswordInput } from "@/components/ui/password-input"
 import { type Lang, t } from "@/lib/translations"
 
@@ -97,208 +98,41 @@ export function WorkerRegistrationForm({ lang }: { lang: Lang }) {
         </p>
       )}
       <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label
-            htmlFor="name"
-            className="block text-sm font-medium text-slate-300"
-          >
-            {t("form.name", lang)} <span className="text-red-400">*</span>
-          </label>
-          <input
-            id="name"
-            name="name"
-            type="text"
-            required
-            value={formData.name}
-            onChange={handleChange}
-            className="mt-1 w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-white placeholder-slate-500 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-            placeholder="Juan Dela Cruz"
-          />
-        </div>
-
-        <div>
-          <label
-            htmlFor="whatsapp"
-            className="block text-sm font-medium text-slate-300"
-          >
-            {t("form.whatsapp", lang)} <span className="text-red-400">*</span>
-          </label>
-          <input
-            id="whatsapp"
-            name="whatsapp"
-            type="text"
-            required
-            value={formData.whatsapp}
-            onChange={handleChange}
-            className="mt-1 w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-white placeholder-slate-500 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-            placeholder="+639123456789"
-          />
-        </div>
-
-        <div>
-          <label
-            htmlFor="email"
-            className="block text-sm font-medium text-slate-300"
-          >
-            {t("form.email", lang)} <span className="text-red-400">*</span>
-          </label>
-          <input
-            id="email"
-            name="email"
-            type="email"
-            required
-            value={formData.email}
-            onChange={handleChange}
-            className="mt-1 w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-white placeholder-slate-500 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-            placeholder="juan@example.com"
-          />
-        </div>
+        <TextField id="name" label={t("form.name", lang)} value={formData.name} onChange={handleChange} required placeholder="Juan Dela Cruz" />
+        <TextField id="whatsapp" label={t("form.whatsapp", lang)} value={formData.whatsapp} onChange={handleChange} required placeholder="+639123456789" />
+        <TextField id="email" label={t("form.email", lang)} value={formData.email} onChange={handleChange} type="email" required placeholder="juan@example.com" />
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div>
-            <label
-              htmlFor="password"
-              className="block text-sm font-medium text-slate-300"
-            >
+            <label htmlFor="password" className="block text-sm font-medium text-slate-300">
               {t("form.password", lang)} <span className="text-red-400">*</span>
             </label>
             <PasswordInput
-              id="password"
-              name="password"
-              required
-              minLength={6}
-              value={formData.password}
-              onChange={handleChange}
+              id="password" name="password" required minLength={6}
+              value={formData.password} onChange={handleChange}
               placeholder={t("form.passwordMin", lang)}
               containerClassName="mt-1"
             />
           </div>
           <div>
-            <label
-              htmlFor="confirmPassword"
-              className="block text-sm font-medium text-slate-300"
-            >
+            <label htmlFor="confirmPassword" className="block text-sm font-medium text-slate-300">
               {t("form.confirmPassword", lang)} <span className="text-red-400">*</span>
             </label>
             <PasswordInput
-              id="confirmPassword"
-              name="confirmPassword"
-              required
-              minLength={6}
-              value={formData.confirmPassword}
-              onChange={handleChange}
+              id="confirmPassword" name="confirmPassword" required minLength={6}
+              value={formData.confirmPassword} onChange={handleChange}
               placeholder={t("form.confirmPassword", lang)}
               containerClassName="mt-1"
             />
           </div>
         </div>
 
-        <div>
-          <label
-            htmlFor="employer"
-            className="block text-sm font-medium text-slate-300"
-          >
-            {t("form.employer", lang)}
-          </label>
-          <input
-            id="employer"
-            name="employer"
-            type="text"
-            value={formData.employer}
-            onChange={handleChange}
-            className="mt-1 w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-white placeholder-slate-500 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-            placeholder="Company name"
-          />
-        </div>
-
-        <div>
-          <label
-            htmlFor="city"
-            className="block text-sm font-medium text-slate-300"
-          >
-            {t("form.city", lang)}
-          </label>
-          <input
-            id="city"
-            name="city"
-            type="text"
-            value={formData.city}
-            onChange={handleChange}
-            className="mt-1 w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-white placeholder-slate-500 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-            placeholder="Prague"
-          />
-        </div>
-
-        <div>
-          <label
-            htmlFor="accommodation"
-            className="block text-sm font-medium text-slate-300"
-          >
-            {t("form.accommodation", lang)}
-          </label>
-          <input
-            id="accommodation"
-            name="accommodation"
-            type="text"
-            value={formData.accommodation}
-            onChange={handleChange}
-            className="mt-1 w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-white placeholder-slate-500 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-            placeholder="Address in Czech Republic"
-          />
-        </div>
-
-        <div>
-          <label
-            htmlFor="arrivalDate"
-            className="block text-sm font-medium text-slate-300"
-          >
-            {t("form.arrivalDate", lang)}
-          </label>
-          <input
-            id="arrivalDate"
-            name="arrivalDate"
-            type="date"
-            value={formData.arrivalDate}
-            onChange={handleChange}
-            className="mt-1 w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-white outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-          />
-        </div>
-
-        <div>
-          <label
-            htmlFor="emergencyContactName"
-            className="block text-sm font-medium text-slate-300"
-          >
-            {t("form.emergencyName", lang)}
-          </label>
-          <input
-            id="emergencyContactName"
-            name="emergencyContactName"
-            type="text"
-            value={formData.emergencyContactName}
-            onChange={handleChange}
-            className="mt-1 w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-white placeholder-slate-500 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-            placeholder="Next of kin"
-          />
-        </div>
-
-        <div>
-          <label
-            htmlFor="emergencyContactPhone"
-            className="block text-sm font-medium text-slate-300"
-          >
-            {t("form.emergencyPhone", lang)}
-          </label>
-          <input
-            id="emergencyContactPhone"
-            name="emergencyContactPhone"
-            type="text"
-            value={formData.emergencyContactPhone}
-            onChange={handleChange}
-            className="mt-1 w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-white placeholder-slate-500 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-            placeholder="+639123456789"
-          />
-        </div>
+        <TextField id="employer" label={t("form.employer", lang)} value={formData.employer} onChange={handleChange} placeholder="Company name" />
+        <TextField id="city" label={t("form.city", lang)} value={formData.city} onChange={handleChange} placeholder="Prague" />
+        <TextField id="accommodation" label={t("form.accommodation", lang)} value={formData.accommodation} onChange={handleChange} placeholder="Address in Czech Republic" />
+        <TextField id="arrivalDate" label={t("form.arrivalDate", lang)} value={formData.arrivalDate} onChange={handleChange} type="date" />
+        <TextField id="emergencyContactName" label={t("form.emergencyName", lang)} value={formData.emergencyContactName} onChange={handleChange} placeholder="Next of kin" />
+        <TextField id="emergencyContactPhone" label={t("form.emergencyPhone", lang)} value={formData.emergencyContactPhone} onChange={handleChange} placeholder="+639123456789" />
 
         <button
           type="submit"

@@ -2,7 +2,7 @@ import { auth } from "@/lib/auth"
 import { prisma, createNotificationForAdmins } from "@/lib/prisma"
 import { apiHandler, unauthorized, notFound, forbidden, parseId } from "@/lib/api-utils"
 import { validate, updateIssueSchema } from "@/lib/validation"
-import { notifyWorkerOfResolution } from "@/lib/email-helpers"
+import { notifyWorkerOfResolution } from "@/lib/email"
 import { logAction } from "@/lib/audit"
 
 export async function GET(_request: Request, { params }: { params: Promise<{ id: string }> }) {

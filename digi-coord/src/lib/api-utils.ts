@@ -52,20 +52,6 @@ export async function apiHandler<T>(
   }
 }
 
-export async function apiHandlerRaw<T>(
-  fn: Handler<NextResponse>,
-): Promise<NextResponse> {
-  try {
-    return await fn()
-  } catch (error) {
-    const message =
-      error instanceof Error ? error.message : "Internal server error"
-    logger.error({ err: error }, "API Error")
-    Sentry.captureException(error)
-    return NextResponse.json({ error: message }, { status: 500 })
-  }
-}
-
 export function unauthorized() {
   return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 }
@@ -88,10 +74,6 @@ export function conflict(error: string) {
 
 export function created(body: unknown) {
   return NextResponse.json(body, { status: 201 })
-}
-
-export function noContent() {
-  return new NextResponse(null, { status: 204 })
 }
 
 export const priorityOrder: Record<string, number> = {

@@ -2,7 +2,7 @@ import { auth } from "@/lib/auth"
 import { prisma, createNotificationForAdmins } from "@/lib/prisma"
 import { apiHandler, unauthorized, notFound, badRequest } from "@/lib/api-utils"
 import { logAction } from "@/lib/audit"
-import { notifyWorkerOfApproval } from "@/lib/email-helpers"
+import { notifyWorkerOfApproval } from "@/lib/email"
 import { NextRequest } from "next/server"
 
 export async function PATCH(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {

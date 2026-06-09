@@ -1,10 +1,4 @@
-export default function Loading() {
-  return (
-    <div className="flex min-h-[50vh] items-center justify-center">
-      <div className="flex flex-col items-center gap-3">
-        <div className="h-8 w-8 animate-spin rounded-full border-2 border-blue-500 border-t-transparent" />
-        <p className="text-sm text-slate-400">Loading dashboard...</p>
-      </div>
-    </div>
-  )
+import Loading from "@/components/ui/loading"
+export default function DashboardLoading() {
+  return <Loading text="Loading dashboard..." />
 }

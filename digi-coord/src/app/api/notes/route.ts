@@ -1,7 +1,7 @@
 import { NextRequest } from "next/server"
 import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
-import { apiHandler, unauthorized, badRequest, parseId } from "@/lib/api-utils"
+import { apiHandler, unauthorized, badRequest, parseId, created } from "@/lib/api-utils"
 import { logAction } from "@/lib/audit"
 
 export async function GET(req: NextRequest) {
@@ -70,6 +70,6 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    return new Response(JSON.stringify(note), { status: 201 })
+    return created(note)
   })
 }

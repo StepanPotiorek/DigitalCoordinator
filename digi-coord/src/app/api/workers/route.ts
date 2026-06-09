@@ -5,7 +5,7 @@ import { validate, createWorkerSchema, updateWorkerSchema } from "@/lib/validati
 import { defaultOnboardingItems } from "@/lib/onboarding-items"
 import { hash } from "bcryptjs"
 import { NextRequest } from "next/server"
-import { notifyAdminsOfNewWorker, notifyWorkerOfRegistration } from "@/lib/email-helpers"
+import { notifyAdminsOfNewWorker, notifyWorkerOfRegistration } from "@/lib/email"
 import { logAction } from "@/lib/audit"
 import { sendWhatsApp } from "@/lib/whatsapp"
 

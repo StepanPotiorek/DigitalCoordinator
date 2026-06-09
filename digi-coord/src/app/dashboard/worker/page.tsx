@@ -4,6 +4,8 @@ import { useSession } from "next-auth/react"
 import { useEffect, useState } from "react"
 import Link from "next/link"
 import { JourneyCard } from "./journey-card"
+import { useLang } from "@/lib/use-lang"
+import { t } from "@/lib/translations"
 
 interface WorkerData {
   id: number
@@ -74,6 +76,7 @@ const EMPLOYEE_CARD_NEXT_ACTION: Record<string, { label: string; href: string } 
 
 export default function WorkerDashboardPage() {
   const { data: session } = useSession()
+  const lang = useLang()
   const [worker, setWorker] = useState<WorkerData | null>(null)
   const [onboarding, setOnboarding] = useState<OnboardingItem[]>([])
   const [issues, setIssues] = useState<IssueItem[]>([])
@@ -93,11 +96,11 @@ export default function WorkerDashboardPage() {
   }, [])
 
   if (loading) {
-    return <div className="text-sm text-slate-400">Loading...</div>
+    return <div className="text-sm text-slate-400">{t("dashboard.loading", lang)}</div>
   }
 
   if (!worker) {
-    return <div className="text-sm text-slate-400">Worker profile not found.</div>
+    return <div className="text-sm text-slate-400">{t("dashboard.notFound", lang)}</div>
   }
 
   function itemsForCategory(cat: string) {
@@ -139,10 +142,10 @@ export default function WorkerDashboardPage() {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold text-white">
-              {progress < 100 ? `What's next, ${worker.name}?` : `Good job, ${worker.name}!`}
+              {progress < 100 ? t("dashboard.whatsNext", lang).replace("{name}", worker.name) : t("dashboard.goodJob", lang).replace("{name}", worker.name)}
             </h1>
             <p className="mt-1 text-sm text-slate-400">
-              {completedSteps} of {totalSteps} steps completed
+              {t("dashboard.stepsCompleted", lang).replace("{done}", String(completedSteps)).replace("{total}", String(totalSteps))}
             </p>
           </div>
           <div className="flex items-center gap-2">
@@ -167,7 +170,7 @@ export default function WorkerDashboardPage() {
             <span className="text-xl">🔔</span>
             <div className="min-w-0 flex-1">
               <div className="text-sm font-medium text-amber-400">
-                {openIssues.length} open {openIssues.length === 1 ? "issue" : "issues"}
+                {t("dashboard.openIssues", lang).replace("{count}", String(openIssues.length))}
               </div>
               <div className="line-clamp-1 text-xs text-slate-400">
                 {openIssues[0].issueType} &middot; {openIssues[0].priority}
@@ -184,30 +187,30 @@ export default function WorkerDashboardPage() {
       <div className="space-y-3">
         <JourneyCard
           icon="✈️"
-          title="Arrival"
+          title={t("dashboard.arrival", lang)}
           status={arrivalDone ? "completed" : "not-started"}
           items={[
-            { label: "Arrived in Czech Republic", done: arrivalDone },
+            { label: t("dashboard.arrivedInCz", lang), done: arrivalDone },
           ]}
-          nextAction={arrivalDone ? undefined : "Track your arrival"}
+          nextAction={arrivalDone ? undefined : t("dashboard.trackArrival", lang)}
           nextActionHref={arrivalDone ? undefined : "/after-arrival"}
         />
 
         <JourneyCard
           icon="🏠"
-          title="Accommodation"
+          title={t("dashboard.accommodation", lang)}
           status={categoryStatus("ACCOMMODATION")}
           items={itemsForCategory("ACCOMMODATION").map((i) => ({
             label: i.label,
             done: i.completed,
           }))}
-          nextAction={categoryStatus("ACCOMMODATION") === "completed" ? undefined : "View accommodation details"}
+          nextAction={categoryStatus("ACCOMMODATION") === "completed" ? undefined : t("dashboard.viewAccommodation", lang)}
           nextActionHref={categoryStatus("ACCOMMODATION") === "completed" ? undefined : "/dashboard/worker/help?category=accommodation"}
         />
 
         <JourneyCard
           icon="🪪"
-          title="Employee Card"
+          title={t("dashboard.employeeCardTitle", lang)}
           status={
             worker.employeeCardStatus === "ISSUED"
               ? "completed"
@@ -222,7 +225,7 @@ export default function WorkerDashboardPage() {
 
         <JourneyCard
           icon="📱"
-          title="SIM Card"
+          title={t("dashboard.simCard", lang)}
           status={categoryStatus("SIM_CARD")}
           items={itemsForCategory("SIM_CARD").map((i) => ({
             label: i.label,
@@ -232,7 +235,7 @@ export default function WorkerDashboardPage() {
 
         <JourneyCard
           icon="🏦"
-          title="Bank Account"
+          title={t("dashboard.bankAccount", lang)}
           status={categoryStatus("BANK_ACCOUNT")}
           items={itemsForCategory("BANK_ACCOUNT").map((i) => ({
             label: i.label,
@@ -242,7 +245,7 @@ export default function WorkerDashboardPage() {
 
         <JourneyCard
           icon="👷"
-          title="First Day at Work"
+          title={t("dashboard.firstDayWork", lang)}
           status={categoryStatus("FIRST_DAY")}
           items={itemsForCategory("FIRST_DAY").map((i) => ({
             label: i.label,
@@ -252,7 +255,7 @@ export default function WorkerDashboardPage() {
 
         <JourneyCard
           icon="🌦️"
-          title="Adaptation"
+          title={t("dashboard.adaptation", lang)}
           status={categoryStatus("ADAPTATION")}
           items={itemsForCategory("ADAPTATION").map((i) => ({
             label: i.label,
@@ -270,8 +273,8 @@ export default function WorkerDashboardPage() {
           <div className="flex items-center gap-3">
             <span className="text-xl">🆘</span>
             <div>
-              <div className="font-medium text-white">Need help?</div>
-              <div className="text-xs text-slate-400">Self-service guides for any situation</div>
+              <div className="font-medium text-white">{t("dashboard.needHelpTitle", lang)}</div>
+              <div className="text-xs text-slate-400">{t("dashboard.needHelpDesc", lang)}</div>
             </div>
           </div>
         </Link>
@@ -283,8 +286,8 @@ export default function WorkerDashboardPage() {
           <div className="flex items-center gap-3">
             <span className="text-xl">📬</span>
             <div>
-              <div className="font-medium text-white">My Letters</div>
-              <div className="text-xs text-slate-400">Understand official letters and upload photos</div>
+              <div className="font-medium text-white">{t("dashboard.myLettersTitle", lang)}</div>
+              <div className="text-xs text-slate-400">{t("dashboard.myLettersDesc", lang)}</div>
             </div>
           </div>
         </Link>
@@ -296,8 +299,8 @@ export default function WorkerDashboardPage() {
           <div className="flex items-center gap-3">
             <span className="text-xl">📋</span>
             <div>
-              <div className="font-medium text-white">Onboarding details</div>
-              <div className="text-xs text-slate-400">View all onboarding items</div>
+              <div className="font-medium text-white">{t("dashboard.onboardingDetails", lang)}</div>
+              <div className="text-xs text-slate-400">{t("dashboard.onboardingDetailsDesc", lang)}</div>
             </div>
           </div>
         </Link>
@@ -305,12 +308,12 @@ export default function WorkerDashboardPage() {
 
       {/* Bottom links */}
       <div className="flex gap-4 text-xs text-slate-500">
-        <Link href="/dashboard/worker/letters" className="hover:text-white transition">📬 My Letters</Link>
-        <Link href="/dashboard/worker/documents" className="hover:text-white transition">📄 Documents</Link>
-        <Link href="/dashboard/worker/profile" className="hover:text-white transition">👤 Profile</Link>
-        <Link href="/faq" className="hover:text-white transition">❓ FAQ</Link>
+        <Link href="/dashboard/worker/letters" className="hover:text-white transition">{t("dashboard.myLettersTitle", lang)}</Link>
+        <Link href="/dashboard/worker/documents" className="hover:text-white transition">{t("dashboard.documents", lang)}</Link>
+        <Link href="/dashboard/worker/profile" className="hover:text-white transition">{t("dashboard.profile", lang)}</Link>
+        <Link href="/faq" className="hover:text-white transition">{t("faq.label", lang)}</Link>
         <a href="https://wa.me/420777654279" target="_blank" rel="noopener noreferrer" className="hover:text-white transition">
-          💬 WhatsApp
+          {t("contact.whatsapp", lang)}
         </a>
       </div>
     </div>

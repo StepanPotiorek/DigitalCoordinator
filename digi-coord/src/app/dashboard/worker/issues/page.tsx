@@ -1,6 +1,8 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import { useLang } from "@/lib/use-lang"
+import { t } from "@/lib/translations"
 
 interface Issue {
   id: number
@@ -26,6 +28,7 @@ const priorityColors: Record<string, string> = {
 }
 
 export default function WorkerIssuesPage() {
+  const lang = useLang()
   const [issues, setIssues] = useState<Issue[]>([])
   const [loading, setLoading] = useState(true)
 
@@ -39,17 +42,17 @@ export default function WorkerIssuesPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-white">My Issues</h1>
+        <h1 className="text-2xl font-bold text-white">{t("dashboard.myIssues", lang)}</h1>
         <p className="mt-1 text-sm text-slate-400">
-          Issues you have reported
+          {t("dashboard.issuesReported", lang)}
         </p>
       </div>
 
       {loading ? (
-        <p className="text-sm text-slate-400">Loading...</p>
+        <p className="text-sm text-slate-400">{t("dashboard.loading", lang)}</p>
       ) : issues.length === 0 ? (
         <div className="rounded-xl border border-slate-800 bg-slate-900/50 p-8 text-center backdrop-blur-sm">
-          <p className="text-slate-400">No issues reported yet.</p>
+          <p className="text-slate-400">{t("dashboard.noIssues", lang)}</p>
         </div>
       ) : (
         <div className="space-y-4">
@@ -80,7 +83,7 @@ export default function WorkerIssuesPage() {
               </p>
               {issue.mediaUrls && issue.mediaUrls.length > 0 && (
                 <p className="mt-2 text-xs text-slate-500">
-                  {issue.mediaUrls.length} attachment(s)
+                  {t("dashboard.attachments", lang).replace("{count}", String(issue.mediaUrls.length))}
                 </p>
               )}
               <p className="mt-2 text-xs text-slate-500">
@@ -96,7 +99,7 @@ export default function WorkerIssuesPage() {
           href="/report"
           className="inline-block rounded-lg bg-blue-600 px-6 py-2 text-sm font-medium text-white hover:bg-blue-700"
         >
-          Report New Issue
+          {t("dashboard.reportIssue", lang)}
         </a>
       </div>
     </div>

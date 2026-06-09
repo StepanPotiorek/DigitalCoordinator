@@ -1,6 +1,8 @@
 "use client"
 
 import { useEffect, useState, useRef } from "react"
+import { useLang } from "@/lib/use-lang"
+import { t } from "@/lib/translations"
 
 interface Document {
   id: number
@@ -8,13 +10,6 @@ interface Document {
   filename: string
   originalName: string
   uploadedAt: string
-}
-
-const docTypeLabels: Record<string, string> = {
-  PASSPORT: "Passport",
-  VISA: "Visa",
-  CONTRACT: "Contract",
-  OTHER: "Other",
 }
 
 const docTypeColors: Record<string, string> = {
@@ -25,7 +20,18 @@ const docTypeColors: Record<string, string> = {
 }
 
 export default function WorkerDocumentsPage() {
+  const lang = useLang()
   const fileRef = useRef<HTMLInputElement>(null)
+
+  function docTypeLabel(type: string) {
+    const map: Record<string, string> = {
+      PASSPORT: t("dashboard.docPassport", lang),
+      VISA: t("dashboard.docVisa", lang),
+      CONTRACT: t("dashboard.docContract", lang),
+      OTHER: t("dashboard.docOther", lang),
+    }
+    return map[type] || type
+  }
   const [docs, setDocs] = useState<Document[]>([])
   const [loading, setLoading] = useState(true)
   const [uploading, setUploading] = useState(false)
@@ -76,29 +82,29 @@ export default function WorkerDocumentsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-white">My Documents</h1>
+        <h1 className="text-2xl font-bold text-white">{t("dashboard.myDocuments", lang)}</h1>
         <p className="mt-1 text-sm text-slate-400">
-          Upload your passport, visa, contract and other documents
+          {t("dashboard.uploadDocsDesc", lang)}
         </p>
       </div>
 
       <form onSubmit={handleUpload} className="rounded-xl border border-slate-800 bg-slate-900/50 p-6 backdrop-blur-sm">
-        <h2 className="mb-4 text-lg font-semibold text-white">Upload Document</h2>
+        <h2 className="mb-4 text-lg font-semibold text-white">{t("dashboard.uploadDocument", lang)}</h2>
         <div className="grid gap-4 sm:grid-cols-3">
           <div>
-            <label className="mb-1 block text-sm font-medium text-slate-300">Document Type</label>
+            <label className="mb-1 block text-sm font-medium text-slate-300">{t("dashboard.documentType", lang)}</label>
             <select
               value={docType}
               onChange={(e) => setDocType(e.target.value)}
               className="w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-white outline-none focus:border-blue-500"
             >
-              {Object.entries(docTypeLabels).map(([value, label]) => (
-                <option key={value} value={value}>{label}</option>
+              {["PASSPORT", "VISA", "CONTRACT", "OTHER"].map((value) => (
+                <option key={value} value={value}>{docTypeLabel(value)}</option>
               ))}
             </select>
           </div>
           <div>
-            <label className="mb-1 block text-sm font-medium text-slate-300">File</label>
+            <label className="mb-1 block text-sm font-medium text-slate-300">{t("dashboard.file", lang)}</label>
             <input
               ref={fileRef}
               type="file"
@@ -113,26 +119,26 @@ export default function WorkerDocumentsPage() {
               disabled={uploading}
               className="w-full rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
             >
-              {uploading ? "Uploading..." : "Upload"}
+              {uploading ? t("dashboard.uploading", lang) : t("dashboard.upload", lang)}
             </button>
           </div>
         </div>
         {error && <p className="mt-2 text-sm text-red-400">{error}</p>}
-        <p className="mt-2 text-xs text-slate-500">Accepted: JPG, PNG, WebP, PDF. Max 20MB.</p>
+        <p className="mt-2 text-xs text-slate-500">{t("dashboard.acceptedFormats", lang)}</p>
       </form>
 
       {loading ? (
-        <p className="text-sm text-slate-400">Loading...</p>
+        <p className="text-sm text-slate-400">{t("dashboard.loading", lang)}</p>
       ) : docs.length === 0 ? (
         <div className="rounded-xl border border-slate-800 bg-slate-900/50 p-8 text-center backdrop-blur-sm">
-          <p className="text-slate-400">No documents uploaded yet.</p>
+          <p className="text-slate-400">{t("dashboard.noDocuments", lang)}</p>
         </div>
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {docs.map((doc) => (
             <div key={doc.id} className={`rounded-xl border p-4 backdrop-blur-sm ${docTypeColors[doc.type] || docTypeColors.OTHER}`}>
               <div className="mb-1 text-xs font-medium uppercase tracking-wider opacity-70">
-                {docTypeLabels[doc.type] || doc.type}
+                {docTypeLabel(doc.type)}
               </div>
               <div className="truncate text-sm font-medium text-white">
                 {doc.originalName}
@@ -147,7 +153,7 @@ export default function WorkerDocumentsPage() {
                   rel="noopener noreferrer"
                   className="mt-2 inline-block text-xs text-blue-400 hover:text-blue-300"
                 >
-                  View →
+                  {t("dashboard.view", lang)}
                 </a>
               ) : (
                 <a
@@ -156,7 +162,7 @@ export default function WorkerDocumentsPage() {
                   rel="noopener noreferrer"
                   className="mt-2 inline-block text-xs text-blue-400 hover:text-blue-300"
                 >
-                  Download →
+                  {t("dashboard.download", lang)}
                 </a>
               )}
             </div>

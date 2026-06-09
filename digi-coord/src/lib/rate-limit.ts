@@ -27,29 +27,6 @@ export function checkRateLimit(
   }
 }
 
-export function rateLimitHeaders(
-  key: string,
-  options?: RateLimitOptions,
-): Record<string, string> {
-  const result = checkRateLimit(key, options)
-  return {
-    "X-RateLimit-Limit": String(options?.maxRequests ?? 100),
-    "X-RateLimit-Remaining": String(result.remaining),
-    "X-RateLimit-Reset": String(Math.ceil(result.resetAt / 1000)),
-  }
-}
-
 export function resetRateLimit(key: string) {
   stores.delete(key)
-}
-
-export function withRateLimit<T>(
-  key: string,
-  options: RateLimitOptions,
-  fn: () => Promise<T>,
-  onLimit: () => Promise<{ error: string; status: number }>,
-): Promise<T | { error: string; status: number }> {
-  const { allowed } = checkRateLimit(key, options)
-  if (!allowed) return onLimit()
-  return fn()
 }

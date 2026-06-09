@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
+import { TextField } from "@/components/ui/text-field"
 
 export function NewWorkerForm() {
   const router = useRouter()
@@ -111,124 +112,16 @@ export function NewWorkerForm() {
       )}
 
       <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label htmlFor="name" className="block text-sm font-medium text-slate-300">
-            Full name <span className="text-red-400">*</span>
-          </label>
-          <input
-            id="name" name="name" type="text" required
-            value={form.name} onChange={handleChange}
-            className="mt-1 w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-white placeholder-slate-500 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-            placeholder="Juan Dela Cruz"
-          />
-        </div>
-
-        <div>
-          <label htmlFor="whatsapp" className="block text-sm font-medium text-slate-300">
-            WhatsApp number <span className="text-red-400">*</span>
-          </label>
-          <input
-            id="whatsapp" name="whatsapp" type="text" required
-            value={form.whatsapp} onChange={handleChange}
-            className="mt-1 w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-white placeholder-slate-500 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-            placeholder="+639123456789"
-          />
-        </div>
-
-        <div>
-          <label htmlFor="email" className="block text-sm font-medium text-slate-300">
-            Email address <span className="text-red-400">*</span>
-          </label>
-          <input
-            id="email" name="email" type="email" required
-            value={form.email} onChange={handleChange}
-            className="mt-1 w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-white placeholder-slate-500 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-            placeholder="juan@example.com"
-          />
-        </div>
-
-        <div>
-          <label htmlFor="password" className="block text-sm font-medium text-slate-300">
-            Password <span className="text-red-400">*</span>
-          </label>
-          <input
-            id="password" name="password" type="password" required minLength={6}
-            value={form.password} onChange={handleChange}
-            className="mt-1 w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-white placeholder-slate-500 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-            placeholder="Min 6 characters"
-          />
-        </div>
-
-        <div>
-          <label htmlFor="employer" className="block text-sm font-medium text-slate-300">
-            Employer / Company
-          </label>
-          <input
-            id="employer" name="employer" type="text"
-            value={form.employer} onChange={handleChange}
-            className="mt-1 w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-white placeholder-slate-500 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-            placeholder="Company name"
-          />
-        </div>
-
-        <div>
-          <label htmlFor="city" className="block text-sm font-medium text-slate-300">
-            City
-          </label>
-          <input
-            id="city" name="city" type="text"
-            value={form.city} onChange={handleChange}
-            className="mt-1 w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-white placeholder-slate-500 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-            placeholder="Prague"
-          />
-        </div>
-
-        <div>
-          <label htmlFor="accommodation" className="block text-sm font-medium text-slate-300">
-            Accommodation address
-          </label>
-          <input
-            id="accommodation" name="accommodation" type="text"
-            value={form.accommodation} onChange={handleChange}
-            className="mt-1 w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-white placeholder-slate-500 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-            placeholder="Address in Czech Republic"
-          />
-        </div>
-
-        <div>
-          <label htmlFor="arrivalDate" className="block text-sm font-medium text-slate-300">
-            Arrival date
-          </label>
-          <input
-            id="arrivalDate" name="arrivalDate" type="date"
-            value={form.arrivalDate} onChange={handleChange}
-            className="mt-1 w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-white outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-          />
-        </div>
-
-        <div>
-          <label htmlFor="emergencyContactName" className="block text-sm font-medium text-slate-300">
-            Emergency contact name
-          </label>
-          <input
-            id="emergencyContactName" name="emergencyContactName" type="text"
-            value={form.emergencyContactName} onChange={handleChange}
-            className="mt-1 w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-white placeholder-slate-500 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-            placeholder="Next of kin"
-          />
-        </div>
-
-        <div>
-          <label htmlFor="emergencyContactPhone" className="block text-sm font-medium text-slate-300">
-            Emergency contact phone
-          </label>
-          <input
-            id="emergencyContactPhone" name="emergencyContactPhone" type="text"
-            value={form.emergencyContactPhone} onChange={handleChange}
-            className="mt-1 w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-white placeholder-slate-500 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-            placeholder="+639123456789"
-          />
-        </div>
+        <TextField id="name" label="Full name" value={form.name} onChange={handleChange} required placeholder="Juan Dela Cruz" />
+        <TextField id="whatsapp" label="WhatsApp number" value={form.whatsapp} onChange={handleChange} required placeholder="+639123456789" />
+        <TextField id="email" label="Email address" value={form.email} onChange={handleChange} type="email" required placeholder="juan@example.com" />
+        <TextField id="password" label="Password" value={form.password} onChange={handleChange} type="password" required minLength={6} placeholder="Min 6 characters" />
+        <TextField id="employer" label="Employer / Company" value={form.employer} onChange={handleChange} placeholder="Company name" />
+        <TextField id="city" label="City" value={form.city} onChange={handleChange} placeholder="Prague" />
+        <TextField id="accommodation" label="Accommodation address" value={form.accommodation} onChange={handleChange} placeholder="Address in Czech Republic" />
+        <TextField id="arrivalDate" label="Arrival date" value={form.arrivalDate} onChange={handleChange} type="date" />
+        <TextField id="emergencyContactName" label="Emergency contact name" value={form.emergencyContactName} onChange={handleChange} placeholder="Next of kin" />
+        <TextField id="emergencyContactPhone" label="Emergency contact phone" value={form.emergencyContactPhone} onChange={handleChange} placeholder="+639123456789" />
 
         <div className="flex gap-3 pt-2">
           <button

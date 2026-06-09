@@ -57,6 +57,7 @@ export default async function WorkerDetailPage({
       accommodationDetail: true,
       issues: { take: 5, orderBy: { createdAt: "desc" } },
       documents: { orderBy: { uploadedAt: "desc" } },
+      communications: { take: 20, orderBy: { createdAt: "desc" } },
     },
   })
 
@@ -306,6 +307,31 @@ export default async function WorkerDetailPage({
                   </div>
                   <p className="text-xs text-slate-400">
                     {new Date(issue.createdAt).toISOString().split("T")[0]}
+                  </p>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <div className="rounded-xl border border-slate-800 bg-slate-900/50 p-6 backdrop-blur-sm">
+          <h2 className="mb-4 text-lg font-semibold text-white">
+            Messages from Worker
+          </h2>
+          {worker.communications.length === 0 ? (
+            <p className="text-sm text-slate-400">No messages yet.</p>
+          ) : (
+            <div className="space-y-3">
+              {worker.communications.map((msg) => (
+                <div
+                  key={msg.id}
+                  className="rounded-lg border border-slate-700 bg-slate-800/50 p-3"
+                >
+                  <p className="whitespace-pre-wrap text-sm text-slate-200">
+                    {msg.message}
+                  </p>
+                  <p className="mt-1 text-xs text-slate-500">
+                    {new Date(msg.createdAt).toLocaleString()} · {msg.createdBy}
                   </p>
                 </div>
               ))}

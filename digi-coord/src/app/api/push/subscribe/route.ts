@@ -1,13 +1,13 @@
-import { NextRequest, NextResponse } from "next/server"
+import { NextRequest } from "next/server"
 import { prisma } from "@/lib/prisma"
+import { apiHandler, badRequest } from "@/lib/api-utils"
+import { logger } from "@/lib/logger"
 
 export async function POST(request: NextRequest) {
-  try {
+  return apiHandler(async () => {
     const { endpoint, keys, userAgent } = await request.json()
 
-    if (!endpoint || !keys?.p256dh || !keys?.auth) {
-      return NextResponse.json({ error: "Invalid subscription" }, { status: 400 })
-    }
+    if (!endpoint || !keys?.p256dh || !keys?.auth) return badRequest("Invalid subscription")
 
     await prisma.pushSubscription.upsert({
       where: { endpoint },
@@ -15,23 +15,16 @@ export async function POST(request: NextRequest) {
       create: { endpoint, p256dh: keys.p256dh, auth: keys.auth, userAgent: userAgent ?? null },
     })
 
-    return NextResponse.json({ success: true })
-  } catch (error) {
-    console.error("Push subscribe error:", error)
-    return NextResponse.json({ error: "Subscribe failed" }, { status: 500 })
-  }
+    return { success: true }
+  })
 }
 
 export async function DELETE(request: NextRequest) {
-  try {
+  return apiHandler(async () => {
     const { endpoint } = await request.json()
-    if (!endpoint) {
-      return NextResponse.json({ error: "Missing endpoint" }, { status: 400 })
-    }
+    if (!endpoint) return badRequest("Missing endpoint")
 
     await prisma.pushSubscription.delete({ where: { endpoint } })
-    return NextResponse.json({ success: true })
-  } catch {
-    return NextResponse.json({ success: true })
-  }
+    return { success: true }
+  })
 }

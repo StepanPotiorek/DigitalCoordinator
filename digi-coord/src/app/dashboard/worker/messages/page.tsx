@@ -1,15 +1,30 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useLang } from "@/lib/use-lang"
 import { t } from "@/lib/translations"
+
+interface Message {
+  id: number
+  message: string
+  createdAt: string
+}
 
 export default function MessagesPage() {
   const lang = useLang()
   const [message, setMessage] = useState("")
+  const [messages, setMessages] = useState<Message[]>([])
   const [sent, setSent] = useState(false)
   const [error, setError] = useState("")
   const [submitting, setSubmitting] = useState(false)
+
+  async function loadMessages() {
+    const res = await fetch("/api/worker/me/messages")
+    const data = await res.json()
+    if (Array.isArray(data)) setMessages(data)
+  }
+
+  useEffect(() => { loadMessages() }, [])
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -30,6 +45,7 @@ export default function MessagesPage() {
       }
       setSent(true)
       setMessage("")
+      loadMessages()
     } catch {
       setError("Failed to send message")
     } finally {
@@ -68,6 +84,25 @@ export default function MessagesPage() {
           {submitting ? t("dashboard.sending", lang) : t("dashboard.send", lang)}
         </button>
       </form>
+
+      {/* Sent messages */}
+      {messages.length > 0 && (
+        <div className="mt-10">
+          <h2 className="mb-3 text-sm font-medium text-slate-400">{t("dashboard.letterHistory", lang)}</h2>
+          <div className="space-y-2">
+            {messages.map((msg) => (
+              <div key={msg.id} className="rounded-xl border border-slate-800 bg-slate-900/50 p-4 backdrop-blur-sm">
+                <p className="whitespace-pre-wrap text-sm text-slate-200">
+                  {msg.message.replace(/^📩 Worker message: /, "")}
+                </p>
+                <p className="mt-2 text-xs text-slate-500">
+                  {new Date(msg.createdAt).toLocaleString()}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   )
 }

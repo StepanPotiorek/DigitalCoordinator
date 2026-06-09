@@ -310,6 +310,57 @@ bash deploy.sh
 - Only images (not PDF) are sent to Gemini for analysis
 - Falls back gracefully if API key not set
 
+### Session 4 — Fix "Anonymous" + Switch SMTP to Gmail
+
+**Problem 1:** Issue emails showed "Anonymous" instead of worker name because `POST /api/issues` from help page didn't pass `workerName` or `workerId`.
+
+**Fix:** Added session-based fallback in `src/app/api/issues/route.ts` — if workerName is missing, looks up `prisma.worker.email` matching `session.user.email` and uses `worker.name`.
+
+**Problem 2:** Seznam SMTP (`stepan.potiorek@seznam.cz`) failed SPF/DKIM for Gmail recipients → emails arrived but with empty body (Gmail stripped HTML).
+
+**Fix:** Switched to Gmail SMTP (`gleestepan@gmail.com` with App Password):
+- `smtp.gmail.com:587`, `SMTP_SECURE=false`
+- `FROM` → `Digital Coordinator <gleestepan@gmail.com>`
+- Updated both `.env` (dev) and `.env.production` (Docker)
+- App Password: `voqxcnoufnepwwze`
+
+**Verified:** Emails now arrive with correct worker name and full content.
+
+### Session 5 — Codebase simplification
+
+**Changes made:**
+
+| What | Files affected | Lines removed |
+|------|---------------|---------------|
+| Removed risk `findFirst` lookup | `issues/route.ts:47-52` | 6 |
+| Dead code removal | `audit.ts` (`auditAction`), `logger.ts` (`createRequestLogger`), `api-utils.ts` (`apiHandlerRaw`, `noContent`), `validation.ts` (`handleValidation`), `rate-limit.ts` (`rateLimitHeaders`, `withRateLimit`) | ~50 |
+| Merged email modules into one | `email-helpers.ts` + `email-templates.ts` → `email.ts` (deleted old files) | 2 files |
+| Unified auth pattern | `export/issues`, `export/workers` (`getToken` → `auth()`), `activity` (`getToken` moved inside `apiHandler`) | — |
+
+**Key architectural change:** `email.ts` is now a single file containing:
+- Templates + `escapeHtml()` + `wrap()` (formerly `email-templates.ts`)
+- All `notify*` helpers (formerly `email-helpers.ts`)
+- Sending logic unchanged
+
+**Result:** 3 source files → 1, ~230 lines → ~190 lines, zero dead code.
+
+### Session 5 — Codebase simplification (continued)
+
+**Changes made:**
+
+| Area | What | Files |
+|------|------|-------|
+| 🔴 API consistency | Added `apiHandler` + `auth()` to `upload/route.ts` and `push/subscribe/route.ts`; `getToken` → `auth()` in `admin/api-keys/*` | 4 route files |
+| 🔴 Dead files | Deleted `email-helpers.ts` and `email-templates.ts` (already empty) | 2 files deleted |
+| 🟡 Shared components | Created `TextField`/`SelectField` in `components/ui/text-field.tsx`; refactored all 3 worker forms to use it (~80 lines → ~30 lines each) | 3 form files + 1 new |
+| 🟡 Loading unification | Created shared `components/ui/loading.tsx`; simplified 7 `loading.tsx` to re-export it | 8 files |
+| 🟡 Sidebar DRY | Extracted `Sidebar` component from `dashboard-shell.tsx`, replaced desktop + mobile duplicate asides | 2 files |
+| 🟡 UI extraction | `RippleButton` → `components/ui/ripple-button.tsx`, `SkeletonCard` → `components/ui/skeleton-card.tsx` (removed from inline in help page) | 3 files |
+| 🟢 Prisma | Removed redundant `@@index([workerId])` on Accommodation (unique field already creates index) | schema.prisma |
+| 🟢 Helpers | `notes/route.ts`: `new Response` → `created()`; export routes wrapped in `apiHandler` | 3 route files |
+
+**Net effect:** ~300 lines of duplication removed, 6 new shared components, every API route now consistently uses `apiHandler` + `auth()`.
+
 ### Known issues:
 - WhatsApp Callmebot not activated — send "I allow callmebot" from +420777654279 to +34 644 45 70 57
 - Seed DB in Dockerfile (`db-init` stage) always runs `prisma seed`, could overwrite fresh data on first volume creation

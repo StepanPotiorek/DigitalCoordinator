@@ -1,15 +1,15 @@
 import { NextRequest } from "next/server"
 import { prisma } from "@/lib/prisma"
-import { apiHandler } from "@/lib/api-utils"
-import { getToken } from "next-auth/jwt"
+import { apiHandler, unauthorized } from "@/lib/api-utils"
+import { auth } from "@/lib/auth"
 
 export const dynamic = "force-dynamic"
 
 export async function GET(req: NextRequest) {
-  const token = await getToken({ req, secret: process.env.AUTH_SECRET })
-  if (!token) return new Response("Unauthorized", { status: 401 })
-
   return apiHandler(async () => {
+    const session = await auth()
+    if (!session?.user) return unauthorized()
+
     const url = new URL(req.url)
     const limit = Math.min(parseInt(url.searchParams.get("limit") || "20"), 50)
 

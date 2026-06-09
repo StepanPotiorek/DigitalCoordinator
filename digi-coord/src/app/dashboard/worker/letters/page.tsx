@@ -2,6 +2,8 @@
 
 import { useEffect, useState, useRef } from "react"
 import Link from "next/link"
+import { useLang } from "@/lib/use-lang"
+import { t } from "@/lib/translations"
 import { letterCategories, letterIcons, type LetterCategory } from "@/lib/letter-guides"
 
 interface LetterRecord {
@@ -24,6 +26,7 @@ type ViewState =
   | { type: "result"; letter: LetterRecord }
 
 export default function LettersPage() {
+  const lang = useLang()
   const [view, setView] = useState<ViewState>({ type: "grid" })
   const [letters, setLetters] = useState<LetterRecord[]>([])
   const [loading, setLoading] = useState(true)
@@ -126,26 +129,26 @@ export default function LettersPage() {
 
   if (view.type === "category") {
     const cat = view.category
-    const t = (obj: { en: string; cz: string }) => obj.en
     const reasons = cat.commonReasons.en
+    const localized = (obj: { en: string; cz: string }) => obj.en
     return (
       <div className="mx-auto max-w-2xl space-y-6">
         <button
           onClick={() => setView({ type: "grid" })}
           className="text-sm text-slate-400 hover:text-white transition"
         >
-          ← Back to categories
+          {t("dashboard.backToCategories", lang)}
         </button>
 
         <div className="rounded-xl border border-slate-800 bg-slate-900/50 p-6 backdrop-blur-sm">
           <div className="mb-4 flex items-center gap-3">
             <span className="text-2xl">{cat.icon}</span>
-            <h2 className="text-xl font-bold text-white">{t(cat.title)}</h2>
+            <h2 className="text-xl font-bold text-white">{localized(cat.title)}</h2>
           </div>
 
           <div className="space-y-4">
             <div>
-              <h3 className="mb-2 text-sm font-medium text-slate-400">Common reasons</h3>
+              <h3 className="mb-2 text-sm font-medium text-slate-400">{t("dashboard.commonReasons", lang)}</h3>
               <ul className="space-y-1.5">
                 {reasons.map((reason: string) => (
                   <li key={reason} className="flex items-start gap-2 text-sm text-slate-300">
@@ -157,20 +160,20 @@ export default function LettersPage() {
             </div>
 
             <div className="rounded-lg border border-amber-800/50 bg-amber-950/30 p-4">
-              <h3 className="mb-2 text-sm font-semibold text-amber-400">⚠️ What should I do?</h3>
-              <p className="text-sm text-slate-300">{t(cat.action)}</p>
+              <h3 className="mb-2 text-sm font-semibold text-amber-400">{t("dashboard.whatShouldIDo", lang)}</h3>
+              <p className="text-sm text-slate-300">{localized(cat.action)}</p>
             </div>
 
             {cat.requiresCoordinator && cat.coordinatorNote && (
               <div className="rounded-lg border border-blue-800/50 bg-blue-950/30 p-4">
-                <h3 className="mb-2 text-sm font-semibold text-blue-400">📞 Contact your coordinator</h3>
-                <p className="text-sm text-slate-300">{t(cat.coordinatorNote)}</p>
+                <h3 className="mb-2 text-sm font-semibold text-blue-400">{t("dashboard.contactCoordinator", lang)}</h3>
+                <p className="text-sm text-slate-300">{localized(cat.coordinatorNote)}</p>
               </div>
             )}
 
             {!cat.requiresCoordinator && (
               <p className="text-xs text-slate-500">
-                You can handle this on your own. Contact your coordinator only if you are unsure.
+                {t("dashboard.handleYourself", lang)}
               </p>
             )}
           </div>
@@ -192,17 +195,17 @@ export default function LettersPage() {
           onClick={() => setView({ type: "grid" })}
           className="text-sm text-slate-400 hover:text-white transition"
         >
-          ← Back to categories
+          {t("dashboard.backToCategories", lang)}
         </button>
 
         <div className="rounded-xl border border-slate-800 bg-slate-900/50 p-6 backdrop-blur-sm">
           <div className="mb-4 flex items-center gap-3">
             <span className="text-2xl">{icon}</span>
             <div>
-              <h2 className="text-xl font-bold text-white">AI Analysis Result</h2>
+              <h2 className="text-xl font-bold text-white">{t("dashboard.aiResult", lang)}</h2>
               {letter.aiConfidence && (
                 <span className="text-xs text-emerald-400">
-                  Analyzed by AI
+                  {t("dashboard.analyzedByAi", lang)}
                 </span>
               )}
             </div>
@@ -221,12 +224,12 @@ export default function LettersPage() {
           <div className="space-y-4">
             <div className="grid gap-3 sm:grid-cols-2">
               <div className="rounded-lg bg-slate-800/50 p-3">
-                <div className="text-xs text-slate-500">Sender</div>
+                <div className="text-xs text-slate-500">{t("dashboard.sender", lang)}</div>
                 <div className="text-sm font-medium text-white">{senderLabel}</div>
               </div>
               {letter.deadline && (
                 <div className="rounded-lg bg-slate-800/50 p-3">
-                  <div className="text-xs text-slate-500">Deadline</div>
+                  <div className="text-xs text-slate-500">{t("dashboard.deadline", lang)}</div>
                   <div className="text-sm font-medium text-amber-400">
                     {new Date(letter.deadline).toLocaleDateString()}
                   </div>
@@ -236,21 +239,21 @@ export default function LettersPage() {
 
             {letter.purpose && (
               <div className="rounded-lg bg-slate-800/50 p-3">
-                <div className="text-xs text-slate-500">Purpose</div>
+                <div className="text-xs text-slate-500">{t("dashboard.purpose", lang)}</div>
                 <div className="text-sm text-white">{letter.purpose}</div>
               </div>
             )}
 
             {letter.actionRequired && (
               <div className="rounded-lg border border-amber-800/50 bg-amber-950/30 p-3">
-                <div className="text-xs font-medium text-amber-400">Action Required</div>
+                <div className="text-xs font-medium text-amber-400">{t("dashboard.actionRequired", lang)}</div>
                 <div className="text-sm text-white">{letter.actionRequired}</div>
               </div>
             )}
 
             {letter.explanation && (
               <div className="rounded-lg border border-blue-800/50 bg-blue-950/30 p-3">
-                <div className="text-xs font-medium text-blue-400">Explanation</div>
+                <div className="text-xs font-medium text-blue-400">{t("dashboard.explanation", lang)}</div>
                 <div className="text-sm text-slate-200">{letter.explanation}</div>
               </div>
             )}
@@ -263,7 +266,7 @@ export default function LettersPage() {
                 }}
                 className="w-full rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 transition"
               >
-                Show guide for {senderLabel}
+                {t("dashboard.showGuideFor", lang).replace("{sender}", senderLabel)}
               </button>
             )}
           </div>
@@ -273,21 +276,20 @@ export default function LettersPage() {
   }
 
   if (view.type === "upload") {
-    const hasApiKey = typeof process !== "undefined" // stub - real check is at runtime
     return (
       <div className="mx-auto max-w-2xl space-y-6">
         <button
           onClick={() => setView({ type: "grid" })}
           className="text-sm text-slate-400 hover:text-white transition"
         >
-          ← Back to categories
+          {t("dashboard.backToCategories", lang)}
         </button>
 
         <div className="rounded-xl border border-slate-800 bg-slate-900/50 p-6 backdrop-blur-sm">
           <div className="mb-6">
-            <h2 className="text-xl font-bold text-white">Upload a letter photo</h2>
+            <h2 className="text-xl font-bold text-white">{t("dashboard.uploadLetterTitle", lang)}</h2>
             <p className="mt-1 text-sm text-slate-400">
-              Take a photo or upload a scan of the letter. AI will analyze it.
+              {t("dashboard.uploadLetterDesc", lang)}
             </p>
           </div>
 
@@ -310,10 +312,10 @@ export default function LettersPage() {
               <>
                 <span className="mb-2 text-3xl">📸</span>
                 <p className="text-sm text-slate-400">
-                  Tap to select a photo or drag & drop
+                  {t("dashboard.tapToSelect", lang)}
                 </p>
                 <p className="mt-1 text-xs text-slate-500">
-                  JPG, PNG, WEBP or PDF — max 20MB
+                  {t("dashboard.acceptedFormatsLetter", lang)}
                 </p>
               </>
             )}
@@ -334,7 +336,7 @@ export default function LettersPage() {
                 }}
                 className="ml-2 text-sm text-red-400 hover:text-red-300"
               >
-                Remove
+                {t("dashboard.remove", lang)}
               </button>
             </div>
           )}
@@ -351,15 +353,15 @@ export default function LettersPage() {
             className="w-full rounded-lg bg-blue-600 px-4 py-2 font-medium text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {analyzing
-              ? "Analyzing letter..."
+              ? t("dashboard.analyzingLetter", lang)
               : uploading
-                ? "Uploading..."
-                : "Upload & Analyze"}
+                ? t("dashboard.uploading", lang)
+                : t("dashboard.uploadAnalyze", lang)}
           </button>
 
           {analyzing && (
             <div className="mt-4 text-center text-sm text-slate-400">
-              <span className="inline-block animate-pulse">AI is reading the letter...</span>
+              <span className="inline-block animate-pulse">{t("dashboard.aiReading", lang)}</span>
             </div>
           )}
         </div>
@@ -371,9 +373,9 @@ export default function LettersPage() {
   return (
     <div className="mx-auto max-w-3xl space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-white">📬 My Letters</h1>
+        <h1 className="text-2xl font-bold text-white">{t("dashboard.myLettersTitle2", lang)}</h1>
         <p className="mt-1 text-sm text-slate-400">
-          Understand official letters you receive. Choose a category or upload a photo.
+          {t("dashboard.lettersDesc", lang)}
         </p>
       </div>
 
@@ -400,14 +402,14 @@ export default function LettersPage() {
           className="flex w-full items-center justify-center gap-2 rounded-lg py-3 text-sm text-slate-400 transition hover:bg-slate-800/50 hover:text-white"
         >
           <span className="text-lg">📸</span>
-          <span>Upload a photo of your letter — AI will analyze it</span>
+          <span>{t("dashboard.uploadLetterPhoto", lang)}</span>
         </button>
       </div>
 
       {/* History */}
       {letters.length > 0 && (
         <div>
-          <h3 className="mb-3 text-sm font-medium text-slate-400">Letter History</h3>
+          <h3 className="mb-3 text-sm font-medium text-slate-400">{t("dashboard.letterHistory", lang)}</h3>
           <div className="space-y-2">
             {letters.map((letter) => {
               const icon = letter.sender ? (letterIcons[letter.sender] || "📮") : "📮"
@@ -449,14 +451,14 @@ export default function LettersPage() {
       )}
 
       {loading && (
-        <div className="text-center text-sm text-slate-400">Loading...</div>
+        <div className="text-center text-sm text-slate-400">{t("dashboard.loading", lang)}</div>
       )}
 
       {!loading && letters.length === 0 && (
         <div className="rounded-xl border border-slate-800 bg-slate-900/30 p-8 text-center">
-          <p className="text-sm text-slate-500">No letters yet.</p>
+          <p className="text-sm text-slate-500">{t("dashboard.noLetters", lang)}</p>
           <p className="mt-1 text-xs text-slate-600">
-            Upload a letter photo or browse categories above.
+            {t("dashboard.noLettersDesc", lang)}
           </p>
         </div>
       )}

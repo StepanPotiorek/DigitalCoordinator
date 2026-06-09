@@ -1,7 +1,7 @@
 "use client"
 
 import { useSession } from "next-auth/react"
-import { LogoutButton } from "@/components/auth/logout-button"
+import { Sidebar } from "./sidebar"
 import { NotificationBell } from "@/components/dashboard/notification-bell"
 import { PushSubscribeButton } from "@/components/pwa/push-subscribe-button"
 import { LanguageToggle } from "@/components/public/language-toggle"
@@ -224,23 +224,11 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
       </button>
 
       {/* Desktop sidebar */}
-      <aside className="hidden w-64 flex-col border-r border-slate-800 bg-slate-900/50 p-6 backdrop-blur-sm md:flex">
-        <div className="mb-8">
-          <h2 className="text-lg font-bold text-white">Dashboard</h2>
-          <p className="mt-1 text-sm text-slate-400">
-            {session?.user?.name || "User"}
-          </p>
-          <p className="text-xs text-slate-500">{role}</p>
-        </div>
-
-        <nav className="flex flex-1 flex-col space-y-2">
-          {navLinks}
-        </nav>
-
-        <div className="mt-auto pt-4">
-          <LogoutButton />
-        </div>
-      </aside>
+      <Sidebar
+        className="hidden w-64 flex-col border-r border-slate-800 bg-slate-900/50 p-6 backdrop-blur-sm md:flex"
+        navLinks={navLinks}
+        session={session}
+      />
 
       {/* Mobile overlay */}
       {menuOpen && (
@@ -251,27 +239,14 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
       )}
 
       {/* Mobile sidebar */}
-      <aside
+      <Sidebar
         className={`fixed left-0 top-0 z-50 flex h-full w-64 flex-col border-r border-slate-800 bg-slate-900 p-6 backdrop-blur-sm transition-transform md:hidden ${
           menuOpen ? "translate-x-0" : "-translate-x-full"
         }`}
-      >
-        <div className="mb-8">
-          <h2 className="text-lg font-bold text-white">Dashboard</h2>
-          <p className="mt-1 text-sm text-slate-400">
-            {session?.user?.name || "User"}
-          </p>
-          <p className="text-xs text-slate-500">{role}</p>
-        </div>
-
-        <nav className="flex flex-1 flex-col space-y-2">
-          {navLinks}
-        </nav>
-
-        <div className="mt-auto pt-4">
-          <LogoutButton />
-        </div>
-      </aside>
+        navLinks={navLinks}
+        session={session}
+        onLinkClick={() => setMenuOpen(false)}
+      />
 
       <main className="flex-1">
         <div className="flex items-center justify-end gap-2 border-b border-slate-800 px-4 py-2 md:px-8">

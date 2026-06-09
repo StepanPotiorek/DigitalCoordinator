@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react"
 import Link from "next/link"
+import { useLang } from "@/lib/use-lang"
+import { t } from "@/lib/translations"
 
 interface WorkerData {
   id: number
@@ -10,16 +12,17 @@ interface WorkerData {
 }
 
 const STEPS = [
-  { status: "NOT_STARTED", label: "Not Started", icon: "📄", description: "Employee Card process has not begun yet." },
-  { status: "IN_PROGRESS", label: "In Progress", icon: "📋", description: "Application submitted, waiting for processing." },
-  { status: "BIOMETRICS_DONE", label: "Biometrics Done", icon: "✋", description: "Biometrics and photo taken at OAMP office." },
-  { status: "CARD_READY", label: "Card Ready", icon: "✅", description: "Your card is ready for collection at OAMP." },
-  { status: "ISSUED", label: "Issued", icon: "🪪", description: "Your Employee Card has been collected." },
+  { status: "NOT_STARTED", labelKey: "dashboard.notStarted", icon: "📄", descKey: "dashboard.notStartedDesc" },
+  { status: "IN_PROGRESS", labelKey: "dashboard.inProgress", icon: "📋", descKey: "dashboard.inProgressDesc" },
+  { status: "BIOMETRICS_DONE", labelKey: "dashboard.biometricsDone", icon: "✋", descKey: "dashboard.biometricsDoneDesc" },
+  { status: "CARD_READY", labelKey: "dashboard.cardReady", icon: "✅", descKey: "dashboard.cardReadyDesc" },
+  { status: "ISSUED", labelKey: "dashboard.issued", icon: "🪪", descKey: "dashboard.issuedDesc" },
 ]
 
 const STATUS_ORDER = ["NOT_STARTED", "IN_PROGRESS", "BIOMETRICS_DONE", "CARD_READY", "ISSUED"]
 
 export default function EmployeeCardPage() {
+  const lang = useLang()
   const [worker, setWorker] = useState<WorkerData | null>(null)
   const [loading, setLoading] = useState(true)
 
@@ -34,11 +37,11 @@ export default function EmployeeCardPage() {
   }, [])
 
   if (loading) {
-    return <div className="text-sm text-slate-400">Loading...</div>
+    return <div className="text-sm text-slate-400">{t("dashboard.loading", lang)}</div>
   }
 
   if (!worker) {
-    return <div className="text-sm text-slate-400">Worker profile not found.</div>
+    return <div className="text-sm text-slate-400">{t("dashboard.notFound", lang)}</div>
   }
 
   const currentIdx = STATUS_ORDER.indexOf(worker.employeeCardStatus)
@@ -46,14 +49,14 @@ export default function EmployeeCardPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-white">Employee Card</h1>
+        <h1 className="text-2xl font-bold text-white">{t("dashboard.employeeCardTitle", lang)}</h1>
         <p className="mt-1 text-sm text-slate-400">
-          Track your Employee Card (Zaměstnanecká karta) progress
+          {t("dashboard.trackEmployeeCard", lang)}
         </p>
       </div>
 
       <div className="rounded-xl border border-slate-800 bg-slate-900/50 p-6 backdrop-blur-sm">
-        <h2 className="mb-6 text-lg font-semibold text-white">Your Progress</h2>
+        <h2 className="mb-6 text-lg font-semibold text-white">{t("dashboard.yourProgress", lang)}</h2>
 
         {/* Visual stepper */}
         <div className="relative">
@@ -67,9 +70,11 @@ export default function EmployeeCardPage() {
 
           {/* Steps */}
           <div className="space-y-8">
-            {STEPS.map((step, idx) => {
+              {STEPS.map((step, idx) => {
               const isActive = idx <= currentIdx
               const isCurrent = idx === currentIdx
+              const stepLabel = t(step.labelKey, lang)
+              const stepDesc = t(step.descKey, lang)
 
               return (
                 <div key={step.status} className="relative flex items-start gap-4 pl-14">
@@ -100,9 +105,9 @@ export default function EmployeeCardPage() {
                       <span className="text-xl">{step.icon}</span>
                       <div>
                         <span className={`text-sm font-medium ${isCurrent ? "text-emerald-300" : isActive ? "text-blue-300" : "text-slate-500"}`}>
-                          {step.label}
+                          {stepLabel}
                         </span>
-                        <p className="mt-0.5 text-xs text-slate-500">{step.description}</p>
+                        <p className="mt-0.5 text-xs text-slate-500">{stepDesc}</p>
                       </div>
                     </div>
                   </div>
@@ -114,10 +119,10 @@ export default function EmployeeCardPage() {
 
         {/* Current status badge */}
         <div className="mt-8 rounded-lg border border-slate-700 bg-slate-800/50 p-4">
-          <div className="text-xs text-slate-500">Current Status</div>
+          <div className="text-xs text-slate-500">{t("dashboard.currentStatus", lang)}</div>
           <div className="mt-1 text-lg font-bold text-white">
             {STEPS.find((s) => s.status === worker.employeeCardStatus)?.icon}{" "}
-            {STEPS.find((s) => s.status === worker.employeeCardStatus)?.label || worker.employeeCardStatus}
+            {t(STEPS.find((s) => s.status === worker.employeeCardStatus)?.labelKey || "", lang) || worker.employeeCardStatus}
           </div>
         </div>
       </div>
@@ -127,15 +132,15 @@ export default function EmployeeCardPage() {
         <div className="flex items-start gap-3">
           <span className="text-xl">💡</span>
           <div>
-            <h3 className="text-sm font-bold text-amber-400">Need help with your Employee Card?</h3>
+            <h3 className="text-sm font-bold text-amber-400">{t("dashboard.employeeCardHelp", lang)}</h3>
             <p className="mt-1 text-xs text-slate-400">
-              If you have questions about your Employee Card, visit the help section for step-by-step guidance.
+              {t("dashboard.employeeCardHelpDesc", lang)}
             </p>
             <Link
               href="/dashboard/worker/help?category=immigration"
               className="mt-2 inline-block text-xs font-medium text-blue-400 hover:text-blue-300 transition"
             >
-              Go to Immigration Help →
+              {t("dashboard.goToImmigrationHelp", lang)}
             </Link>
           </div>
         </div>
@@ -148,8 +153,8 @@ export default function EmployeeCardPage() {
       >
         <div className="flex items-center justify-between">
           <div>
-            <div className="text-sm font-medium text-white">View Full Employee Card Guide</div>
-            <p className="mt-0.5 text-xs text-slate-400">Detailed step-by-step information</p>
+            <div className="text-sm font-medium text-white">{t("dashboard.viewFullGuide", lang)}</div>
+            <p className="mt-0.5 text-xs text-slate-400">{t("dashboard.detailedInfo", lang)}</p>
           </div>
           <svg className="h-4 w-4 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
@@ -161,7 +166,7 @@ export default function EmployeeCardPage() {
         href="/dashboard/worker"
         className="inline-block text-sm text-blue-400 hover:text-blue-300 transition"
       >
-        ← Back to dashboard
+        {t("dashboard.backToDashboard", lang)}
       </Link>
     </div>
   )

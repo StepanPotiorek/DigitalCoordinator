@@ -1,13 +1,13 @@
 import { NextRequest } from "next/server"
 import { prisma } from "@/lib/prisma"
-import { getToken } from "next-auth/jwt"
-import { apiHandler, parseId, notFound } from "@/lib/api-utils"
+import { auth } from "@/lib/auth"
+import { apiHandler, parseId, notFound, unauthorized } from "@/lib/api-utils"
 
 export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const token = await getToken({ req, secret: process.env.AUTH_SECRET })
-  if (!token || token.role !== "ADMIN") return new Response("Unauthorized", { status: 401 })
-
   return apiHandler(async () => {
+    const session = await auth()
+    if (!session?.user || session.user.role !== "ADMIN") return unauthorized()
+
     const { id } = await params
     const keyId = parseId(id)
     if (!keyId) return notFound("ApiKey")
@@ -18,10 +18,10 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
 }
 
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const token = await getToken({ req, secret: process.env.AUTH_SECRET })
-  if (!token || token.role !== "ADMIN") return new Response("Unauthorized", { status: 401 })
-
   return apiHandler(async () => {
+    const session = await auth()
+    if (!session?.user || session.user.role !== "ADMIN") return unauthorized()
+
     const { id } = await params
     const keyId = parseId(id)
     if (!keyId) return notFound("ApiKey")

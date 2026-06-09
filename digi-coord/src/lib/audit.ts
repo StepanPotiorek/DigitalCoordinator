@@ -22,12 +22,4 @@ export async function logAction(
   }
 }
 
-export function auditAction(
-  userId: string | undefined | null,
-  action: string,
-  entity: string,
-  entityId?: number | null,
-  details?: Record<string, unknown> | null,
-) {
-  logAction(userId, action, entity, entityId, details)
-}
+

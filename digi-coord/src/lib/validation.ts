@@ -1,5 +1,4 @@
 import { z } from "zod"
-import { NextResponse } from "next/server"
 
 export function validate<T>(schema: z.ZodSchema<T>, data: unknown): T {
   const result = schema.safeParse(data)
@@ -15,13 +14,6 @@ export class ValidationError extends Error {
     super(message)
     this.name = "ValidationError"
   }
-}
-
-export function handleValidation(error: unknown): NextResponse {
-  if (error instanceof ValidationError) {
-    return NextResponse.json({ error: error.message }, { status: 400 })
-  }
-  throw error
 }
 
 export const createWorkerSchema = z.object({

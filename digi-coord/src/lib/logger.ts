@@ -12,24 +12,3 @@ export const logger = pino({
   }),
 })
 
-export function createRequestLogger(req: { method: string; url: string }) {
-  const start = Date.now()
-  const requestId = crypto.randomUUID?.() ?? Math.random().toString(36).slice(2)
-
-  return {
-    requestId,
-    info(msg: string, ...args: unknown[]) {
-      logger.info({ requestId, method: req.method, url: req.url }, msg, ...args)
-    },
-    warn(msg: string, ...args: unknown[]) {
-      logger.warn({ requestId, method: req.method, url: req.url }, msg, ...args)
-    },
-    error(msg: string, ...args: unknown[]) {
-      logger.error({ requestId, method: req.method, url: req.url }, msg, ...args)
-    },
-    done(status: number) {
-      const duration = Date.now() - start
-      logger.info({ requestId, method: req.method, url: req.url, status, duration }, "request completed")
-    },
-  }
-}

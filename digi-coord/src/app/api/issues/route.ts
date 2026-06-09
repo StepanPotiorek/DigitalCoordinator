@@ -3,7 +3,7 @@ import { prisma, createNotificationForAdmins } from "@/lib/prisma"
 import { apiHandler, unauthorized, badRequest, created, parseId, priorityOrder } from "@/lib/api-utils"
 import { validate, createIssueSchema } from "@/lib/validation"
 import { Prisma } from "@prisma/client"
-import { notifyAdminsOfIssue } from "@/lib/email-helpers"
+import { notifyAdminsOfIssue } from "@/lib/email"
 import { logAction } from "@/lib/audit"
 
 export async function GET(request: Request) {
@@ -44,12 +44,21 @@ export async function POST(request: Request) {
 
     let workerId = data.workerId ?? undefined
 
-    if (!workerId && data.workerName) {
-      const worker = await prisma.worker.findFirst({
-        where: { name: { contains: data.workerName } },
-      })
-      if (worker) workerId = worker.id
+    let workerName = data.workerName || undefined
+    if (!workerName || !workerId) {
+      const session = await auth()
+      if (session?.user?.email) {
+        const w = await prisma.worker.findUnique({
+          where: { email: session.user.email },
+          select: { id: true, name: true },
+        })
+        if (w) {
+          if (!workerName) workerName = w.name
+          if (!workerId) workerId = w.id
+        }
+      }
     }
+    workerName = workerName || "Anonymous"
 
     const issue = await prisma.issue.create({
       data: {
@@ -73,7 +82,6 @@ export async function POST(request: Request) {
       `/dashboard/issues/${issue.id}`,
     )
 
-    const workerName = data.workerName || "Anonymous"
     notifyAdminsOfIssue(workerName, issue.issueType, issue.id, issue.priority)
 
     const session = await auth()
