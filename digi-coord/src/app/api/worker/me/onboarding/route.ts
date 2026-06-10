@@ -7,11 +7,11 @@ export async function GET() {
     const session = await auth()
     if (!session?.user) return unauthorized()
 
-    const worker = await prisma.worker.findUnique({
-      where: { email: session.user.email! },
+    const worker = await prisma.worker.findFirst({
+      where: { OR: [{ userId: session.user.id! }, { email: session.user.email! }] },
       select: { id: true },
     })
-    if (!worker) return notFound("Worker")
+    if (!worker) return []
 
     const items = await prisma.onboardingItem.findMany({
       where: { workerId: worker.id },
@@ -27,8 +27,8 @@ export async function PUT(request: Request) {
     const session = await auth()
     if (!session?.user) return unauthorized()
 
-    const worker = await prisma.worker.findUnique({
-      where: { email: session.user.email! },
+    const worker = await prisma.worker.findFirst({
+      where: { OR: [{ userId: session.user.id! }, { email: session.user.email! }] },
       select: { id: true },
     })
     if (!worker) return notFound("Worker")

@@ -16,6 +16,21 @@ export class ValidationError extends Error {
   }
 }
 
+export const becomeWorkerSchema = z.object({
+  employer: z.string().max(200).optional().or(z.literal("")),
+  city: z.string().max(100).optional().or(z.literal("")),
+})
+
+export const registerSchema = z.object({
+  name: z.string().min(1, "Name is required").max(200),
+  email: z.string().email("Valid email is required"),
+  password: z.string().min(6, "Password must be at least 6 characters").max(100),
+  confirmPassword: z.string().min(1, "Please confirm your password"),
+}).refine((data) => data.password === data.confirmPassword, {
+  message: "Passwords do not match",
+  path: ["confirmPassword"],
+})
+
 export const createWorkerSchema = z.object({
   name: z.string().min(1, "Name is required").max(200),
   whatsapp: z.string().min(1, "WhatsApp is required").max(50).regex(/^\+?[0-9\s\-()]{7,20}$/, "Invalid phone number format"),

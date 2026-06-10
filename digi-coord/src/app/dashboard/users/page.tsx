@@ -7,6 +7,8 @@ const roleColors: Record<string, string> = {
   ADMIN: "bg-red-900/50 text-red-400",
   COORDINATOR: "bg-blue-900/50 text-blue-400",
   COMPANY: "bg-green-900/50 text-green-400",
+  CANDIDATE: "bg-purple-900/50 text-purple-400",
+  WORKER: "bg-slate-900/50 text-slate-400",
 }
 
 export default async function UsersPage() {

@@ -37,10 +37,12 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
         const isValid = await compare(password, user.passwordHash)
         if (!isValid) return null
 
-        let workerStatus: string | undefined
+        let workerStatus: string | undefined | null
         if (user.role === "WORKER") {
-          const worker = await prisma.worker.findUnique({ where: { email } })
-          workerStatus = worker?.status
+          const worker = await prisma.worker.findFirst({
+            where: { OR: [{ userId: user.id }, { email }] },
+          })
+          workerStatus = worker?.status ?? null
         }
 
         resetRateLimit(`login:${email.toLowerCase()}`)
@@ -69,12 +71,23 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
         session.user.id = token.id
         session.user.role = token.role
         session.user.workerStatus = token.workerStatus
-        if (token.role === "WORKER" && token.email) {
-          const worker = await prisma.worker.findUnique({
+        if (token.email) {
+          const user = await prisma.user.findUnique({
             where: { email: token.email },
-            select: { status: true },
+            select: { role: true },
           })
-          session.user.workerStatus = worker?.status ?? "PENDING_APPROVAL"
+          if (user) {
+            session.user.role = user.role
+          }
+          if (user?.role === "WORKER") {
+            const worker = await prisma.worker.findFirst({
+              where: { OR: [{ userId: token.id }, { email: token.email }] },
+              select: { status: true },
+            })
+            session.user.workerStatus = worker?.status ?? null
+          } else {
+            session.user.workerStatus = null
+          }
         }
       }
       return session

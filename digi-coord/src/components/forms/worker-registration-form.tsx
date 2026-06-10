@@ -4,36 +4,24 @@ import { useState } from "react"
 import { TextField } from "@/components/ui/text-field"
 import { PasswordInput } from "@/components/ui/password-input"
 import { type Lang, t } from "@/lib/translations"
+import { useRouter } from "next/navigation"
 
 interface FormData {
   name: string
-  whatsapp: string
   email: string
   password: string
   confirmPassword: string
-  employer: string
-  city: string
-  accommodation: string
-  arrivalDate: string
-  emergencyContactName: string
-  emergencyContactPhone: string
 }
 
 const initialState: FormData = {
   name: "",
-  whatsapp: "",
   email: "",
   password: "",
   confirmPassword: "",
-  employer: "",
-  city: "",
-  accommodation: "",
-  arrivalDate: "",
-  emergencyContactName: "",
-  emergencyContactPhone: "",
 }
 
 export function WorkerRegistrationForm({ lang }: { lang: Lang }) {
+  const router = useRouter()
   const [formData, setFormData] = useState<FormData>(initialState)
   const [submitted, setSubmitted] = useState(false)
   const [error, setError] = useState("")
@@ -61,7 +49,7 @@ export function WorkerRegistrationForm({ lang }: { lang: Lang }) {
 
     setLoading(true)
 
-    const res = await fetch("/api/workers", {
+    const res = await fetch("/api/auth/register", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(formData),
@@ -86,6 +74,12 @@ export function WorkerRegistrationForm({ lang }: { lang: Lang }) {
         <p className="mt-2 text-slate-400">
           {t("register.success.desc", lang)}
         </p>
+        <button
+          onClick={() => router.push("/login")}
+          className="mt-4 rounded-lg bg-blue-600 px-6 py-2 font-medium text-white transition hover:bg-blue-700"
+        >
+          Sign in
+        </button>
       </div>
     )
   }
@@ -99,7 +93,6 @@ export function WorkerRegistrationForm({ lang }: { lang: Lang }) {
       )}
       <form onSubmit={handleSubmit} className="space-y-4">
         <TextField id="name" label={t("form.name", lang)} value={formData.name} onChange={handleChange} required placeholder="Juan Dela Cruz" />
-        <TextField id="whatsapp" label={t("form.whatsapp", lang)} value={formData.whatsapp} onChange={handleChange} required placeholder="+639123456789" />
         <TextField id="email" label={t("form.email", lang)} value={formData.email} onChange={handleChange} type="email" required placeholder="juan@example.com" />
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -126,13 +119,6 @@ export function WorkerRegistrationForm({ lang }: { lang: Lang }) {
             />
           </div>
         </div>
-
-        <TextField id="employer" label={t("form.employer", lang)} value={formData.employer} onChange={handleChange} placeholder="Company name" />
-        <TextField id="city" label={t("form.city", lang)} value={formData.city} onChange={handleChange} placeholder="Prague" />
-        <TextField id="accommodation" label={t("form.accommodation", lang)} value={formData.accommodation} onChange={handleChange} placeholder="Address in Czech Republic" />
-        <TextField id="arrivalDate" label={t("form.arrivalDate", lang)} value={formData.arrivalDate} onChange={handleChange} type="date" />
-        <TextField id="emergencyContactName" label={t("form.emergencyName", lang)} value={formData.emergencyContactName} onChange={handleChange} placeholder="Next of kin" />
-        <TextField id="emergencyContactPhone" label={t("form.emergencyPhone", lang)} value={formData.emergencyContactPhone} onChange={handleChange} placeholder="+639123456789" />
 
         <button
           type="submit"

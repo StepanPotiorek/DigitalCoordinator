@@ -9,8 +9,8 @@ export async function GET() {
     const session = await auth()
     if (!session?.user) return unauthorized()
 
-    const worker = await prisma.worker.findUnique({
-      where: { email: session.user.email! },
+    const worker = await prisma.worker.findFirst({
+      where: { OR: [{ userId: session.user.id! }, { email: session.user.email! }] },
       include: {
         _count: { select: { issues: { where: { status: { not: "RESOLVED" } } } } },
         onboardingItems: { orderBy: [{ category: "asc" }, { id: "asc" }] },
@@ -18,7 +18,7 @@ export async function GET() {
       },
     })
 
-    if (!worker) return notFound("Worker")
+    if (!worker) return null
 
     const totalItems = worker.onboardingItems.length
     const completedItems = worker.onboardingItems.filter((i) => i.completed).length
@@ -40,8 +40,8 @@ export async function PUT(request: Request) {
     const body = await request.json()
     const { name, whatsapp, city, emergencyContactName, emergencyContactPhone, password } = body
 
-    const worker = await prisma.worker.findUnique({
-      where: { email: session.user.email! },
+    const worker = await prisma.worker.findFirst({
+      where: { OR: [{ userId: session.user.id! }, { email: session.user.email! }] },
     })
     if (!worker) return notFound("Worker")
 

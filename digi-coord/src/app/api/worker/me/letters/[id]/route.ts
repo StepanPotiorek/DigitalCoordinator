@@ -9,8 +9,8 @@ export async function GET(_request: Request, { params }: { params: Promise<{ id:
     const session = await auth()
     if (!session?.user) return unauthorized()
 
-    const worker = await prisma.worker.findUnique({
-      where: { email: session.user.email! },
+    const worker = await prisma.worker.findFirst({
+      where: { OR: [{ userId: session.user.id! }, { email: session.user.email! }] },
     })
     if (!worker) return unauthorized()
 
@@ -29,8 +29,8 @@ export async function DELETE(_request: Request, { params }: { params: Promise<{ 
     const session = await auth()
     if (!session?.user) return unauthorized()
 
-    const worker = await prisma.worker.findUnique({
-      where: { email: session.user.email! },
+    const worker = await prisma.worker.findFirst({
+      where: { OR: [{ userId: session.user.id! }, { email: session.user.email! }] },
     })
     if (!worker) return unauthorized()
 

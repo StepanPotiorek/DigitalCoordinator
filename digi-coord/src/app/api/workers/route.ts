@@ -36,27 +36,36 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: Request) {
   return apiHandler(async () => {
+    const session = await auth()
+    if (!session?.user || (session.user.role !== "ADMIN" && session.user.role !== "COORDINATOR")) {
+      return unauthorized()
+    }
+
     const body = await request.json()
     const data = validate(createWorkerSchema, body)
 
-    const existing = await prisma.user.findUnique({ where: { email: data.email } })
-    if (existing) {
-      return conflict("This email is already registered. If you cannot sign in, check with your admin. Contact us if the problem persists.")
+    let user = await prisma.user.findUnique({ where: { email: data.email } })
+
+    if (!user) {
+      const passwordHash = await hash(data.password, 12)
+      user = await prisma.user.create({
+        data: {
+          name: data.name,
+          email: data.email,
+          passwordHash,
+          role: "WORKER",
+        },
+      })
     }
 
-    const passwordHash = await hash(data.password, 12)
-
-    const user = await prisma.user.create({
-      data: {
-        name: data.name,
-        email: data.email,
-        passwordHash,
-        role: "WORKER",
-      },
-    })
+    const existingWorker = await prisma.worker.findUnique({ where: { email: data.email } })
+    if (existingWorker) {
+      return conflict("A worker with this email already exists.")
+    }
 
     const worker = await prisma.worker.create({
       data: {
+        userId: user.id,
         name: data.name,
         whatsapp: data.whatsapp,
         email: data.email,
@@ -81,7 +90,7 @@ export async function POST(request: Request) {
 
     await createNotificationForAdmins(
       "NEW_WORKER",
-      `New worker registered: ${worker.name}`,
+      `New worker created: ${worker.name}`,
       `/dashboard/workers/${worker.id}`,
     )
 
@@ -92,8 +101,7 @@ export async function POST(request: Request) {
       `🆕 New worker: ${worker.name}\n📱 ${worker.whatsapp}${worker.employer ? `\n🏢 ${worker.employer}` : ""}\n🔗 https://digicoord.cz/dashboard/workers/${worker.id}`,
     )
 
-    const session = await auth()
-    void logAction(session?.user?.id, "worker.create", "Worker", worker.id)
+    void logAction(session.user?.id, "worker.create", "Worker", worker.id)
 
     return created({ worker, user: { id: user.id, name: user.name, email: user.email } })
   })

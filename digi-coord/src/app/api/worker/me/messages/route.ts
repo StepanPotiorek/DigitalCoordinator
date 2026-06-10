@@ -8,8 +8,8 @@ export async function GET() {
     const session = await auth()
     if (!session?.user) return unauthorized()
 
-    const worker = await prisma.worker.findUnique({
-      where: { email: session.user.email! },
+    const worker = await prisma.worker.findFirst({
+      where: { OR: [{ userId: session.user.id! }, { email: session.user.email! }] },
       select: { id: true },
     })
     if (!worker) return unauthorized()
@@ -29,8 +29,8 @@ export async function POST(request: Request) {
     const session = await auth()
     if (!session?.user) return unauthorized()
 
-    const worker = await prisma.worker.findUnique({
-      where: { email: session.user.email! },
+    const worker = await prisma.worker.findFirst({
+      where: { OR: [{ userId: session.user.id! }, { email: session.user.email! }] },
       select: { id: true, name: true },
     })
     if (!worker) return unauthorized()

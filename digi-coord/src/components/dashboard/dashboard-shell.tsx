@@ -39,7 +39,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
 
   const navLinks = (
     <>
-      {role === "WORKER" && (
+      {(role === "CANDIDATE" || role === "WORKER") && (
         <>
           <Link
             href="/dashboard/worker/help"
@@ -54,6 +54,20 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
             onClick={() => setMenuOpen(false)}
           >
             {t("dashboard.overview", lang)}
+          </Link>
+          <Link
+            href="/dashboard/candidate/profile"
+            className="rounded-lg bg-blue-900/30 px-3 py-2 text-sm font-medium text-blue-300 transition hover:bg-blue-800/40 hover:text-blue-200"
+            onClick={() => setMenuOpen(false)}
+          >
+            My Profile
+          </Link>
+          <Link
+            href="/dashboard/candidate/become-worker"
+            className="rounded-lg bg-emerald-900/30 px-3 py-2 text-sm font-medium text-emerald-300 transition hover:bg-emerald-800/40 hover:text-emerald-200"
+            onClick={() => setMenuOpen(false)}
+          >
+            Become a Worker
           </Link>
           <Link
             href="/dashboard/worker/onboarding"
@@ -91,18 +105,18 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
             {t("dashboard.documents", lang)}
           </Link>
           <Link
-            href="/dashboard/worker/profile"
-            className="rounded-lg px-3 py-2 text-sm text-slate-300 transition hover:bg-slate-800 hover:text-white"
-            onClick={() => setMenuOpen(false)}
-          >
-            {t("dashboard.profile", lang)}
-          </Link>
-          <Link
             href="/dashboard/worker/messages"
             className="rounded-lg px-3 py-2 text-sm text-slate-300 transition hover:bg-slate-800 hover:text-white"
             onClick={() => setMenuOpen(false)}
           >
             {t("dashboard.messageCoordinator", lang)}
+          </Link>
+          <Link
+            href="/dashboard/worker/profile"
+            className="rounded-lg px-3 py-2 text-sm text-slate-300 transition hover:bg-slate-800 hover:text-white"
+            onClick={() => setMenuOpen(false)}
+          >
+            {t("dashboard.profile", lang)}
           </Link>
           <Link
             href="/dashboard/worker/change-password"
@@ -129,6 +143,15 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
           onClick={() => setMenuOpen(false)}
         >
           Users
+        </Link>
+      )}
+      {role === "ADMIN" && (
+        <Link
+          href="/dashboard/admin/candidates"
+          className="rounded-lg px-3 py-2 text-sm text-slate-300 transition hover:bg-slate-800 hover:text-white"
+          onClick={() => setMenuOpen(false)}
+        >
+          Candidates
         </Link>
       )}
       {(role === "ADMIN" || role === "COORDINATOR") && (

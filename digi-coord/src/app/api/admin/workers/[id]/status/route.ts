@@ -23,7 +23,7 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
 
     const worker = await prisma.worker.findUnique({
       where: { id: workerId },
-      select: { id: true, name: true, email: true, status: true },
+      select: { id: true, name: true, email: true, status: true, userId: true },
     })
 
     if (!worker) {
@@ -34,6 +34,13 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
       where: { id: workerId },
       data: { status },
     })
+
+    if (status === "ACTIVE" && worker.userId) {
+      await prisma.user.update({
+        where: { id: worker.userId },
+        data: { role: "WORKER" },
+      })
+    }
 
     await createNotificationForAdmins(
       status === "ACTIVE" ? "WORKER_APPROVED" : "WORKER_REJECTED",

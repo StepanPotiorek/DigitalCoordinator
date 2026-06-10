@@ -16,7 +16,12 @@ export default async function DashboardPage() {
     redirect("/dashboard/workers")
   } else if (role === "COMPANY") {
     redirect("/dashboard/companies")
+  } else if (role === "CANDIDATE") {
+    redirect("/dashboard/candidate/profile")
   } else if (role === "WORKER") {
+    if (!session.user.workerStatus) {
+      redirect("/dashboard/candidate/profile")
+    }
     redirect("/dashboard/worker")
   }
 
