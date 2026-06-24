@@ -17,7 +17,7 @@ export function TextField({
 }: TextFieldProps) {
   return (
     <div>
-      <label htmlFor={id} className="block text-sm font-medium text-slate-300">
+      <label htmlFor={id} className="block text-sm font-medium text-fg-secondary">
         {label} {required && <span className="text-red-400">*</span>}
       </label>
       <input
@@ -29,7 +29,7 @@ export function TextField({
         value={value}
         onChange={onChange}
         placeholder={placeholder}
-        className="mt-1 w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-white placeholder-slate-500 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+        className="mt-1 w-full rounded-lg border border-border bg-surface-raised px-3 py-2 text-fg placeholder-fg-dim outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
       />
     </div>
   )
@@ -48,7 +48,7 @@ export function SelectField({
 }: SelectFieldProps) {
   return (
     <div>
-      <label htmlFor={id} className="block text-sm font-medium text-slate-300">
+      <label htmlFor={id} className="block text-sm font-medium text-fg-secondary">
         {label}
       </label>
       <select
@@ -56,7 +56,7 @@ export function SelectField({
         name={id}
         value={value}
         onChange={onChange}
-        className="mt-1 w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-white outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+        className="mt-1 w-full rounded-lg border border-border bg-surface-raised px-3 py-2 text-fg outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
       >
         {options.map((o) => (
           <option key={o.value} value={o.value}>{o.label}</option>

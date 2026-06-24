@@ -17,8 +17,15 @@ const publicRoutes = [
   "/_not-found",
 ]
 
+function getOrigin(req: NextRequest): string {
+  const proto = req.headers.get("x-forwarded-proto") ?? "http"
+  const host = req.headers.get("host") ?? "localhost:3000"
+  return `${proto}://${host}`
+}
+
 export function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl
+  const origin = getOrigin(req)
 
   if (pathname.startsWith("/_next") || pathname.startsWith("/api") || pathname.startsWith("/icons") || pathname.startsWith("/favicon") || pathname === "/manifest.json" || pathname === "/sw.js") {
     return
@@ -28,7 +35,7 @@ export function proxy(req: NextRequest) {
 
   if (protectedPrefixes.some((p) => pathname.startsWith(p))) {
     if (!hasSessionCookie) {
-      const loginUrl = new URL("/login", req.url)
+      const loginUrl = new URL("/login", origin)
       loginUrl.searchParams.set("callbackUrl", pathname)
       return NextResponse.redirect(loginUrl)
     }
@@ -37,7 +44,7 @@ export function proxy(req: NextRequest) {
 
   if (authPrefixes.some((p) => pathname.startsWith(p))) {
     if (hasSessionCookie) {
-      return NextResponse.redirect(new URL("/dashboard", req.url))
+      return NextResponse.redirect(new URL("/dashboard", origin))
     }
     return
   }

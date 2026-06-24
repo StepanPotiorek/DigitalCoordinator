@@ -37,7 +37,7 @@ export async function apiHandler<T>(
 
     const result = await fn()
     if (result === undefined || result === null) {
-      return NextResponse.json(null, { status: 204 })
+      return new NextResponse(null, { status: 204 })
     }
     if (result instanceof Response) {
       return result as unknown as NextResponse

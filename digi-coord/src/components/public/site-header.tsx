@@ -4,6 +4,7 @@ import Link from "next/link"
 import { useState } from "react"
 import { type Lang, t } from "@/lib/translations"
 import { LanguageToggle } from "./language-toggle"
+import { ThemeToggle } from "@/components/theme/theme-toggle"
 
 interface SiteHeaderProps {
   lang: Lang
@@ -18,14 +19,14 @@ export function SiteHeader({ lang, showBack }: SiteHeaderProps) {
       <Link
         href="/guide"
         onClick={() => setMenuOpen(false)}
-        className="rounded-full bg-slate-700 px-5 py-2 text-sm font-semibold text-white transition hover:bg-slate-600 hover:scale-105 active:scale-95"
+        className="rounded-full bg-surface-hover px-5 py-2 text-sm font-semibold text-fg transition hover:bg-surface-active hover:scale-105 active:scale-95"
       >
         📘 {t("nav.guide", lang)}
       </Link>
       <Link
         href="/contact"
         onClick={() => setMenuOpen(false)}
-        className="rounded-full bg-slate-700 px-5 py-2 text-sm font-semibold text-white transition hover:bg-slate-600 hover:scale-105 active:scale-95"
+        className="rounded-full bg-surface-hover px-5 py-2 text-sm font-semibold text-fg transition hover:bg-surface-active hover:scale-105 active:scale-95"
       >
         📞 {t("nav.contact", lang)}
       </Link>
@@ -40,14 +41,14 @@ export function SiteHeader({ lang, showBack }: SiteHeaderProps) {
   )
 
   return (
-    <header className="sticky top-0 z-50 border-b border-white/10 bg-slate-950/90 backdrop-blur-xl">
+    <header className="sticky top-0 z-50 border-b border-white/10 bg-surface/90 backdrop-blur-xl">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
         <Link href={showBack ? "/guide" : "/"} className="group flex items-center gap-3">
           <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-blue-800/50 bg-gradient-to-br from-blue-600/20 to-red-600/20 text-sm">
             🇵🇭
           </div>
           {showBack && (
-            <svg className="h-4 w-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <svg className="h-4 w-4 text-fg-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
             </svg>
           )}
@@ -57,7 +58,7 @@ export function SiteHeader({ lang, showBack }: SiteHeaderProps) {
                 {t("site.title", lang)}
               </span>
             </h1>
-            <p className="text-[11px] font-medium leading-tight uppercase tracking-wide text-slate-400">
+            <p className="text-[11px] font-medium leading-tight uppercase tracking-wide text-fg-muted">
               {t("site.tagline", lang)}
             </p>
           </div>
@@ -67,7 +68,7 @@ export function SiteHeader({ lang, showBack }: SiteHeaderProps) {
           {showBack ? (
             <Link
               href="/guide"
-              className="rounded-full bg-slate-700 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-slate-600"
+              className="rounded-full bg-surface-hover px-3 py-1.5 text-xs font-semibold text-fg transition hover:bg-surface-raised"
             >
               ← {t("nav.back", lang)}
             </Link>
@@ -76,7 +77,7 @@ export function SiteHeader({ lang, showBack }: SiteHeaderProps) {
               <div className="hidden sm:flex items-center gap-2">{navLinks}</div>
               <button
                 onClick={() => setMenuOpen(true)}
-                className="flex sm:hidden items-center justify-center rounded-lg p-2 text-slate-400 transition hover:bg-slate-800 hover:text-white"
+                className="flex sm:hidden items-center justify-center rounded-lg p-2 text-fg-muted transition hover:bg-surface-raised hover:text-fg"
                 aria-label="Open menu"
               >
                 <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -85,6 +86,7 @@ export function SiteHeader({ lang, showBack }: SiteHeaderProps) {
               </button>
             </>
           )}
+          <ThemeToggle />
           <LanguageToggle lang={lang} />
         </div>
       </div>
@@ -97,7 +99,7 @@ export function SiteHeader({ lang, showBack }: SiteHeaderProps) {
       )}
 
       <div
-        className={`fixed left-0 top-0 z-50 flex h-full w-64 flex-col gap-4 border-r border-white/10 bg-slate-950 p-6 shadow-xl transition-transform duration-200 sm:hidden ${
+        className={`fixed left-0 top-0 z-50 flex h-full w-64 flex-col gap-4 border-r border-white/10 bg-surface p-6 shadow-xl transition-transform duration-200 sm:hidden ${
           menuOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
@@ -107,7 +109,7 @@ export function SiteHeader({ lang, showBack }: SiteHeaderProps) {
           </div>
           <button
             onClick={() => setMenuOpen(false)}
-            className="rounded-lg p-1 text-slate-400 transition hover:bg-slate-800 hover:text-white"
+            className="rounded-lg p-1 text-fg-muted transition hover:bg-surface-raised hover:text-fg"
             aria-label="Close menu"
           >
             <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -120,14 +122,14 @@ export function SiteHeader({ lang, showBack }: SiteHeaderProps) {
           <Link
             href="/guide"
             onClick={() => setMenuOpen(false)}
-            className="rounded-xl border border-slate-800 bg-slate-900/50 px-4 py-3 text-sm font-semibold text-white transition hover:bg-slate-800"
+            className="rounded-xl border border-border-light bg-surface-card px-4 py-3 text-sm font-semibold text-fg transition hover:bg-surface-raised"
           >
             📘 {t("nav.guide", lang)}
           </Link>
           <Link
             href="/contact"
             onClick={() => setMenuOpen(false)}
-            className="rounded-xl border border-slate-800 bg-slate-900/50 px-4 py-3 text-sm font-semibold text-white transition hover:bg-slate-800"
+            className="rounded-xl border border-border-light bg-surface-card px-4 py-3 text-sm font-semibold text-fg transition hover:bg-surface-raised"
           >
             📞 {t("nav.contact", lang)}
           </Link>

@@ -1,4 +1,4 @@
-const CACHE = "digicoord-v2"
+const CACHE = "digicoord-v3"
 
 const ASSETS = [
   "/",
@@ -23,6 +23,7 @@ self.addEventListener("activate", (event) => {
 
 self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET") return
+  if (!event.request.url.startsWith(self.location.origin)) return
   event.respondWith(
     caches.match(event.request).then((cached) => cached || fetch(event.request).then((res) => {
       if (res.status === 200 && /\.(png|svg|jpg|jpeg|webp|woff2?|ico)$/.test(event.request.url)) {
@@ -30,7 +31,7 @@ self.addEventListener("fetch", (event) => {
         caches.open(CACHE).then((cache) => cache.put(event.request, clone))
       }
       return res
-    })),
+    }).catch(() => caches.match(event.request))),
   )
 })
 

@@ -28,11 +28,11 @@ export function Sidebar({
   return (
     <aside className={className}>
       <div className="mb-8">
-        <h2 className="text-lg font-bold text-white">Dashboard</h2>
-        <p className="mt-1 text-sm text-slate-400">
+        <h2 className="text-lg font-bold text-fg">Dashboard</h2>
+        <p className="mt-1 text-sm text-fg-muted">
           {session?.user?.name || "User"}
         </p>
-        <p className="text-xs text-slate-500">{roleLabel(session?.user?.role)}</p>
+        <p className="text-xs text-fg-dim">{roleLabel(session?.user?.role)}</p>
       </div>
 
       <nav className="flex flex-1 flex-col space-y-2" onClick={onLinkClick}>

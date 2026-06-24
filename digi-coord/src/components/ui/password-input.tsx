@@ -13,13 +13,13 @@ export function PasswordInput({ containerClassName, className, ...props }: Passw
     <div className={`relative ${containerClassName || ""}`}>
       <input
         type={visible ? "text" : "password"}
-        className={`w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 pr-9 text-white placeholder-slate-500 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 ${className || ""}`}
+        className={`w-full rounded-lg border border-border bg-surface-raised px-3 py-2 pr-9 text-fg placeholder-fg-dim outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 ${className || ""}`}
         {...props}
       />
       <button
         type="button"
         onClick={() => setVisible(!visible)}
-        className="absolute top-1/2 -translate-y-1/2 flex items-center justify-center w-5 h-5 text-slate-400 hover:text-white"
+        className="absolute top-1/2 -translate-y-1/2 flex items-center justify-center w-5 h-5 text-fg-muted hover:text-fg"
         style={{ right: "0.5rem" }}
         aria-label={visible ? "Hide password" : "Show password"}
         tabIndex={-1}

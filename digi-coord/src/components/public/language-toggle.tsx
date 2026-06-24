@@ -8,7 +8,7 @@ export function LanguageToggle({ lang }: { lang: Lang }) {
       <input type="hidden" name="lang" value={nextLang} />
       <button
         type="submit"
-        className="rounded-lg border border-slate-600 px-2.5 py-1 text-xs font-medium text-slate-300 transition hover:bg-slate-700 hover:text-white"
+        className="rounded-lg border border-border px-2.5 py-1 text-xs font-medium text-fg-muted transition hover:bg-surface-hover hover:text-fg"
         aria-label={t("lang.toggle", lang)}
       >
         {langLabels[nextLang].short}

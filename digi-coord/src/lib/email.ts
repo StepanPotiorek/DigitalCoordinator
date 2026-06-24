@@ -56,9 +56,10 @@ export async function sendEmail(to: string, subject: string, html: string) {
   const text = html.replace(/<[^>]*>/g, "").replace(/\s+/g, " ").trim()
 
   try {
-    await transport.sendMail({ from: FROM, to, subject, html, text })
+    const info = await transport.sendMail({ from: FROM, to, subject, html, text })
+    logger.info({ to, subject, messageId: info.messageId }, "Email sent")
   } catch (error) {
-    logger.error({ err: error, to }, "Failed to send email")
+    logger.error({ err: error, to, subject }, "Failed to send email")
   }
 }
 

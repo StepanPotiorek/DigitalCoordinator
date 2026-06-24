@@ -63,7 +63,7 @@ export function ActivityFeed() {
       text: (
         <span>
           <span className="rounded bg-slate-800 px-1.5 py-0.5 text-[10px] font-medium text-slate-400">{a.action}</span>
-          {" on "}{a.entity}{a.entityId ? <> <Link href={`/dashboard/${a.entity.toLowerCase()}s/${a.entityId}`} className="text-blue-400 hover:text-blue-300">#{a.entityId}</Link></> : null}
+          {" on "}{a.entity}{a.entityId ? <> <span className="text-blue-400">#{a.entityId}</span></> : null}
         </span>
       ),
       link: a.entityId ? `/dashboard/${a.entity.toLowerCase()}s/${a.entityId}` : null,

@@ -218,15 +218,34 @@ for i in 1 2 3 4 5 6 7 8 9 10; do fuser 3000/tcp 2>/dev/null && echo "OK ($((i))
 tail -20 /tmp/digicoord-dev.log
 
 # === Deploy to production server ===
-# Server: root@rdev.buq.cz, project: /opt/digi-coord/
-# Builds locally, rsyncs files, rebuilds Docker container
-cd /home/stepan/Documents/programming/digital-coordinator/digi-coord
-bash deploy.sh
+# Server: ubuntu@89.168.123.99 (Oracle Cloud)
+# Project: ~/DigitalCoordinator/digi-coord
+# Systemd service: digi-coord.service (port 8080, HOST=0.0.0.0)
+# Nginx Proxy Manager (Docker) on ports 80/81/443 → 172.18.0.1:8080
+# IMPORTANT: static files must be copied into standalone/.next/static after rsync
+# Run from project root:
+bash scripts/deploy.sh
 ```
 
 ---
 
 ## Current Session Context
+
+### Session 6 — Fix logout/SW crash + password reset
+
+**Problem:** Logout via `signOut()` from `next-auth/react` used hardcoded build-time `NEXTAUTH_URL=http://localhost:3000` (Next.js inlines it into client bundle). Service Worker then errored fetching `http://localhost:3000/login`.
+
+**Root cause:**
+- `next-auth/react` client code: `__NEXTAUTH.baseUrl = parseUrl(process.env.NEXTAUTH_URL ?? ...).origin` — `NEXTAUTH_URL` from `.env` (`http://localhost:3000`) was compiled into client JS at build time
+- `signOut({ callbackUrl: "/login" })` POSTs to `http://localhost:3000/api/auth/signout`, which fails, browser shows SW error
+
+**Fixes:**
+- `src/app/api/auth/signout/route.ts`: **new file** — custom signout API route using `signOut({ redirect: false })` from `@/lib/auth` + redirect URL from request headers (same pattern as login route). Priority match over NextAuth `[...nextauth]` catch-all.
+- `src/components/auth/logout-button.tsx`: removed `signOut()` from `next-auth/react`, uses `<form action="/api/auth/signout" method="POST">` instead
+- `public/sw.js`: `CACHE` bumped to `v3`, added `self.location.origin` check in fetch handler, added `catch` fallback to cached response
+- Production DB admin password reset to `admin123` (old hash didn't match, `upsert` with `update: {}` never updated it)
+
+**Verified:** Login → 303 `/dashboard` ✅, Dashboard 200 ✅, Signout → 303 `/login` with cleared cookie ✅ (all via `89.168.123.99`, no `localhost:3000` references)
 
 ### Login flow — definitive version (all tests passing)
 

@@ -5,6 +5,7 @@ import { SessionProvider } from "@/components/auth/session-provider";
 import { WhatsAppFloat } from "@/components/public/whatsapp-float";
 import { SearchModal } from "@/components/search/search-modal";
 import { PwaProvider } from "@/components/pwa/pwa-provider";
+import { ThemeProvider } from "@/components/theme/theme-provider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -52,13 +53,15 @@ export default function RootLayout({
       lang="en"
         className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
       >
-        <body className="min-h-full bg-slate-950 text-white">
-        <SessionProvider>
-          {children}
-          <WhatsAppFloat />
-          <SearchModal />
-          <PwaProvider />
-        </SessionProvider>
+        <body className="min-h-full bg-surface text-fg">
+        <ThemeProvider>
+          <SessionProvider>
+            {children}
+            <WhatsAppFloat />
+            <SearchModal />
+            <PwaProvider />
+          </SessionProvider>
+        </ThemeProvider>
       </body>
     </html>
   );
