@@ -53,6 +53,7 @@ export default async function CandidatesPage() {
                 <th className="px-3 py-2 font-medium text-slate-400">Drv. License</th>
                 <th className="px-3 py-2 font-medium text-slate-400">Lic. Cat.</th>
                 <th className="px-3 py-2 font-medium text-slate-400">Drv. Exp.</th>
+                <th className="px-3 py-2 font-medium text-slate-400">CV</th>
                 <th className="px-3 py-2 font-medium text-slate-400">Comments</th>
               </tr>
             </thead>
@@ -77,6 +78,15 @@ export default async function CandidatesPage() {
                     <td className="px-3 py-2 text-slate-300">{boolLabel(p?.validDriversLicense)}</td>
                     <td className="px-3 py-2 text-slate-300">{nullLabel(p?.driversLicenseCategory)}</td>
                     <td className="px-3 py-2 text-slate-300">{nullLabel(p?.drivingExperience)}</td>
+                    <td className="px-3 py-2">
+                      {p?.cvPath ? (
+                        <a href={p.cvPath} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300">
+                          View CV
+                        </a>
+                      ) : (
+                        <span className="text-slate-600">—</span>
+                      )}
+                    </td>
                     <td className="px-3 py-2 text-slate-300 max-w-[200px] truncate" title={p?.additionalComments || ""}>
                       {nullLabel(p?.additionalComments)}
                     </td>

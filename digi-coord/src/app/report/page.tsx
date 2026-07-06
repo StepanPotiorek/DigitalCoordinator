@@ -4,6 +4,7 @@ import { Suspense } from "react"
 import { t } from "@/lib/translations"
 import { SiteHeader } from "@/components/public/site-header"
 import { PageContainer, PageHeader } from "@/components/public/page-layout"
+import { SiteFooter } from "@/components/public/site-footer"
 import { IssueReportForm } from "@/components/forms/issue-report-form"
 
 export default async function ReportPage() {
@@ -26,9 +27,7 @@ export default async function ReportPage() {
         </div>
       </PageContainer>
 
-      <footer className="border-t border-white/10 py-6 text-center text-xs text-slate-500">
-        <p>Digital Coordinator — Suporta sa Manggagawang Pilipino 🇵🇭🇨🇿</p>
-      </footer>
+      <SiteFooter />
     </div>
   )
 }

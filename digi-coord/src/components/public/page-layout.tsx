@@ -116,18 +116,6 @@ export function ChecklistItem({ children }: ChecklistItemProps) {
   )
 }
 
-interface FooterProps {
-  lang?: string
-}
-
-export function SiteFooter({}: FooterProps) {
-  return (
-    <footer className="border-t border-white/10 py-6 text-center text-xs text-slate-500">
-      <p>Digital Coordinator — Suporta sa Manggagawang Pilipino 🇵🇭🇨🇿</p>
-    </footer>
-  )
-}
-
 export function Breadcrumb({ items }: { items: { label: string; href: string }[] }) {
   return (
     <nav className="mb-6 flex items-center gap-1.5 text-xs text-slate-500">

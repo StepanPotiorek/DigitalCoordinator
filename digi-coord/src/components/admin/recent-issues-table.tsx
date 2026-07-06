@@ -18,7 +18,7 @@ type Issue = {
   issueType: string
   priority: string
   status: string
-  createdAt: Date
+  createdAt: string | Date
   worker: { name: string } | null
 }
 

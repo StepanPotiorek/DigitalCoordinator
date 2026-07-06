@@ -1,8 +1,21 @@
 import { auth } from "@/lib/auth"
-import { prisma } from "@/lib/prisma"
+import { fetchWithAuth } from "@/lib/server-fetch"
 import { redirect } from "next/navigation"
 import Link from "next/link"
 import { Checklist } from "@/components/onboarding/checklist"
+
+interface OnboardingApiResponse {
+  worker: { id: number; name: string }
+  items: {
+    id: number
+    workerId: number
+    label: string
+    category: string
+    completed: boolean
+    completedAt: string | null
+    createdAt: string
+  }[]
+}
 
 export default async function WorkerOnboardingPage({
   params,
@@ -18,16 +31,15 @@ export default async function WorkerOnboardingPage({
   }
 
   const { id } = await params
-  const workerId = parseInt(id)
+  const baseUrl = process.env.NEXTAUTH_URL || `http://localhost:${process.env.PORT || 3000}`
 
-  const worker = await prisma.worker.findUnique({
-    where: { id: workerId },
-    include: { onboardingItems: { orderBy: { createdAt: "asc" } } },
-  })
-
-  if (!worker) {
+  const res = await fetchWithAuth(`${baseUrl}/api/onboarding?workerId=${id}`, { cache: "no-store" })
+  if (!res.ok) {
     return <p className="text-slate-400">Worker not found.</p>
   }
+
+  const data: OnboardingApiResponse = await res.json()
+  const { worker, items } = data
 
   return (
     <div>
@@ -51,7 +63,7 @@ export default async function WorkerOnboardingPage({
       <div className="rounded-xl border border-slate-800 bg-slate-900/50 p-6 backdrop-blur-sm">
         <Checklist
           workerId={worker.id}
-          initialItems={worker.onboardingItems}
+          initialItems={items}
         />
       </div>
     </div>

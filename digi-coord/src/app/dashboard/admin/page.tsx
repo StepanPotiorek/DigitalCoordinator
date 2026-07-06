@@ -1,10 +1,29 @@
 import { auth } from "@/lib/auth"
-import { prisma } from "@/lib/prisma"
+import { fetchWithAuth } from "@/lib/server-fetch"
 import { redirect } from "next/navigation"
 import Link from "next/link"
 import { StatCard } from "@/components/admin/stat-card"
+import { ActivityFeed } from "@/components/dashboard/activity-feed"
 import { RecentIssuesTable } from "@/components/admin/recent-issues-table"
 import { WorkersOverviewChart } from "@/components/admin/workers-overview-chart"
+
+interface StatsResponse {
+  totalWorkers: number
+  workersByStatus: Record<string, number>
+  pendingApprovals: number
+  totalIssues: number
+  issuesByStatus: Record<string, number>
+  urgentIssues: number
+  recentWorkers: { id: number; name: string; createdAt: string }[]
+  recentIssues: { id: number; issueType: string; priority: string; status: string; createdAt: string; worker: { name: string } | null }[]
+  onboardingCompletionRate: number
+  totalFeedback: number
+  helpedFeedback: number
+  issuesFromHelp: number
+  resolutionRate: number
+  selfServiceRate: number | null
+  issuesAvoided: number
+}
 
 export default async function AdminDashboardPage() {
   const session = await auth()
@@ -12,7 +31,11 @@ export default async function AdminDashboardPage() {
     redirect("/login")
   }
 
-  const [
+  const baseUrl = process.env.NEXTAUTH_URL || `http://localhost:${process.env.PORT || 3000}`
+  const res = await fetchWithAuth(`${baseUrl}/api/admin/stats`, { cache: "no-store" })
+  const stats: StatsResponse = await res.json()
+
+  const {
     totalWorkers,
     workersByStatus,
     pendingApprovals,
@@ -21,74 +44,14 @@ export default async function AdminDashboardPage() {
     urgentIssues,
     recentWorkers,
     recentIssues,
-    onboardingItems,
+    onboardingCompletionRate,
     totalFeedback,
     helpedFeedback,
     issuesFromHelp,
-  ] = await Promise.all([
-    prisma.worker.count(),
-    prisma.worker.groupBy({
-      by: ["onboardingStatus"],
-      _count: true,
-    }),
-    prisma.worker.count({ where: { status: "PENDING_APPROVAL" } }),
-    prisma.issue.count(),
-    prisma.issue.groupBy({
-      by: ["status"],
-      _count: true,
-    }),
-    prisma.issue.count({
-      where: { priority: "URGENT", status: { not: "RESOLVED" } },
-    }),
-    prisma.worker.findMany({
-      orderBy: { createdAt: "desc" },
-      take: 5,
-    }),
-    prisma.issue.findMany({
-      orderBy: { createdAt: "desc" },
-      take: 10,
-      include: { worker: { select: { name: true } } },
-    }),
-    prisma.onboardingItem.findMany({
-      select: { completed: true },
-    }),
-    prisma.situationFeedback.count(),
-    prisma.situationFeedback.count({ where: { helped: true } }),
-    prisma.issue.count({ where: { situationId: { not: null } } }),
-  ])
-
-  const workersByStatusMap: Record<string, number> = {}
-  for (const w of workersByStatus) {
-    workersByStatusMap[w.onboardingStatus] = w._count
-  }
-
-  const issuesByStatusMap: Record<string, number> = {}
-  for (const i of issuesByStatus) {
-    issuesByStatusMap[i.status] = i._count
-  }
-
-  const totalOnboarding = onboardingItems.length
-  const completedOnboarding = onboardingItems.filter(
-    (i) => i.completed
-  ).length
-  const onboardingRate =
-    totalOnboarding === 0
-      ? 0
-      : Math.round((completedOnboarding / totalOnboarding) * 100)
-
-  const resolvedIssues = issuesByStatusMap["RESOLVED"] || 0
-  const resolutionRate =
-    totalIssues === 0
-      ? 0
-      : Math.round((resolvedIssues / totalIssues) * 100)
-
-  const selfServiceRate =
-    totalFeedback === 0
-      ? null
-      : Math.round((helpedFeedback / totalFeedback) * 100)
-  const issuesAvoided = totalFeedback > 0
-    ? Math.round(helpedFeedback * (totalFeedback / (issuesFromHelp || 1)))
-    : 0
+    resolutionRate,
+    selfServiceRate,
+    issuesAvoided,
+  } = stats
 
   return (
     <div className="space-y-8">
@@ -127,7 +90,7 @@ export default async function AdminDashboardPage() {
         />
         <StatCard
           title="Onboarding Rate"
-          value={`${onboardingRate}%`}
+          value={`${onboardingCompletionRate}%`}
           accent="green"
         />
       </div>
@@ -137,7 +100,7 @@ export default async function AdminDashboardPage() {
           <h2 className="mb-4 text-lg font-semibold text-white">
             Workers Overview
           </h2>
-          <WorkersOverviewChart workersByStatus={workersByStatusMap} />
+          <WorkersOverviewChart workersByStatus={workersByStatus} />
 
           <h3 className="mb-3 mt-6 text-sm font-semibold text-slate-400">
             Recent Workers
@@ -169,7 +132,7 @@ export default async function AdminDashboardPage() {
                   {s.replace("_", " ")}
                 </span>
                 <span className="font-medium text-white">
-                  {issuesByStatusMap[s] || 0}
+                  {issuesByStatus[s] || 0}
                 </span>
               </div>
             ))}
@@ -272,10 +235,15 @@ export default async function AdminDashboardPage() {
             </div>
             <div className="flex items-center justify-between">
               <span className="text-slate-400">Onboarding Completion</span>
-              <span className="font-medium text-white">{onboardingRate}%</span>
+                <span className="font-medium text-white">{onboardingCompletionRate}%</span>
             </div>
           </div>
         </div>
+      </div>
+
+      <div className="rounded-xl border border-slate-800 bg-slate-900/50 p-6 backdrop-blur-sm">
+        <h2 className="mb-4 text-lg font-semibold text-white">Recent Activity</h2>
+        <ActivityFeed />
       </div>
     </div>
   )

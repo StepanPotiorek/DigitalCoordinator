@@ -18,12 +18,18 @@ export async function GET(request: Request) {
     const workerId = parseId(workerIdStr)
     if (!workerId) return badRequest("Invalid workerId")
 
+    const worker = await prisma.worker.findUnique({
+      where: { id: workerId },
+      select: { id: true, name: true },
+    })
+    if (!worker) return notFound("Worker")
+
     const items = await prisma.onboardingItem.findMany({
       where: { workerId },
       orderBy: { createdAt: "asc" },
     })
 
-    return items
+    return { worker, items }
   })
 }
 

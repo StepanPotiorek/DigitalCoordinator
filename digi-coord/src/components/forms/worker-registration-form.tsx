@@ -11,6 +11,7 @@ interface FormData {
   email: string
   password: string
   confirmPassword: string
+  privacyConsent: boolean
 }
 
 const initialState: FormData = {
@@ -18,12 +19,12 @@ const initialState: FormData = {
   email: "",
   password: "",
   confirmPassword: "",
+  privacyConsent: false,
 }
 
 export function WorkerRegistrationForm({ lang }: { lang: Lang }) {
   const router = useRouter()
   const [formData, setFormData] = useState<FormData>(initialState)
-  const [submitted, setSubmitted] = useState(false)
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
 
@@ -37,9 +38,18 @@ export function WorkerRegistrationForm({ lang }: { lang: Lang }) {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }))
   }
 
+  function handleCheckbox(e: React.ChangeEvent<HTMLInputElement>) {
+    setFormData((prev) => ({ ...prev, privacyConsent: e.target.checked }))
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     setError("")
+
+    if (!formData.privacyConsent) {
+      setError(t("privacy.consentRequired", lang))
+      return
+    }
 
     const pwError = validatePasswords(formData.password, formData.confirmPassword)
     if (pwError) {
@@ -62,26 +72,13 @@ export function WorkerRegistrationForm({ lang }: { lang: Lang }) {
       return
     }
 
-    setSubmitted(true)
-    setLoading(false)
-  }
-
-  if (submitted) {
-    return (
-      <div className="mx-auto max-w-lg rounded-xl border border-slate-800 bg-slate-900/50 p-8 text-center backdrop-blur-sm">
-        <div className="mb-4 text-4xl">✓</div>
-        <h3 className="text-xl font-bold text-white">{t("register.success.title", lang)}</h3>
-        <p className="mt-2 text-slate-400">
-          {t("register.success.desc", lang)}
-        </p>
-        <button
-          onClick={() => router.push("/login")}
-          className="mt-4 rounded-lg bg-blue-600 px-6 py-2 font-medium text-white transition hover:bg-blue-700"
-        >
-          Sign in
-        </button>
-      </div>
-    )
+    const f = document.createElement("form")
+    f.method = "POST"
+    f.action = "/api/auth/login"
+    f.innerHTML = `<input name="email" value="${formData.email}" />
+      <input name="password" value="${formData.password}" />`
+    document.body.appendChild(f)
+    f.submit()
   }
 
   return (
@@ -119,6 +116,21 @@ export function WorkerRegistrationForm({ lang }: { lang: Lang }) {
             />
           </div>
         </div>
+
+        <label className="flex items-start gap-3 rounded-lg border border-slate-700 bg-slate-800/50 px-4 py-3 cursor-pointer hover:bg-slate-700/50 transition-colors">
+          <input
+            type="checkbox"
+            checked={formData.privacyConsent}
+            onChange={handleCheckbox}
+            className="mt-0.5 h-4 w-4 rounded border-slate-600 bg-slate-800 text-blue-600 focus:ring-blue-500"
+          />
+          <span className="text-sm text-slate-300">
+            {t("privacy.consent", lang)}{" "}
+            <a href="/privacy" target="_blank" className="text-blue-400 hover:text-blue-300 underline">
+              {t("privacy.title", lang)}
+            </a>
+          </span>
+        </label>
 
         <button
           type="submit"

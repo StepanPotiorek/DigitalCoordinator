@@ -30,13 +30,13 @@ export const letterCategories: LetterCategory[] = [
       ],
     },
     action: {
-      en: "Read the letter carefully. Check the date and whether an appointment is required. Contact your coordinator if you do not understand the instructions.",
-      cz: "Přečtěte si dopis pozorně. Zkontrolujte datum a zda je vyžadována schůzka. Kontaktujte koordinátora, pokud nerozumíte pokynům.",
+      en: "Forward the letter to your coordinator immediately. They will handle all communication with the Ministry of Interior on your behalf.",
+      cz: "Pošlete dopis svému koordinátorovi. Ten za vás vyřídí veškerou komunikaci s ministerstvem vnitra.",
     },
-    requiresCoordinator: false,
+    requiresCoordinator: true,
     coordinatorNote: {
-      en: "If you are unsure about any ministry letter, contact your coordinator before taking action.",
-      cz: "Pokud si nejste jisti jakýmkoli dopisem z ministerstva, před provedením akce kontaktujte koordinátora.",
+      en: "Please send a clear photo or scan of the ministry letter to your coordinator. Do not take any action yourself.",
+      cz: "Pošlete prosím jasnou fotku nebo sken dopisu z ministerstva svému koordinátorovi. Nepodnikejte žádné kroky sami.",
     },
   },
   {

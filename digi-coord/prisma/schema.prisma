@@ -37,6 +37,7 @@ model CandidateProfile {
   driversLicenseCategory String?
   drivingExperience     String?
   additionalComments    String?
+  cvPath                String?
   createdAt             DateTime @default(now())
   updatedAt             DateTime @updatedAt
 
@@ -248,8 +249,23 @@ model Faq {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  feedback FaqFeedback[]
+
   @@index([category])
   @@index([order])
+}
+
+model FaqFeedback {
+  id      Int      @id @default(autoincrement())
+  faqId   Int
+  helpful Boolean
+  comment String?
+  createdAt DateTime @default(now())
+
+  faq Faq @relation(fields: [faqId], references: [id], onDelete: Cascade)
+
+  @@index([faqId])
+  @@index([helpful])
 }
 
 model PasswordResetToken {

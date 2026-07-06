@@ -1,8 +1,34 @@
 import { auth } from "@/lib/auth"
-import { prisma } from "@/lib/prisma"
+import { fetchWithAuth } from "@/lib/server-fetch"
 import { redirect } from "next/navigation"
 import Link from "next/link"
 import { CommunicationForm } from "@/components/companies/communication-form"
+
+interface CompanyWorker {
+  id: number
+  name: string
+  whatsapp: string | null
+  onboardingStatus: string
+  employeeCardStatus: string
+  openIssues: number
+}
+
+interface CompanyComm {
+  id: number
+  type: string
+  message: string
+  createdBy: string
+  createdAt: string
+  worker: { name: string } | null
+}
+
+const ecLabel: Record<string, string> = {
+  NOT_STARTED: "Card: Not Started",
+  IN_PROGRESS: "Card: In Progress",
+  BIOMETRICS_DONE: "Card: Biometrics Done",
+  CARD_READY: "Card: Ready",
+  ISSUED: "Card: Issued",
+}
 
 export default async function CompanyDetailPage({
   params,
@@ -13,22 +39,26 @@ export default async function CompanyDetailPage({
   if (!session?.user) redirect("/login")
 
   const { id } = await params
-  const companyId = parseInt(id)
+  const baseUrl = process.env.NEXTAUTH_URL || `http://localhost:${process.env.PORT || 3000}`
 
-  const company = await prisma.company.findUnique({
-    where: { id: companyId },
-    include: {
-      communications: {
-        orderBy: { createdAt: "desc" },
-        take: 50,
-        include: { worker: { select: { name: true } } },
-      },
-    },
-  })
+  const [companyRes, workersRes] = await Promise.all([
+    fetchWithAuth(`${baseUrl}/api/companies/${id}`, { cache: "no-store" }),
+    fetchWithAuth(`${baseUrl}/api/companies/${id}/workers`, { cache: "no-store" }),
+  ])
 
-  if (!company) {
+  if (!companyRes.ok) {
     return <p className="text-slate-400">Company not found.</p>
   }
+
+  const company: {
+    id: number
+    name: string
+    contactEmail: string | null
+    contactPhone: string | null
+    notes: string | null
+    userId: string | null
+    communications: CompanyComm[]
+  } = await companyRes.json()
 
   if (
     session.user.role === "COMPANY" &&
@@ -37,23 +67,7 @@ export default async function CompanyDetailPage({
     redirect("/dashboard/companies")
   }
 
-  const ecLabel: Record<string, string> = {
-    NOT_STARTED: "Card: Not Started",
-    IN_PROGRESS: "Card: In Progress",
-    BIOMETRICS_DONE: "Card: Biometrics Done",
-    CARD_READY: "Card: Ready",
-    ISSUED: "Card: Issued",
-  }
-
-  const workers = await prisma.worker.findMany({
-    where: { employer: company.name },
-    include: {
-      _count: {
-        select: { issues: { where: { status: { not: "RESOLVED" } } } },
-      },
-    },
-    orderBy: { createdAt: "desc" },
-  })
+  const workers: CompanyWorker[] = workersRes.ok ? await workersRes.json() : []
 
   return (
     <div>
@@ -128,12 +142,12 @@ export default async function CompanyDetailPage({
                   <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs">
                     <span
                       className={
-                        worker._count.issues > 0
+                        worker.openIssues > 0
                           ? "font-medium text-red-400"
                           : "text-green-400"
                       }
                     >
-                      ⚠ {worker._count.issues} open
+                      ⚠ {worker.openIssues} open
                     </span>
                     <span className="text-slate-500">
                       {worker.onboardingStatus.replace("_", " ")}

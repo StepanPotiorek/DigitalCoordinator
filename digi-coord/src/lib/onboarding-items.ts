@@ -37,11 +37,5 @@ export const defaultOnboardingItems: OnboardingItemDef[] = [
   { label: "Basic Czech phrases reviewed", category: "LANGUAGE" },
   { label: "Weather adaptation tips shared", category: "ADAPTATION" },
   { label: "Cultural norms explained", category: "ADAPTATION" },
-  { label: "Employer Card application submitted at embassy", category: "IMMIGRATION" },
-  { label: "Employer Card visa received in passport", category: "IMMIGRATION" },
-  { label: "OAMP visit within 3 working days of arrival", category: "IMMIGRATION" },
-  { label: "Biometrics submitted at OAMP", category: "IMMIGRATION" },
-  { label: "Employer Card collected from OAMP", category: "IMMIGRATION" },
-  { label: "Residence registration at Foreign Police", category: "IMMIGRATION" },
-  { label: "Employer Card renewal before expiration", category: "IMMIGRATION" },
+  { label: "Employee Card process handled by coordinator", category: "IMMIGRATION" },
 ]

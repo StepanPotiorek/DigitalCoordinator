@@ -1,7 +1,8 @@
-const CACHE = "digicoord-v3"
+const CACHE = "digicoord-__CACHE_VERSION__"
 
 const ASSETS = [
   "/",
+  "/offline.html",
   "/manifest.json",
   "/icons/icon.svg",
   "/icons/icon-192x192.png",
@@ -31,7 +32,10 @@ self.addEventListener("fetch", (event) => {
         caches.open(CACHE).then((cache) => cache.put(event.request, clone))
       }
       return res
-    }).catch(() => caches.match(event.request))),
+    }).catch(() => {
+      if (event.request.mode === "navigate") return caches.match("/offline.html")
+      return caches.match(event.request)
+    })),
   )
 })
 

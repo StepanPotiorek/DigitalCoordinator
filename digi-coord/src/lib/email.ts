@@ -108,6 +108,22 @@ function urgentIssueEmail(workerName: string, issueType: string, issueId: number
   `)
 }
 
+function newCandidateEmail(candidateName: string, candidateEmail: string): string {
+  const cn = escapeHtml(candidateName)
+  const ce = escapeHtml(candidateEmail)
+  return wrap(`
+    <div class="header">
+      <h1>New Candidate Registered</h1>
+      <p>${cn} has registered on the platform</p>
+    </div>
+    <div class="label">Name</div>
+    <div class="value">${cn}</div>
+    <div class="label">Email</div>
+    <div class="value">${ce}</div>
+    <a href="${process.env.NEXTAUTH_URL}/dashboard/admin/candidates" class="button">View Candidates</a>
+  `)
+}
+
 function newWorkerEmail(workerName: string, workerId: number): string {
   const wn = escapeHtml(workerName)
   return wrap(`
@@ -128,7 +144,7 @@ function registrationConfirmationEmail(name: string): string {
       <h1>Registration Received</h1>
       <p>Welcome to Digital Coordinator, ${n}!</p>
     </div>
-    <p style="color:#94a3b8;font-size:14px;">Your registration has been received. An admin will review your account and you will be notified once approved.</p>
+    <p style="color:#94a3b8;font-size:14px;">Your registration was successful. You can now log in to complete your profile and upload your CV.</p>
     <p style="color:#94a3b8;font-size:14px;">If you have any questions, please contact support.</p>
   `)
 }
@@ -187,6 +203,10 @@ function sendNewWorkerAlert(to: string, workerName: string, workerId: number) {
   return sendEmail(to, `New Worker Registered: ${workerName}`, newWorkerEmail(workerName, workerId))
 }
 
+function sendNewCandidateAlert(to: string, candidateName: string, candidateEmail: string) {
+  return sendEmail(to, `New Candidate Registered: ${candidateName}`, newCandidateEmail(candidateName, candidateEmail))
+}
+
 // --- Public notify functions ---
 
 export async function notifyAdminsOfIssue(workerName: string, issueType: string, issueId: number, priority: string) {
@@ -211,6 +231,10 @@ export async function notifyWorkerOfRegistration(email: string, name: string) {
 
 export async function notifyAdminsOfNewWorker(workerName: string, workerId: number) {
   await sendNewWorkerAlert(ADMIN_EMAIL, workerName, workerId)
+}
+
+export async function notifyAdminsOfNewCandidate(candidateName: string, candidateEmail: string) {
+  await sendNewCandidateAlert(ADMIN_EMAIL, candidateName, candidateEmail)
 }
 
 // --- Public send function (used directly by other modules) ---

@@ -42,36 +42,12 @@ interface IssueItem {
   createdAt: string
 }
 
-const EMPLOYEE_CARD_SUBTASKS: Record<string, { label: string; doneKey: string }[]> = {
-  NOT_STARTED: [
-    { label: "Appointment booked", doneKey: "NOT_STARTED" },
-  ],
-  IN_PROGRESS: [
-    { label: "Appointment booked", doneKey: "IN_PROGRESS" },
-    { label: "Documents prepared", doneKey: "IN_PROGRESS" },
-  ],
-  BIOMETRICS_DONE: [
-    { label: "Appointment booked", doneKey: "BIOMETRICS_DONE" },
-    { label: "Documents prepared", doneKey: "BIOMETRICS_DONE" },
-    { label: "Biometrics completed", doneKey: "BIOMETRICS_DONE" },
-  ],
-  CARD_READY: [
-    { label: "Appointment booked", doneKey: "CARD_READY" },
-    { label: "Documents prepared", doneKey: "CARD_READY" },
-    { label: "Biometrics completed", doneKey: "CARD_READY" },
-    { label: "Card ready for pickup", doneKey: "CARD_READY" },
-  ],
-  ISSUED: [
-    { label: "Employee card issued", doneKey: "ISSUED" },
-  ],
-}
-
-const EMPLOYEE_CARD_NEXT_ACTION: Record<string, { label: string; href: string } | null> = {
-  NOT_STARTED: { label: "Book biometrics appointment", href: "/dashboard/worker/employee-card" },
-  IN_PROGRESS: { label: "Complete biometrics", href: "/dashboard/worker/employee-card" },
-  BIOMETRICS_DONE: { label: "Wait for card to be ready", href: "/dashboard/worker/employee-card" },
-  CARD_READY: { label: "Collect your employee card", href: "/dashboard/worker/employee-card" },
-  ISSUED: null,
+const EC_STATUS_LABEL: Record<string, string> = {
+  NOT_STARTED: "Not started — handled by your coordinator",
+  IN_PROGRESS: "In progress — your coordinator is working on it",
+  BIOMETRICS_DONE: "Biometrics completed",
+  CARD_READY: "Card ready for collection",
+  ISSUED: "Employee card issued",
 }
 
 export default function WorkerDashboardPage() {
@@ -131,9 +107,6 @@ export default function WorkerDashboardPage() {
 
   const progress = Math.round((completedSteps / totalSteps) * 100)
   const openIssues = issues.filter((i) => i.status === "OPEN" || i.status === "IN_PROGRESS")
-
-  const ecSubtasks = EMPLOYEE_CARD_SUBTASKS[worker.employeeCardStatus] || []
-  const ecNextAction = EMPLOYEE_CARD_NEXT_ACTION[worker.employeeCardStatus]
 
   return (
     <div className="space-y-6">
@@ -211,16 +184,10 @@ export default function WorkerDashboardPage() {
         <JourneyCard
           icon="🪪"
           title={t("dashboard.employeeCardTitle", lang)}
-          status={
-            worker.employeeCardStatus === "ISSUED"
-              ? "completed"
-              : worker.employeeCardStatus === "NOT_STARTED"
-                ? "not-started"
-                : "in-progress"
-          }
-          items={ecSubtasks.map((t) => ({ label: t.label, done: true }))}
-          nextAction={ecNextAction?.label}
-          nextActionHref={ecNextAction?.href}
+          status="not-started"
+          items={[{ label: EC_STATUS_LABEL[worker.employeeCardStatus] || "Handled by your coordinator", done: worker.employeeCardStatus === "ISSUED" }]}
+          nextAction={t("dashboard.employeeCardInfo", lang)}
+          nextActionHref="/dashboard/worker/employee-card"
         />
 
         <JourneyCard

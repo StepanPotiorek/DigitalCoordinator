@@ -3,6 +3,7 @@ import { getLang } from "@/lib/i18n"
 import { t } from "@/lib/translations"
 import { SiteHeader } from "@/components/public/site-header"
 import { PageContainer, PageHeader, InfoBox, ChecklistItem } from "@/components/public/page-layout"
+import { SiteFooter } from "@/components/public/site-footer"
 
 const checklist = [
   "Valid passport (minimum 6 months validity)",
@@ -97,9 +98,7 @@ export default async function BeforeArrivalPage() {
         </InfoBox>
       </PageContainer>
 
-      <footer className="border-t border-white/10 py-6 text-center text-xs text-slate-500">
-        <p>Digital Coordinator — Suporta sa Manggagawang Pilipino 🇵🇭🇨🇿</p>
-      </footer>
+      <SiteFooter />
     </div>
   )
 }

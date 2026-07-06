@@ -34,6 +34,29 @@ export const metadata: Metadata = {
       { url: "/icons/icon.svg", type: "image/svg+xml" },
     ],
   },
+  openGraph: {
+    title: "Digital Coordinator — Suporta sa Manggagawang Pilipino",
+    description:
+      "Automated onboarding and worker support for Filipino workers in Czech Republic.",
+    url: "https://digitalcoordinator.eu",
+    siteName: "Digital Coordinator",
+    locale: "en_US",
+    type: "website",
+    images: [
+      {
+        url: "/icons/icon-512x512.png",
+        width: 512,
+        height: 512,
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Digital Coordinator — Suporta sa Manggagawang Pilipino",
+    description:
+      "Automated onboarding and worker support for Filipino workers in Czech Republic.",
+    images: ["/icons/icon-512x512.png"],
+  },
 };
 
 export const viewport: Viewport = {
@@ -54,6 +77,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
       >
         <body className="min-h-full bg-surface text-fg">
+        <style>{`body{background:#0f172a;color:#e2e8f0;font-family:system-ui,-apple-system,sans-serif;padding:1rem}a{color:#60a5fa}.hidden{display:block!important}`}</style>
         <ThemeProvider>
           <SessionProvider>
             {children}

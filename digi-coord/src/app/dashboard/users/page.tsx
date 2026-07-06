@@ -1,7 +1,17 @@
 import { auth } from "@/lib/auth"
-import { prisma } from "@/lib/prisma"
+import { fetchWithAuth } from "@/lib/server-fetch"
 import { redirect } from "next/navigation"
 import Link from "next/link"
+
+interface UserRecord {
+  id: string
+  name: string | null
+  email: string
+  role: string
+  createdAt: string
+  updatedAt: string
+  company: { name: string } | null
+}
 
 const roleColors: Record<string, string> = {
   ADMIN: "bg-red-900/50 text-red-400",
@@ -17,18 +27,12 @@ export default async function UsersPage() {
     redirect("/login")
   }
 
-  const users = await prisma.user.findMany({
-    select: {
-      id: true,
-      name: true,
-      email: true,
-      role: true,
-      createdAt: true,
-      updatedAt: true,
-      company: { select: { name: true } },
-    },
-    orderBy: { createdAt: "desc" },
-  })
+  const baseUrl = process.env.NEXTAUTH_URL || `http://localhost:${process.env.PORT || 3000}`
+  const res = await fetchWithAuth(`${baseUrl}/api/users`, { cache: "no-store" })
+  if (!res.ok) {
+    return <p className="text-slate-400">Failed to load users.</p>
+  }
+  const users: UserRecord[] = await res.json()
 
   return (
     <div>

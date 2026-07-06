@@ -23,7 +23,7 @@ export async function GET(
     const ext = path.extname(safe).toLowerCase()
     const contentType = MIME_MAP[ext] || "application/octet-stream"
 
-    const dirs = ["issues", "documents", "letters"]
+    const dirs = ["issues", "documents", "letters", "cv"]
     for (const dir of dirs) {
       try {
         const filePath = path.join(process.cwd(), "public", "uploads", dir, safe)

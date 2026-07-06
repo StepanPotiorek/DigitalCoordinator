@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { TextField } from "@/components/ui/text-field"
 import { useLang } from "@/lib/use-lang"
 import { t } from "@/lib/translations"
@@ -18,6 +18,7 @@ interface ProfileData {
   driversLicenseCategory: string
   drivingExperience: string
   additionalComments: string
+  cvPath: string | null
 }
 
 const initialProfile: ProfileData = {
@@ -33,6 +34,7 @@ const initialProfile: ProfileData = {
   driversLicenseCategory: "",
   drivingExperience: "",
   additionalComments: "",
+  cvPath: null,
 }
 
 export default function CandidateProfilePage() {
@@ -42,6 +44,9 @@ export default function CandidateProfilePage() {
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
   const [error, setError] = useState("")
+  const [uploading, setUploading] = useState(false)
+  const [uploadError, setUploadError] = useState("")
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     fetch("/api/user/candidate-profile")
@@ -61,6 +66,7 @@ export default function CandidateProfilePage() {
             driversLicenseCategory: data.driversLicenseCategory || "",
             drivingExperience: data.drivingExperience || "",
             additionalComments: data.additionalComments || "",
+            cvPath: data.cvPath || null,
           })
         }
       })
@@ -97,6 +103,40 @@ export default function CandidateProfilePage() {
     setSaving(false)
     setSaved(true)
     setTimeout(() => setSaved(false), 3000)
+  }
+
+  async function handleCvUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    setUploadError("")
+    setUploading(true)
+
+    const body = new FormData()
+    body.append("cv", file)
+
+    const res = await fetch("/api/user/candidate-cv", { method: "POST", body })
+    const data = await res.json()
+
+    if (!res.ok) {
+      setUploadError(data.error || "Upload failed")
+      setUploading(false)
+      return
+    }
+
+    setForm((prev) => ({ ...prev, cvPath: data.cvPath }))
+    setUploading(false)
+  }
+
+  async function handleRemoveCv() {
+    setUploading(true)
+    const res = await fetch("/api/user/candidate-cv", { method: "DELETE" })
+
+    if (res.ok) {
+      setForm((prev) => ({ ...prev, cvPath: null }))
+      if (fileInputRef.current) fileInputRef.current.value = ""
+    }
+    setUploading(false)
   }
 
   if (loading) {
@@ -368,6 +408,45 @@ export default function CandidateProfilePage() {
         </button>
       </form>
 
+      <div className="mt-8 rounded-xl border border-slate-800 bg-slate-900/50 p-6 backdrop-blur-sm">
+        <h2 className="mb-4 text-lg font-semibold text-white">CV / Resume</h2>
+        {form.cvPath ? (
+          <div className="flex items-center justify-between rounded-lg border border-slate-700 bg-slate-800/50 px-4 py-3">
+            <span className="text-sm text-slate-300">CV uploaded</span>
+            <div className="flex gap-3">
+              <a
+                href={form.cvPath}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm font-medium text-blue-400 hover:text-blue-300"
+              >
+                View CV
+              </a>
+              <button
+                onClick={handleRemoveCv}
+                disabled={uploading}
+                className="text-sm font-medium text-red-400 hover:text-red-300 disabled:opacity-50"
+              >
+                Remove
+              </button>
+            </div>
+          </div>
+        ) : (
+          <p className="mb-3 text-sm text-slate-400">No CV uploaded yet.</p>
+        )}
+        <div className="mt-3">
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+            onChange={handleCvUpload}
+            className="block w-full text-sm text-slate-400 file:mr-3 file:rounded-lg file:border-0 file:bg-blue-600 file:px-4 file:py-2 file:text-sm file:font-medium file:text-white hover:file:bg-blue-700"
+          />
+          {uploadError && (
+            <p className="mt-2 text-sm text-red-400">{uploadError}</p>
+          )}
+        </div>
+      </div>
 
     </div>
   )

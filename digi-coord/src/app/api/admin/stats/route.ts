@@ -7,10 +7,11 @@ export async function GET() {
     const session = await auth()
     if (!session?.user || session.user.role !== "ADMIN") return unauthorized()
 
-    const [totalWorkers, workersByStatus, totalIssues, issuesByStatus, urgentIssues, recentWorkers, recentIssues, onboardingItems] =
+    const [totalWorkers, workersByStatus, pendingApprovals, totalIssues, issuesByStatus, urgentIssues, recentWorkers, recentIssues, onboardingItems, totalFeedback, helpedFeedback, issuesFromHelp] =
       await Promise.all([
         prisma.worker.count(),
         prisma.worker.groupBy({ by: ["onboardingStatus"], _count: true }),
+        prisma.worker.count({ where: { status: "PENDING_APPROVAL" } }),
         prisma.issue.count(),
         prisma.issue.groupBy({ by: ["status"], _count: true }),
         prisma.issue.count({ where: { priority: "URGENT", status: { not: "RESOLVED" } } }),
@@ -21,6 +22,9 @@ export async function GET() {
           include: { worker: { select: { name: true } } },
         }),
         prisma.onboardingItem.findMany({ select: { completed: true } }),
+        prisma.situationFeedback.count(),
+        prisma.situationFeedback.count({ where: { helped: true } }),
+        prisma.issue.count({ where: { situationId: { not: null } } }),
       ])
 
     const workersByStatusMap: Record<string, number> = {}
@@ -38,9 +42,25 @@ export async function GET() {
       where: { createdAt: { gte: firstOfMonth } },
     })
 
+    const resolvedIssues = issuesByStatusMap["RESOLVED"] || 0
+    const resolutionRate =
+      totalIssues === 0
+        ? 0
+        : Math.round((resolvedIssues / totalIssues) * 100)
+
+    const selfServiceRate =
+      totalFeedback === 0
+        ? null
+        : Math.round((helpedFeedback / totalFeedback) * 100)
+    const issuesAvoided =
+      totalFeedback > 0
+        ? Math.round(helpedFeedback * (totalFeedback / (issuesFromHelp || 1)))
+        : 0
+
     return {
       totalWorkers,
       workersByStatus: workersByStatusMap,
+      pendingApprovals,
       totalIssues,
       issuesByStatus: issuesByStatusMap,
       urgentIssues,
@@ -49,6 +69,12 @@ export async function GET() {
       recentIssues,
       onboardingCompletionRate:
         totalOnboarding === 0 ? 0 : Math.round((completedOnboarding / totalOnboarding) * 100),
+      totalFeedback,
+      helpedFeedback,
+      issuesFromHelp,
+      resolutionRate,
+      selfServiceRate,
+      issuesAvoided,
     }
   })
 }

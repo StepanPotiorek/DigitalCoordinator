@@ -4,6 +4,7 @@ import { t } from "@/lib/translations"
 import { SiteHeader } from "@/components/public/site-header"
 import { PageContainer, PageHeader } from "@/components/public/page-layout"
 import { prisma } from "@/lib/prisma"
+import { SiteFooter } from "@/components/public/site-footer"
 import { FAQList } from "./faq-list"
 
 export const dynamic = "force-dynamic"
@@ -38,9 +39,7 @@ export default async function FAQPage() {
         <FAQList grouped={grouped} />
       </PageContainer>
 
-      <footer className="border-t border-white/10 py-6 text-center text-xs text-slate-500">
-        <p>Digital Coordinator — Suporta sa Manggagawang Pilipino 🇵🇭🇨🇿</p>
-      </footer>
+      <SiteFooter />
     </div>
   )
 }

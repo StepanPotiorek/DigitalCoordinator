@@ -37,6 +37,7 @@ export async function GET(_request: Request, { params }: { params: Promise<{ id:
       employer: w.employer,
       arrivalDate: w.arrivalDate,
       onboardingStatus: w.onboardingStatus,
+      employeeCardStatus: w.employeeCardStatus,
       openIssues: w._count.issues,
       onboardingCompleted: w.onboardingItems.filter((i) => i.completed).length,
       onboardingTotal: w.onboardingItems.length,

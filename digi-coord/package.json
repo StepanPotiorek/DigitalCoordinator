@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "SW_VER=$(date +%s) && cp public/sw.js /tmp/sw.js.bak && sed -i \"s/__CACHE_VERSION__/$SW_VER/\" public/sw.js && next build && mv /tmp/sw.js.bak public/sw.js && rm -f .next/standalone/public/sw.js.bak && cp -r .next/static .next/standalone/.next/static && test -d .next/standalone/.next/static/chunks || { echo 'ERROR: static/ missing'; exit 1; }",
     "start": "next start",
     "lint": "eslint",
     "seed": "tsx prisma/seed.ts",

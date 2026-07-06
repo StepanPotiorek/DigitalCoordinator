@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react"
 import Link from "next/link"
+import { useDesktopNotifications } from "@/lib/use-desktop-notifications"
 
 interface Notification {
   id: number
@@ -17,6 +18,8 @@ export function NotificationBell() {
   const [notifications, setNotifications] = useState<Notification[]>([])
   const [unreadCount, setUnreadCount] = useState(0)
   const ref = useRef<HTMLDivElement>(null)
+
+  useDesktopNotifications(notifications)
 
   useEffect(() => {
     fetchNotifications()
@@ -67,6 +70,7 @@ export function NotificationBell() {
     NEW_ISSUE: "bg-amber-500/10 text-amber-400 border-amber-800",
     ISSUE_RESOLVED: "bg-green-500/10 text-green-400 border-green-800",
     NEW_WORKER: "bg-blue-500/10 text-blue-400 border-blue-800",
+    NEW_CANDIDATE: "bg-purple-500/10 text-purple-400 border-purple-800",
   }
 
   return (
@@ -74,6 +78,7 @@ export function NotificationBell() {
       <button
         onClick={() => setOpen(!open)}
         className="relative rounded-lg p-2 text-slate-400 transition hover:bg-slate-800 hover:text-white"
+        title="Notifications"
         aria-label="Notifications"
       >
         <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -99,6 +104,17 @@ export function NotificationBell() {
               </button>
             )}
           </div>
+
+          {typeof Notification !== "undefined" && Notification.permission === "default" && (
+            <div className="border-b border-slate-700 px-4 py-2">
+              <button
+                onClick={() => Notification.requestPermission()}
+                className="text-xs text-blue-400 transition hover:text-blue-300"
+              >
+                Enable Desktop Notifications
+              </button>
+            </div>
+          )}
 
           <div className="max-h-96 overflow-y-auto">
             {notifications.length === 0 ? (

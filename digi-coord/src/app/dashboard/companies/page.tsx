@@ -1,56 +1,77 @@
 import { auth } from "@/lib/auth"
-import { prisma } from "@/lib/prisma"
+import { fetchWithAuth } from "@/lib/server-fetch"
 import { redirect } from "next/navigation"
 import Link from "next/link"
+
+interface CompanyRecord {
+  id: number
+  name: string
+  contactEmail: string | null
+  contactPhone: string | null
+  notes: string | null
+  createdAt: string
+  workerCount?: number
+}
+
+interface CompanyMeWorker {
+  id: number
+  name: string
+  whatsapp: string | null
+  arrivalDate: string | null
+  onboardingStatus: string
+  employeeCardStatus: string
+  accommodationAddress: string | null
+  openIssues: number
+  onboardingCompleted: number
+  onboardingTotal: number
+}
+
+interface CompanyMeResponse {
+  company: {
+    id: number
+    name: string
+    contactEmail: string | null
+    communications: {
+      id: number
+      type: string
+      message: string
+      createdBy: string
+      createdAt: string
+      worker: { name: string } | null
+    }[]
+  }
+  workers: CompanyMeWorker[]
+}
+
+const ecLabels: Record<string, string> = {
+  NOT_STARTED: "Card: Not Started",
+  IN_PROGRESS: "Card: In Progress",
+  BIOMETRICS_DONE: "Card: Biometrics Done",
+  CARD_READY: "Card: Ready",
+  ISSUED: "Card: Issued",
+}
 
 export default async function CompaniesPage() {
   const session = await auth()
   if (!session?.user) redirect("/login")
 
   const role = session.user.role
+  const baseUrl = process.env.NEXTAUTH_URL || `http://localhost:${process.env.PORT || 3000}`
 
   if (role === "COMPANY") {
-    const companyRecord = await prisma.company.findUnique({
-      where: { userId: session.user.id },
-      include: {
-        communications: {
-          orderBy: { createdAt: "desc" },
-          take: 20,
-          include: { worker: { select: { name: true } } },
-        },
-      },
-    })
-
-    if (!companyRecord) {
+    const res = await fetchWithAuth(`${baseUrl}/api/companies/me`, { cache: "no-store" })
+    if (!res.ok) {
       return <p className="text-slate-400">Company profile not found.</p>
     }
-
-    const workers = await prisma.worker.findMany({
-      where: { employer: companyRecord.name },
-      include: {
-        _count: {
-          select: { issues: { where: { status: { not: "RESOLVED" } } } },
-        },
-        onboardingItems: { select: { completed: true } },
-        accommodationDetail: { select: { address: true } },
-      },
-      orderBy: { createdAt: "desc" },
-    })
-
-    const ecLabels: Record<string, string> = {
-      NOT_STARTED: "Card: Not Started",
-      IN_PROGRESS: "Card: In Progress",
-      BIOMETRICS_DONE: "Card: Biometrics Done",
-      CARD_READY: "Card: Ready",
-      ISSUED: "Card: Issued",
-    }
+    const data: CompanyMeResponse = await res.json()
+    const { company: companyRecord, workers } = data
 
     const totalWorkers = workers.length
     const completedOnboarding = workers.filter(
       (w) => w.onboardingStatus === "COMPLETED"
     ).length
     const totalIssues = workers.reduce(
-      (sum, w) => sum + w._count.issues,
+      (sum, w) => sum + w.openIssues,
       0
     )
 
@@ -95,9 +116,9 @@ export default async function CompaniesPage() {
           ) : (
             <div className="space-y-4">
               {workers.map((worker) => {
-                const total = worker.onboardingItems.length
-                const completed = worker.onboardingItems.filter((i) => i.completed).length
-                const progress = total === 0 ? 0 : Math.round((completed / total) * 100)
+                const progress = worker.onboardingTotal === 0
+                  ? 0
+                  : Math.round((worker.onboardingCompleted / worker.onboardingTotal) * 100)
 
                 return (
                   <Link
@@ -113,16 +134,16 @@ export default async function CompaniesPage() {
                         <div className="mt-0.5 text-sm text-slate-400">
                           {worker.whatsapp}
                         </div>
-                        {worker.accommodationDetail && (
+                        {worker.accommodationAddress && (
                           <div className="mt-0.5 text-xs text-slate-500">
-                            {worker.accommodationDetail.address}
+                            {worker.accommodationAddress}
                           </div>
                         )}
                       </div>
                       <div className="text-right text-sm">
-                        <div className={worker._count.issues > 0 ? "font-medium text-red-400" : "text-xs text-green-400"}>
-                          {worker._count.issues > 0
-                            ? `${worker._count.issues} open issue(s)`
+                        <div className={worker.openIssues > 0 ? "font-medium text-red-400" : "text-xs text-green-400"}>
+                          {worker.openIssues > 0
+                            ? `${worker.openIssues} open issue(s)`
                             : "No issues"}
                         </div>
                         <div className="mt-1 text-xs text-slate-500">
@@ -192,18 +213,11 @@ export default async function CompaniesPage() {
 
   if (role !== "ADMIN") redirect("/dashboard")
 
-  const companies = await prisma.company.findMany({
-    orderBy: { createdAt: "desc" },
-  })
-
-  const workers = await prisma.worker.groupBy({
-    by: ["employer"],
-    _count: true,
-  })
-
-  const workerCountMap = new Map(
-    workers.map((w) => [w.employer, w._count])
-  )
+  const res = await fetchWithAuth(`${baseUrl}/api/companies`, { cache: "no-store" })
+  if (!res.ok) {
+    return <p className="text-slate-400">Failed to load companies.</p>
+  }
+  const companies: CompanyRecord[] = await res.json()
 
   return (
     <div>
@@ -257,9 +271,7 @@ export default async function CompaniesPage() {
                     {company.contactPhone || "—"}
                   </td>
                   <td className="px-4 py-3 text-white">
-                    {company.name
-                      ? workerCountMap.get(company.name) || 0
-                      : 0}
+                    {company.workerCount ?? 0}
                   </td>
                   <td className="px-4 py-3 text-slate-400">
                     {new Date(company.createdAt).toISOString().split("T")[0]}

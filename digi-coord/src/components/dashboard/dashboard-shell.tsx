@@ -7,14 +7,29 @@ import { PushSubscribeButton } from "@/components/pwa/push-subscribe-button"
 import { LanguageToggle } from "@/components/public/language-toggle"
 import { ThemeToggle } from "@/components/theme/theme-toggle"
 import Link from "next/link"
+import { usePathname, useRouter } from "next/navigation"
 import { useState, useEffect } from "react"
-import { useRouter } from "next/navigation"
 import { useLang } from "@/lib/use-lang"
 import { t } from "@/lib/translations"
+
+function NavLink({ href, className, children, onClick }: { href: string; className: string; children: React.ReactNode; onClick?: () => void }) {
+  const pathname = usePathname()
+  const isActive = pathname === href || pathname.startsWith(href + "/")
+  return (
+    <Link
+      href={href}
+      className={className + (isActive ? " ring-1 ring-inset ring-blue-500/50 bg-blue-900/20" : "")}
+      onClick={onClick}
+    >
+      {children}
+    </Link>
+  )
+}
 
 export function DashboardShell({ children }: { children: React.ReactNode }) {
   const { data: session, status } = useSession()
   const router = useRouter()
+  const pathname = usePathname()
   const [menuOpen, setMenuOpen] = useState(false)
   const lang = useLang()
 
@@ -42,190 +57,190 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
     <>
       {(role === "CANDIDATE" || role === "WORKER") && (
         <>
-          <Link
+          <NavLink
             href="/dashboard/worker/help"
             className="rounded-lg bg-blue-900/30 px-3 py-2 text-sm font-medium text-blue-300 transition hover:bg-blue-800/40 hover:text-blue-200"
             onClick={() => setMenuOpen(false)}
           >
             {t("dashboard.needHelp", lang)}
-          </Link>
-          <Link
+          </NavLink>
+          <NavLink
             href="/dashboard/worker"
             className="rounded-lg px-3 py-2 text-sm text-fg-secondary transition hover:bg-surface-raised hover:text-fg"
             onClick={() => setMenuOpen(false)}
           >
             {t("dashboard.overview", lang)}
-          </Link>
-          <Link
+          </NavLink>
+          <NavLink
             href="/dashboard/candidate/profile"
             className="rounded-lg bg-blue-900/30 px-3 py-2 text-sm font-medium text-blue-300 transition hover:bg-blue-800/40 hover:text-blue-200"
             onClick={() => setMenuOpen(false)}
           >
             My Profile
-          </Link>
-          <Link
+          </NavLink>
+          <NavLink
             href="/dashboard/candidate/become-worker"
             className="rounded-lg bg-emerald-900/30 px-3 py-2 text-sm font-medium text-emerald-300 transition hover:bg-emerald-800/40 hover:text-emerald-200"
             onClick={() => setMenuOpen(false)}
           >
             Become a Worker
-          </Link>
-          <Link
+          </NavLink>
+          <NavLink
             href="/dashboard/worker/onboarding"
             className="rounded-lg px-3 py-2 text-sm text-fg-secondary transition hover:bg-surface-raised hover:text-fg"
             onClick={() => setMenuOpen(false)}
           >
             {t("dashboard.onboarding", lang)}
-          </Link>
-          <Link
+          </NavLink>
+          <NavLink
             href="/dashboard/worker/employee-card"
             className="rounded-lg px-3 py-2 text-sm text-fg-secondary transition hover:bg-surface-raised hover:text-fg"
             onClick={() => setMenuOpen(false)}
           >
             {t("dashboard.employeeCard", lang)}
-          </Link>
-          <Link
+          </NavLink>
+          <NavLink
             href="/dashboard/worker/issues"
             className="rounded-lg px-3 py-2 text-sm text-fg-secondary transition hover:bg-surface-raised hover:text-fg"
             onClick={() => setMenuOpen(false)}
           >
             {t("dashboard.myIssues", lang)}
-          </Link>
-          <Link
+          </NavLink>
+          <NavLink
             href="/dashboard/worker/letters"
             className="rounded-lg px-3 py-2 text-sm text-fg-secondary transition hover:bg-surface-raised hover:text-fg"
             onClick={() => setMenuOpen(false)}
           >
             {t("dashboard.myLetters", lang)}
-          </Link>
-          <Link
+          </NavLink>
+          <NavLink
             href="/dashboard/worker/documents"
             className="rounded-lg px-3 py-2 text-sm text-fg-secondary transition hover:bg-surface-raised hover:text-fg"
             onClick={() => setMenuOpen(false)}
           >
             {t("dashboard.documents", lang)}
-          </Link>
-          <Link
+          </NavLink>
+          <NavLink
             href="/dashboard/worker/messages"
             className="rounded-lg px-3 py-2 text-sm text-fg-secondary transition hover:bg-surface-raised hover:text-fg"
             onClick={() => setMenuOpen(false)}
           >
             {t("dashboard.messageCoordinator", lang)}
-          </Link>
-          <Link
+          </NavLink>
+          <NavLink
             href="/dashboard/worker/profile"
             className="rounded-lg px-3 py-2 text-sm text-fg-secondary transition hover:bg-surface-raised hover:text-fg"
             onClick={() => setMenuOpen(false)}
           >
             {t("dashboard.profile", lang)}
-          </Link>
-          <Link
+          </NavLink>
+          <NavLink
             href="/dashboard/worker/change-password"
             className="rounded-lg px-3 py-2 text-sm text-fg-secondary transition hover:bg-surface-raised hover:text-fg"
             onClick={() => setMenuOpen(false)}
           >
             {t("dashboard.changePassword", lang)}
-          </Link>
+          </NavLink>
         </>
       )}
       {role === "ADMIN" && (
-        <Link
+        <NavLink
           href="/dashboard/admin"
           className="rounded-lg px-3 py-2 text-sm text-slate-300 transition hover:bg-slate-800 hover:text-white"
           onClick={() => setMenuOpen(false)}
         >
           Admin Panel
-        </Link>
+        </NavLink>
       )}
       {role === "ADMIN" && (
-        <Link
+        <NavLink
           href="/dashboard/users"
           className="rounded-lg px-3 py-2 text-sm text-slate-300 transition hover:bg-slate-800 hover:text-white"
           onClick={() => setMenuOpen(false)}
         >
           Users
-        </Link>
+        </NavLink>
       )}
       {role === "ADMIN" && (
-        <Link
+        <NavLink
           href="/dashboard/admin/candidates"
           className="rounded-lg px-3 py-2 text-sm text-slate-300 transition hover:bg-slate-800 hover:text-white"
           onClick={() => setMenuOpen(false)}
         >
           Candidates
-        </Link>
+        </NavLink>
       )}
       {(role === "ADMIN" || role === "COORDINATOR") && (
-        <Link
+        <NavLink
           href="/dashboard/operations"
           className="rounded-lg px-3 py-2 text-sm text-slate-300 transition hover:bg-slate-800 hover:text-white"
           onClick={() => setMenuOpen(false)}
         >
           Operations
-        </Link>
+        </NavLink>
       )}
       {(role === "ADMIN" || role === "COORDINATOR") && (
-        <Link
+        <NavLink
           href="/dashboard/workers"
           className="rounded-lg px-3 py-2 text-sm text-slate-300 transition hover:bg-slate-800 hover:text-white"
           onClick={() => setMenuOpen(false)}
         >
           Workers
-        </Link>
+        </NavLink>
       )}
       {(role === "ADMIN" || role === "COORDINATOR") && (
-        <Link
+        <NavLink
           href="/dashboard/accommodations"
           className="rounded-lg px-3 py-2 text-sm text-slate-300 transition hover:bg-slate-800 hover:text-white"
           onClick={() => setMenuOpen(false)}
         >
           Accommodations
-        </Link>
+        </NavLink>
       )}
       {(role === "ADMIN" || role === "COORDINATOR") && (
-        <Link
+        <NavLink
           href="/dashboard/issues"
           className="rounded-lg px-3 py-2 text-sm text-slate-300 transition hover:bg-slate-800 hover:text-white"
           onClick={() => setMenuOpen(false)}
         >
           Issues
-        </Link>
+        </NavLink>
       )}
       {(role === "ADMIN" || role === "COMPANY") && (
-        <Link
+        <NavLink
           href="/dashboard/companies"
           className="rounded-lg px-3 py-2 text-sm text-slate-300 transition hover:bg-slate-800 hover:text-white"
           onClick={() => setMenuOpen(false)}
         >
           Companies
-        </Link>
+        </NavLink>
       )}
       {role === "ADMIN" && (
-        <Link
+        <NavLink
           href="/dashboard/audit"
           className="rounded-lg px-3 py-2 text-sm text-slate-300 transition hover:bg-slate-800 hover:text-white"
           onClick={() => setMenuOpen(false)}
         >
           Audit Log
-        </Link>
+        </NavLink>
       )}
       {role === "ADMIN" && (
-        <Link
+        <NavLink
           href="/dashboard/admin/api-keys"
           className="rounded-lg px-3 py-2 text-sm text-slate-300 transition hover:bg-slate-800 hover:text-white"
           onClick={() => setMenuOpen(false)}
         >
           API Keys
-        </Link>
+        </NavLink>
       )}
       {role === "ADMIN" && (
-        <Link
+        <NavLink
           href="/dashboard/worker/change-password"
           className="rounded-lg px-3 py-2 text-sm text-slate-300 transition hover:bg-slate-800 hover:text-white"
           onClick={() => setMenuOpen(false)}
         >
           {t("dashboard.changePassword", lang)}
-        </Link>
+        </NavLink>
       )}
     </>
   )
