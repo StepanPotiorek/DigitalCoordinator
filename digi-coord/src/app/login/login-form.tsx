@@ -74,6 +74,13 @@ export function LoginForm({ lang }: { lang: Lang }) {
             </button>
           </form>
         </div>
+
+        <p className="mt-6 text-center text-xs text-slate-500">
+          Your company wants to join?{" "}
+          <Link href="/register/company" className="text-blue-400 hover:text-blue-300">
+            Register as Company
+          </Link>
+        </p>
       </div>
     </div>
   )

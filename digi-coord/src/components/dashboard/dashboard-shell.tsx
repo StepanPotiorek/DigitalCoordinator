@@ -215,6 +215,15 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
           Companies
         </NavLink>
       )}
+      {role === "COMPANY" && (
+        <NavLink
+          href="/dashboard/companies/candidates"
+          className="rounded-lg px-3 py-2 text-sm text-slate-300 transition hover:bg-slate-800 hover:text-white"
+          onClick={() => setMenuOpen(false)}
+        >
+          Candidates
+        </NavLink>
+      )}
       {role === "ADMIN" && (
         <NavLink
           href="/dashboard/audit"

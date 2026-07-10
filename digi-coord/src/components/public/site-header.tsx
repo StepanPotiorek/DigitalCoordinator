@@ -65,33 +65,30 @@ export function SiteHeader({ lang, showBack }: SiteHeaderProps) {
         </Link>
 
         <div className="flex items-center gap-2">
-          {showBack ? (
+          {showBack && (
             <Link
               href="/guide"
               className="rounded-full bg-surface-hover px-3 py-1.5 text-xs font-semibold text-fg transition hover:bg-surface-raised"
             >
               ← {t("nav.back", lang)}
             </Link>
-          ) : (
-            <>
-              <div className="hidden sm:flex items-center gap-2">{navLinks}</div>
-              <button
-                onClick={() => setMenuOpen(true)}
-                className="flex sm:hidden items-center justify-center rounded-lg p-2 text-fg-muted transition hover:bg-surface-raised hover:text-fg"
-                aria-label="Open menu"
-              >
-                <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
-                </svg>
-              </button>
-            </>
           )}
+          <div className="max-sm:hidden sm:flex items-center gap-2">{navLinks}</div>
+          <button
+            onClick={() => setMenuOpen(true)}
+            className="flex sm:hidden items-center justify-center rounded-lg p-2 text-fg-muted transition hover:bg-surface-raised hover:text-fg"
+            aria-label="Open menu"
+          >
+            <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
           <ThemeToggle />
           <LanguageToggle lang={lang} />
         </div>
       </div>
 
-      {!showBack && menuOpen && (
+      {menuOpen && (
         <div
           className="fixed inset-0 z-40 bg-black/50 sm:hidden"
           onClick={() => setMenuOpen(false)}

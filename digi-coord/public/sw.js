@@ -1,4 +1,4 @@
-const CACHE = "digicoord-__CACHE_VERSION__"
+const CACHE = "digicoord-1783437404"
 
 const ASSETS = [
   "/",

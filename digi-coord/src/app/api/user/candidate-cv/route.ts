@@ -29,15 +29,18 @@ export async function POST(request: Request) {
     const bytes = await file.arrayBuffer()
     await writeFile(filePath, Buffer.from(bytes))
 
-    const cvPath = `/uploads/cv/${filename}`
+    const cvPath = `/api/media/${filename}`
 
     const existing = await prisma.candidateProfile.findUnique({
       where: { userId: session.user.id! },
     })
 
     if (existing?.cvPath) {
-      const oldPath = path.join(process.cwd(), "public", existing.cvPath)
-      try { await unlink(oldPath) } catch { /* ignore */ }
+      const oldFile = existing.cvPath.split("/").pop()
+      if (oldFile) {
+        const oldPath = path.join(uploadDir, oldFile)
+        try { await unlink(oldPath) } catch { /* ignore */ }
+      }
     }
 
     const profile = await prisma.candidateProfile.upsert({
@@ -61,8 +64,12 @@ export async function DELETE() {
 
     if (!profile?.cvPath) return notFound("No CV to delete")
 
-    const oldPath = path.join(process.cwd(), "public", profile.cvPath)
-    try { await unlink(oldPath) } catch { /* ignore */ }
+    const oldFile = profile.cvPath.split("/").pop()
+    if (oldFile) {
+      const uploadDir = path.join(process.cwd(), "public", "uploads", "cv")
+      const oldPath = path.join(uploadDir, oldFile)
+      try { await unlink(oldPath) } catch { /* ignore */ }
+    }
 
     await prisma.candidateProfile.update({
       where: { userId: session.user.id! },
