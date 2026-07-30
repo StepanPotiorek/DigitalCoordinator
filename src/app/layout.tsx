@@ -23,21 +23,19 @@ const SITE_URL = "https://digitalcoordinator.eu";
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "Digital Coordinator — AI-Powered Onboarding for Filipino Workers in Czech Republic",
+    default: "Digital Coordinator | Onboarding Platform for International Workers",
     template: "%s | Digital Coordinator",
   },
   description:
-    "AI-powered onboarding platform helping Filipino workers relocate, adapt, and thrive in the Czech Republic. Employee Card guidance, bank setup, healthcare, and daily support.",
+    "Helping international workers relocate with confidence.",
   keywords: [
-    "Filipino workers Czech Republic",
-    "Employee Card Czech Republic",
-    "Filipino onboarding",
-    "work visa Czech Republic",
-    "Filipino relocation",
-    "Czech Republic worker support",
-    "Philippines to Czech Republic",
+    "international workers",
+    "worker onboarding",
+    "employee relocation",
+    "work visa support",
+    "onboarding platform",
+    "international relocation",
     "Digital Coordinator",
-    "OFW Czech Republic",
   ],
   robots: {
     index: true,
@@ -67,9 +65,9 @@ export const metadata: Metadata = {
     ],
   },
   openGraph: {
-    title: "Digital Coordinator — AI-Powered Onboarding for Filipino Workers",
+    title: "Digital Coordinator | Onboarding Platform for International Workers",
     description:
-      "Helping Filipino workers relocate with confidence. Employee Card guidance, bank setup, healthcare, and daily life support in the Czech Republic.",
+      "Helping international workers relocate with confidence.",
     url: SITE_URL,
     siteName: "Digital Coordinator",
     locale: "en_US",
@@ -79,15 +77,15 @@ export const metadata: Metadata = {
         url: "/og-image.jpg",
         width: 1200,
         height: 630,
-        alt: "Digital Coordinator — Helping Filipino workers relocate with confidence",
+        alt: "Digital Coordinator | Onboarding Platform for International Workers",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Digital Coordinator — AI-Powered Onboarding for Filipino Workers",
+    title: "Digital Coordinator | Onboarding Platform for International Workers",
     description:
-      "Helping Filipino workers relocate with confidence. Employee Card guidance, bank setup, healthcare, and daily life support in the Czech Republic.",
+      "Helping international workers relocate with confidence.",
     images: ["/og-image.jpg"],
   },
 };
