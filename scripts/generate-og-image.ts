@@ -265,7 +265,7 @@ async function main() {
     .jpeg({ quality: 95 })
     .toBuffer()
 
-  const outPath = join(process.cwd(), "public", "og-image.jpg")
+  const outPath = join(process.cwd(), "public", "og-image-v2.jpg")
   writeFileSync(outPath, buf)
   console.log("✅ OG image generated:", outPath, `(${buf.length} bytes)`)
 }

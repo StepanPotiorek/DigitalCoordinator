@@ -74,7 +74,7 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "/og-image.jpg",
+        url: "/og-image-v2.jpg",
         width: 1200,
         height: 630,
         alt: "Digital Coordinator | Onboarding Platform for International Workers",
@@ -86,7 +86,7 @@ export const metadata: Metadata = {
     title: "Digital Coordinator | Onboarding Platform for International Workers",
     description:
       "Helping international workers relocate with confidence through a modern onboarding platform.",
-    images: ["/og-image.jpg"],
+    images: ["/og-image-v2.jpg"],
   },
 };
 
