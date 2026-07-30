@@ -7,7 +7,7 @@ const organizationSchema = {
   url: SITE_URL,
   logo: `${SITE_URL}/icons/icon-512x512.png`,
   description:
-    "AI-powered onboarding platform helping Filipino workers relocate, adapt, and thrive in the Czech Republic.",
+    "Modern onboarding platform helping international workers relocate with confidence.",
   foundingDate: "2024",
   areaServed: [
     {
@@ -17,9 +17,9 @@ const organizationSchema = {
   ],
   offers: {
     "@type": "Service",
-    name: "Filipino Worker Onboarding & Coordination",
+    name: "International Worker Onboarding & Coordination",
     description:
-      "Employee Card guidance, bank account setup, health insurance registration, SIM card, accommodation support, and ongoing coordination for Filipino workers in Czech Republic.",
+      "Employee Card guidance, bank account setup, health insurance registration, SIM card, accommodation support, and ongoing coordination for international workers in Czech Republic.",
     provider: {
       "@type": "Organization",
       name: "Digital Coordinator",

@@ -27,7 +27,7 @@ export const metadata: Metadata = {
     template: "%s | Digital Coordinator",
   },
   description:
-    "Helping international workers relocate with confidence.",
+    "Helping international workers relocate with confidence through a modern onboarding platform.",
   keywords: [
     "international workers",
     "worker onboarding",
@@ -67,7 +67,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Digital Coordinator | Onboarding Platform for International Workers",
     description:
-      "Helping international workers relocate with confidence.",
+      "Helping international workers relocate with confidence through a modern onboarding platform.",
     url: SITE_URL,
     siteName: "Digital Coordinator",
     locale: "en_US",
@@ -85,7 +85,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Digital Coordinator | Onboarding Platform for International Workers",
     description:
-      "Helping international workers relocate with confidence.",
+      "Helping international workers relocate with confidence through a modern onboarding platform.",
     images: ["/og-image.jpg"],
   },
 };
