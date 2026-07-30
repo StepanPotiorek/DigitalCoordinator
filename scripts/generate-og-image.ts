@@ -9,196 +9,253 @@ const svg = Buffer.from(
   `<svg width="${WIDTH}" height="${HEIGHT}" xmlns="http://www.w3.org/2000/svg">
     <defs>
       <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-        <stop offset="0%" stop-color="#070b15"/>
-        <stop offset="50%" stop-color="#0a1025"/>
+        <stop offset="0%" stop-color="#05071c"/>
+        <stop offset="50%" stop-color="#090e2f"/>
         <stop offset="100%" stop-color="#030712"/>
       </linearGradient>
-      <radialGradient id="glowCenter" cx="0.5" cy="0.5" r="0.5">
-        <stop offset="0%" stop-color="#3b82f6" stop-opacity="0.12"/>
-        <stop offset="100%" stop-color="#3b82f6" stop-opacity="0"/>
+
+      <radialGradient id="glowMain" cx="0.65" cy="0.5" r="0.55">
+        <stop offset="0%" stop-color="#6366f1" stop-opacity="0.12"/>
+        <stop offset="50%" stop-color="#8b5cf6" stop-opacity="0.06"/>
+        <stop offset="100%" stop-color="#000" stop-opacity="0"/>
       </radialGradient>
-      <radialGradient id="glowOrb" cx="0.5" cy="0.5" r="0.5">
-        <stop offset="0%" stop-color="#8b5cf6" stop-opacity="0.08"/>
-        <stop offset="100%" stop-color="#8b5cf6" stop-opacity="0"/>
+
+      <radialGradient id="glowTop" cx="0.3" cy="0.15" r="0.3">
+        <stop offset="0%" stop-color="#60a5fa" stop-opacity="0.08"/>
+        <stop offset="100%" stop-color="#60a5fa" stop-opacity="0"/>
       </radialGradient>
+
       <linearGradient id="titleGrad" x1="0" y1="0" x2="1" y2="0">
         <stop offset="0%" stop-color="#fcd116"/>
-        <stop offset="20%" stop-color="#facc15"/>
-        <stop offset="45%" stop-color="#60a5fa"/>
-        <stop offset="70%" stop-color="#a78bfa"/>
-        <stop offset="100%" stop-color="#f87171"/>
+        <stop offset="25%" stop-color="#fbbf24"/>
+        <stop offset="55%" stop-color="#60a5fa"/>
+        <stop offset="80%" stop-color="#a78bfa"/>
+        <stop offset="100%" stop-color="#f472b6"/>
       </linearGradient>
-      <linearGradient id="orbitGrad" x1="0" y1="0" x2="1" y2="1">
-        <stop offset="0%" stop-color="#3b82f6" stop-opacity="0.4"/>
-        <stop offset="50%" stop-color="#8b5cf6" stop-opacity="0.2"/>
-        <stop offset="100%" stop-color="#3b82f6" stop-opacity="0"/>
+
+      <linearGradient id="phoneBody" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#14142a"/>
+        <stop offset="100%" stop-color="#0a0a1a"/>
       </linearGradient>
-      <linearGradient id="arcGrad" x1="0" y1="0" x2="1" y2="0">
-        <stop offset="0%" stop-color="#fcd116" stop-opacity="0.6"/>
-        <stop offset="50%" stop-color="#3b82f6" stop-opacity="0.3"/>
-        <stop offset="100%" stop-color="#ce1126" stop-opacity="0.6"/>
+
+      <linearGradient id="screenGrad" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#0a0e1a"/>
+        <stop offset="100%" stop-color="#16113a"/>
       </linearGradient>
+
+      <linearGradient id="card1Grad" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#1e293b" stop-opacity="0.5"/>
+        <stop offset="100%" stop-color="#0f172a" stop-opacity="0.3"/>
+      </linearGradient>
+
+      <linearGradient id="card2Grad" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#1e293b" stop-opacity="0.5"/>
+        <stop offset="100%" stop-color="#0f172a" stop-opacity="0.3"/>
+      </linearGradient>
+
+      <linearGradient id="card3Grad" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#1e293b" stop-opacity="0.5"/>
+        <stop offset="100%" stop-color="#0f172a" stop-opacity="0.3"/>
+      </linearGradient>
+
+      <linearGradient id="accentBlue" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#3b82f6"/>
+        <stop offset="100%" stop-color="#2563eb"/>
+      </linearGradient>
+
+      <linearGradient id="accentGreen" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#22c55e"/>
+        <stop offset="100%" stop-color="#16a34a"/>
+      </linearGradient>
+
+      <linearGradient id="accentOrange" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#f59e0b"/>
+        <stop offset="100%" stop-color="#d97706"/>
+      </linearGradient>
+
+      <linearGradient id="progressFill" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%" stop-color="#6366f1"/>
+        <stop offset="100%" stop-color="#8b5cf6"/>
+      </linearGradient>
+
       <linearGradient id="logoGrad" x1="0" y1="0" x2="1" y2="1">
         <stop offset="0%" stop-color="#fcd116"/>
         <stop offset="100%" stop-color="#ea580c"/>
       </linearGradient>
-      <linearGradient id="pill1" x1="0" y1="0" x2="1" y2="1">
-        <stop offset="0%" stop-color="#1e293b" stop-opacity="0.5"/>
-        <stop offset="100%" stop-color="#0f172a" stop-opacity="0.3"/>
+
+      <linearGradient id="badge1Grad" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#1e3a5f" stop-opacity="0.85"/>
+        <stop offset="100%" stop-color="#0f172a" stop-opacity="0.4"/>
       </linearGradient>
-      <filter id="glow">
-        <feGaussianBlur stdDeviation="3" result="blur"/>
-        <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+
+      <linearGradient id="badge2Grad" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#1a3a2a" stop-opacity="0.85"/>
+        <stop offset="100%" stop-color="#0f172a" stop-opacity="0.4"/>
+      </linearGradient>
+
+      <filter id="phoneShadow">
+        <feDropShadow dx="0" dy="20" stdDeviation="40" flood-color="#000" flood-opacity="0.7"/>
+      </filter>
+      <filter id="badgeShadow">
+        <feDropShadow dx="0" dy="8" stdDeviation="16" flood-color="#000" flood-opacity="0.5"/>
       </filter>
     </defs>
 
     <rect width="${WIDTH}" height="${HEIGHT}" fill="url(#bg)"/>
 
+    <!-- Subtle grid -->
+    <g stroke="#ffffff" stroke-opacity="0.012" stroke-width="0.5">
+      <line x1="0" y1="90" x2="1200" y2="90"/>
+      <line x1="0" y1="180" x2="1200" y2="180"/>
+      <line x1="0" y1="270" x2="1200" y2="270"/>
+      <line x1="0" y1="360" x2="1200" y2="360"/>
+      <line x1="0" y1="450" x2="1200" y2="450"/>
+      <line x1="0" y1="540" x2="1200" y2="540"/>
+      <line x1="200" y1="0" x2="200" y2="630"/>
+      <line x1="400" y1="0" x2="400" y2="630"/>
+      <line x1="600" y1="0" x2="600" y2="630"/>
+      <line x1="800" y1="0" x2="800" y2="630"/>
+      <line x1="1000" y1="0" x2="1000" y2="630"/>
+    </g>
+
     <!-- Ambient glows -->
-    <circle cx="160" cy="80" r="360" fill="url(#glowCenter)"/>
-    <circle cx="1000" cy="500" r="340" fill="url(#glowOrb)"/>
-    <circle cx="850" cy="300" r="200" fill="url(#glowCenter)"/>
+    <circle cx="780" cy="315" r="450" fill="url(#glowMain)"/>
+    <circle cx="360" cy="95" r="300" fill="url(#glowTop)"/>
 
-    <!-- ===== LOGO ===== -->
-    <g transform="translate(60, 55)">
-      <rect width="48" height="48" rx="12" fill="url(#logoGrad)"/>
-      <text x="24" y="32" font-family="system-ui, sans-serif" font-size="20" font-weight="800" text-anchor="middle" fill="#0b1220">DC</text>
-    </g>
-    <text x="122" y="85" font-family="system-ui, sans-serif" font-size="13" fill="#64748b" font-weight="600" letter-spacing="2">DIGITAL COORDINATOR</text>
+    <!-- ==================== LEFT SIDE ==================== -->
 
-    <!-- ===== TITLE ===== -->
-    <text x="60" y="240" font-family="system-ui, sans-serif" font-size="108" font-weight="800" letter-spacing="-3" fill="url(#titleGrad)">Digital</text>
-    <text x="60" y="335" font-family="system-ui, sans-serif" font-size="108" font-weight="800" letter-spacing="-3" fill="url(#titleGrad)">Coordinator</text>
-
-    <rect x="60" y="370" width="72" height="3" rx="1.5" fill="#fcd116" opacity="0.6"/>
-
-    <!-- ===== SUBTITLE ===== -->
-    <text x="60" y="425" font-family="system-ui, sans-serif" font-size="24" fill="#cbd5e1" font-weight="500" letter-spacing="-0.2">Helping Filipino workers relocate with confidence.</text>
-
-    <!-- ===== DESCRIPTION ===== -->
-    <text x="60" y="465" font-family="system-ui, sans-serif" font-size="14" fill="#64748b" font-weight="400">AI-powered onboarding platform for working and living in the Czech Republic.</text>
-
-    <!-- ===== FEATURE PILLS ===== -->
-    <g transform="translate(60, 500)">
-      <rect width="140" height="34" rx="17" fill="url(#pill1)" stroke="#334155" stroke-width="0.5"/>
-      <text x="14" y="24" font-size="14">✈️</text>
-      <text x="36" y="24" font-family="system-ui, sans-serif" font-size="13" fill="#e2e8f0" font-weight="500">Before Arrival</text>
-    </g>
-    <g transform="translate(215, 500)">
-      <rect width="125" height="34" rx="17" fill="url(#pill1)" stroke="#334155" stroke-width="0.5"/>
-      <text x="14" y="24" font-size="14">📄</text>
-      <text x="36" y="24" font-family="system-ui, sans-serif" font-size="13" fill="#e2e8f0" font-weight="500">Documents</text>
-    </g>
-    <g transform="translate(355, 500)">
-      <rect width="140" height="34" rx="17" fill="url(#pill1)" stroke="#334155" stroke-width="0.5"/>
-      <text x="14" y="24" font-size="14">🏠</text>
-      <text x="36" y="24" font-family="system-ui, sans-serif" font-size="13" fill="#e2e8f0" font-weight="500">Accommodation</text>
-    </g>
-    <g transform="translate(510, 500)">
-      <rect width="125" height="34" rx="17" fill="url(#pill1)" stroke="#334155" stroke-width="0.5"/>
-      <text x="14" y="24" font-size="14">🤖</text>
-      <text x="36" y="24" font-family="system-ui, sans-serif" font-size="13" fill="#e2e8f0" font-weight="500">AI Assistant</text>
+    <!-- Logo -->
+    <g transform="translate(55, 45)">
+      <rect width="40" height="40" rx="10" fill="url(#logoGrad)"/>
+      <text x="20" y="27" font-family="system-ui, sans-serif" font-size="17" font-weight="800" text-anchor="middle" fill="#0b1220">DC</text>
     </g>
 
-    <!-- ===== RIGHT SIDE — ONBOARDING JOURNEY ILLUSTRATION ===== -->
+    <!-- Title -->
+    <text x="55" y="210" font-family="system-ui, sans-serif" font-size="78" font-weight="800" letter-spacing="-2.5" fill="url(#titleGrad)">Digital</text>
+    <text x="55" y="285" font-family="system-ui, sans-serif" font-size="78" font-weight="800" letter-spacing="-2.5" fill="url(#titleGrad)">Coordinator</text>
 
-    <!-- Orbit ring (journey path) -->
-    <circle cx="880" cy="300" r="155" fill="none" stroke="url(#orbitGrad)" stroke-width="1.5" stroke-dasharray="6,8"/>
-    <circle cx="880" cy="300" r="155" fill="none" stroke="#1e293b" stroke-width="0.5"/>
+    <!-- Subtle divider -->
+    <rect x="55" y="315" width="40" height="2.5" rx="1.25" fill="#a78bfa" opacity="0.35"/>
 
-    <!-- Inner decorative ring -->
-    <circle cx="880" cy="300" r="100" fill="none" stroke="#1e293b" stroke-width="0.3"/>
+    <!-- Subtitle -->
+    <text x="55" y="350" font-family="system-ui, sans-serif" font-size="18" fill="#cbd5e1" font-weight="500" letter-spacing="-0.05">Onboarding platform for</text>
+    <text x="55" y="372" font-family="system-ui, sans-serif" font-size="18" fill="#cbd5e1" font-weight="500" letter-spacing="-0.05">international workers</text>
 
-    <!-- Hub glow -->
-    <circle cx="880" cy="300" r="30" fill="#3b82f6" fill-opacity="0.06"/>
-    <circle cx="880" cy="300" r="6" fill="#3b82f6" fill-opacity="0.3"/>
-    <circle cx="880" cy="300" r="2" fill="#60a5fa"/>
+    <!-- Tagline -->
+    <text x="55" y="405" font-family="system-ui, sans-serif" font-size="13" fill="#64748b" font-weight="400">Helping people relocate with confidence.</text>
 
-    <!-- ===== JOURNEY NODES ===== -->
+    <!-- ==================== RIGHT SIDE ==================== -->
 
-    <!-- Node 1: Plane/Travel (top-right, 45deg from center) -->
-    <g transform="translate(989, 190)">
-      <circle r="28" fill="#0f172a" fill-opacity="0.7" stroke="#334155" stroke-width="0.5"/>
-      <circle r="22" fill="#1e3a5f" fill-opacity="0.3" stroke="#3b82f6" stroke-width="0.5"/>
-      <path d="M-8,-6 L0,-12 L8,-6 M0,-12 L0,8 M-5,2 L0,8 L5,2" stroke="#60a5fa" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <!-- Connecting lines to badges -->
+    <line x1="930" y1="195" x2="960" y2="195" stroke="#334155" stroke-width="0.5" stroke-dasharray="3,3"/>
+    <line x1="930" y1="435" x2="960" y2="435" stroke="#334155" stroke-width="0.5" stroke-dasharray="3,3"/>
+
+    <!-- ===== PHONE MOCKUP (20% larger) ===== -->
+    <g transform="translate(810, 315)" filter="url(#phoneShadow)">
+      <!-- Phone body -->
+      <rect x="-109" y="-222" width="218" height="444" rx="32" fill="url(#phoneBody)" stroke="#2a2a4a" stroke-width="0.8"/>
+
+      <!-- Side buttons -->
+      <rect x="109" y="-140" width="2.5" height="32" rx="1" fill="#1a1a33"/>
+      <rect x="109" y="-96" width="2.5" height="44" rx="1" fill="#1a1a33"/>
+      <rect x="-111.5" y="-118" width="2.5" height="40" rx="1" fill="#1a1a33"/>
+
+      <!-- Screen -->
+      <rect x="-102" y="-215" width="204" height="430" rx="6" fill="url(#screenGrad)"/>
+
+      <!-- Camera notch -->
+      <rect x="-30" y="-206" width="60" height="18" rx="9" fill="#0a0a1a"/>
+
+      <!-- === SCREEN CONTENT === -->
+
+      <!-- Status bar -->
+      <text x="-88" y="-194" font-family="system-ui, sans-serif" font-size="10" fill="#64748b" font-weight="600">9:41</text>
+      <rect x="70" y="-202" width="16" height="2.5" rx="1" fill="#22c55e" opacity="0.5"/>
+      <rect x="70" y="-196" width="16" height="2.5" rx="1" fill="#22c55e" opacity="0.35"/>
+      <rect x="70" y="-190" width="16" height="2.5" rx="1" fill="#475569"/>
+
+      <!-- Welcome header area -->
+      <rect x="-102" y="-185" width="204" height="34" fill="#0f0f25"/>
+      <text x="-88" y="-163" font-family="system-ui, sans-serif" font-size="14" fill="#e2e8f0" font-weight="600">Welcome, Maria</text>
+      <text x="86" y="-163" font-family="system-ui, sans-serif" font-size="14">👋</text>
+
+      <!-- Divider line -->
+      <line x1="-88" y1="-145" x2="88" y2="-145" stroke="#ffffff" stroke-opacity="0.04" stroke-width="0.5"/>
+
+      <!-- Section title -->
+      <text x="-88" y="-128" font-family="system-ui, sans-serif" font-size="11" fill="#94a3b8" font-weight="500" letter-spacing="0.3">ONBOARDING PROGRESS</text>
+
+      <!-- Progress bar -->
+      <rect x="-88" y="-114" width="176" height="6" rx="3" fill="#1e293b"/>
+      <rect x="-88" y="-114" width="132" height="6" rx="3" fill="url(#progressFill)"/>
+      <text x="96" y="-110" font-family="system-ui, sans-serif" font-size="10" fill="#a78bfa" font-weight="600">75%</text>
+
+      <!-- === ONBOARDING CARDS === -->
+
+      <!-- Card 1: Documents -->
+      <g transform="translate(0, -92)">
+        <rect x="-88" y="0" width="176" height="42" rx="10" fill="url(#card1Grad)" stroke="#ffffff" stroke-opacity="0.04" stroke-width="0.5"/>
+        <rect x="-88" y="0" width="3" height="42" rx="1.5" fill="url(#accentBlue)"/>
+        <text x="-70" y="26" font-size="16">📄</text>
+        <text x="-46" y="20" font-family="system-ui, sans-serif" font-size="12" fill="#e2e8f0" font-weight="600">Documents</text>
+        <text x="-46" y="33" font-family="system-ui, sans-serif" font-size="9" fill="#64748b" font-weight="400">Upload your passport</text>
+        <circle cx="76" cy="21" r="9" fill="#22c55e" fill-opacity="0.15"/>
+        <text x="76" y="25" font-family="system-ui, sans-serif" font-size="9" fill="#22c55e" text-anchor="middle" font-weight="700">✓</text>
+      </g>
+
+      <!-- Card 2: Accommodation -->
+      <g transform="translate(0, -44)">
+        <rect x="-88" y="0" width="176" height="42" rx="10" fill="url(#card2Grad)" stroke="#ffffff" stroke-opacity="0.04" stroke-width="0.5"/>
+        <rect x="-88" y="0" width="3" height="42" rx="1.5" fill="url(#accentGreen)"/>
+        <text x="-70" y="26" font-size="16">🏠</text>
+        <text x="-46" y="20" font-family="system-ui, sans-serif" font-size="12" fill="#e2e8f0" font-weight="600">Accommodation</text>
+        <text x="-46" y="33" font-family="system-ui, sans-serif" font-size="9" fill="#64748b" font-weight="400">Housing details pending</text>
+        <circle cx="76" cy="21" r="9" fill="#f59e0b" fill-opacity="0.15"/>
+        <text x="76" y="25" font-family="system-ui, sans-serif" font-size="9" fill="#f59e0b" text-anchor="middle" font-weight="700">→</text>
+      </g>
+
+      <!-- Card 3: Before Arrival -->
+      <g transform="translate(0, 4)">
+        <rect x="-88" y="0" width="176" height="42" rx="10" fill="url(#card3Grad)" stroke="#ffffff" stroke-opacity="0.04" stroke-width="0.5"/>
+        <rect x="-88" y="0" width="3" height="42" rx="1.5" fill="url(#accentOrange)"/>
+        <text x="-70" y="26" font-size="16">🛬</text>
+        <text x="-46" y="20" font-family="system-ui, sans-serif" font-size="12" fill="#e2e8f0" font-weight="600">Before Arrival</text>
+        <text x="-46" y="33" font-family="system-ui, sans-serif" font-size="9" fill="#64748b" font-weight="400">Travel checklist ready</text>
+        <circle cx="76" cy="21" r="9" fill="#22c55e" fill-opacity="0.15"/>
+        <text x="76" y="25" font-family="system-ui, sans-serif" font-size="9" fill="#22c55e" text-anchor="middle" font-weight="700">✓</text>
+      </g>
+
+      <!-- Bottom nav -->
+      <rect x="-70" y="198" width="140" height="4" rx="2" fill="#ffffff" fill-opacity="0.06"/>
     </g>
 
-    <!-- Node 2: Documents (bottom-right, 135deg from center) -->
-    <g transform="translate(989, 410)">
-      <circle r="28" fill="#0f172a" fill-opacity="0.7" stroke="#334155" stroke-width="0.5"/>
-      <circle r="22" fill="#1a1a3a" fill-opacity="0.3" stroke="#a78bfa" stroke-width="0.5"/>
-      <rect x="-9" y="-6" width="12" height="15" rx="2" fill="none" stroke="#a78bfa" stroke-width="1.2"/>
-      <rect x="-3" y="-1" width="6" height="2" rx="1" fill="#a78bfa" opacity="0.6"/>
-      <rect x="-3" y="3" width="6" height="1.5" rx="0.75" fill="#a78bfa" opacity="0.6"/>
+    <!-- ===== FLOATING BADGES (only 2) ===== -->
+
+    <!-- Badge 1: Documents -->
+    <g transform="translate(968, 195)" filter="url(#badgeShadow)">
+      <rect x="-54" y="-18" width="108" height="36" rx="18" fill="url(#badge1Grad)" stroke="#3b82f6" stroke-opacity="0.2" stroke-width="0.5"/>
+      <text x="-38" y="6" font-size="14">📄</text>
+      <text x="-20" y="6" font-family="system-ui, sans-serif" font-size="12" fill="#e2e8f0" font-weight="700">Documents</text>
     </g>
 
-    <!-- Node 3: Accommodation (bottom-left, 225deg from center) -->
-    <g transform="translate(771, 410)">
-      <circle r="28" fill="#0f172a" fill-opacity="0.7" stroke="#334155" stroke-width="0.5"/>
-      <circle r="22" fill="#1a2a1a" fill-opacity="0.3" stroke="#22c55e" stroke-width="0.5"/>
-      <path d="M-10,4 L0,-8 L10,4" stroke="#22c55e" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-      <rect x="-6" y="0" width="12" height="8" rx="1.5" fill="none" stroke="#22c55e" stroke-width="1.2"/>
-      <rect x="-3" y="3" width="6" height="5" rx="1" fill="#22c55e" fill-opacity="0.2" stroke="none"/>
+    <!-- Badge 2: Accommodation -->
+    <g transform="translate(968, 435)" filter="url(#badgeShadow)">
+      <rect x="-58" y="-18" width="116" height="36" rx="18" fill="url(#badge2Grad)" stroke="#22c55e" stroke-opacity="0.2" stroke-width="0.5"/>
+      <text x="-42" y="6" font-size="14">🏠</text>
+      <text x="-24" y="6" font-family="system-ui, sans-serif" font-size="12" fill="#e2e8f0" font-weight="700">Accommodation</text>
     </g>
 
-    <!-- Node 4: AI Assistant (top-left, 315deg from center) -->
-    <g transform="translate(771, 190)">
-      <circle r="28" fill="#0f172a" fill-opacity="0.7" stroke="#334155" stroke-width="0.5"/>
-      <circle r="22" fill="#2a1a3a" fill-opacity="0.3" stroke="#f59e0b" stroke-width="0.5"/>
-      <circle cx="0" cy="-2" r="6" fill="none" stroke="#fcd116" stroke-width="1.2"/>
-      <path d="M-3,-4 L0,-8 L3,-4" stroke="#fcd116" stroke-width="1.2" fill="none" stroke-linecap="round"/>
-      <path d="M-3,0 L0,4 L3,0" stroke="#fcd116" stroke-width="1.2" fill="none" stroke-linecap="round"/>
-    </g>
-
-    <!-- Node labels -->
-    <text x="989" y="238" font-family="system-ui, sans-serif" font-size="11" fill="#64748b" font-weight="500" text-anchor="middle">Travel</text>
-    <text x="989" y="458" font-family="system-ui, sans-serif" font-size="11" fill="#64748b" font-weight="500" text-anchor="middle">Documents</text>
-    <text x="771" y="458" font-family="system-ui, sans-serif" font-size="11" fill="#64748b" font-weight="500" text-anchor="middle">Stay</text>
-    <text x="771" y="238" font-family="system-ui, sans-serif" font-size="11" fill="#64748b" font-weight="500" text-anchor="middle">AI Guide</text>
-
-    <!-- Connection path between nodes (onboarding flow) -->
-    <path d="M 989 218 C 1020 250 1020 350 989 382" stroke="#1e293b" stroke-width="1" fill="none"/>
-    <path d="M 989 438 C 960 470 900 470 880 470 C 860 470 800 470 771 438" stroke="#1e293b" stroke-width="1" fill="none"/>
-    <path d="M 771 382 C 740 350 740 250 771 218" stroke="#1e293b" stroke-width="1" fill="none"/>
-    <path d="M 771 162 C 800 140 850 140 880 140 C 910 140 960 140 989 162" stroke="#1e293b" stroke-width="1" fill="none"/>
-
-    <!-- Floating accent particles -->
-    <circle cx="850" cy="200" r="2" fill="#60a5fa" opacity="0.4"/>
-    <circle cx="920" cy="250" r="1.5" fill="#a78bfa" opacity="0.3"/>
-    <circle cx="840" cy="380" r="1.5" fill="#22c55e" opacity="0.3"/>
-    <circle cx="930" cy="350" r="2" fill="#fcd116" opacity="0.4"/>
-
-    <!-- ===== PHILIPPINES → CZECH REPUBLIC CONNECTION ===== -->
-    <g transform="translate(690, 480)">
-      <!-- Arc connecting two points -->
-      <path d="M 0,0 Q 60,-30 120,0" stroke="url(#arcGrad)" stroke-width="1.5" fill="none"/>
-
-      <!-- PH dot -->
-      <circle cx="0" cy="0" r="12" fill="#fcd116" fill-opacity="0.15"/>
-      <circle cx="0" cy="0" r="6" fill="#fcd116"/>
-      <text x="-15" y="-15" font-family="system-ui, sans-serif" font-size="10" fill="#94a3b8" font-weight="500" text-anchor="middle">PH</text>
-
-      <!-- Arrow -->
-      <polygon points="58,-8 64,-3 58,2" fill="#475569"/>
-
-      <!-- CZ dot -->
-      <circle cx="120" cy="0" r="12" fill="#ce1126" fill-opacity="0.15"/>
-      <circle cx="120" cy="0" r="6" fill="#ce1126"/>
-      <text x="135" y="-15" font-family="system-ui, sans-serif" font-size="10" fill="#94a3b8" font-weight="500" text-anchor="middle">CZ</text>
-    </g>
-
-    <!-- Verified badge floating -->
-    <g transform="translate(1010, 280)">
-      <circle r="14" fill="#22c55e" fill-opacity="0.12"/>
-      <circle r="10" fill="none" stroke="#22c55e" stroke-width="1.2"/>
-      <path d="M-4,0 L-1,3 L4,-2" stroke="#22c55e" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-    </g>
+    <!-- ===== DECORATIVE PARTICLES ===== -->
+    <circle cx="560" cy="160" r="1.5" fill="#60a5fa" opacity="0.2"/>
+    <circle cx="580" cy="520" r="1" fill="#a78bfa" opacity="0.15"/>
+    <circle cx="680" cy="100" r="1" fill="#60a5fa" opacity="0.15"/>
+    <circle cx="650" cy="560" r="1.5" fill="#fcd116" opacity="0.12"/>
 
     <!-- ===== URL ===== -->
-    <text x="1140" y="570" font-family="system-ui, sans-serif" font-size="13" fill="#475569" font-weight="500" text-anchor="end">digitalcoordinator.eu</text>
+    <text x="1140" y="600" font-family="system-ui, sans-serif" font-size="11" fill="#1e293b" font-weight="500" text-anchor="end" letter-spacing="1.5">digitalcoordinator.eu</text>
 
-    <!-- ===== DECORATIVE OUTER FRAME ===== -->
-    <rect x="30" y="30" width="1140" height="570" fill="none" stroke="#1e293b" stroke-width="0.5" opacity="0.4"/>
+    <!-- Outer frame -->
+    <rect x="25" y="25" width="1150" height="580" rx="8" fill="none" stroke="#1e293b" stroke-width="0.5" opacity="0.25"/>
   </svg>`,
 )
 
