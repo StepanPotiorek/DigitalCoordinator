@@ -6,6 +6,7 @@ import { WhatsAppFloat } from "@/components/public/whatsapp-float";
 import { SearchModal } from "@/components/search/search-modal";
 import { PwaProvider } from "@/components/pwa/pwa-provider";
 import { ThemeProvider } from "@/components/theme/theme-provider";
+import { JsonLd } from "@/components/seo/json-ld";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -17,10 +18,41 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const SITE_URL = "https://digitalcoordinator.eu";
+
 export const metadata: Metadata = {
-  title: "Digital Coordinator — Suporta sa Manggagawang Pilipino",
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: "Digital Coordinator — AI-Powered Onboarding for Filipino Workers in Czech Republic",
+    template: "%s | Digital Coordinator",
+  },
   description:
-    "Automated onboarding and worker support for Filipino workers in Czech Republic.",
+    "AI-powered onboarding platform helping Filipino workers relocate, adapt, and thrive in the Czech Republic. Employee Card guidance, bank setup, healthcare, and daily support.",
+  keywords: [
+    "Filipino workers Czech Republic",
+    "Employee Card Czech Republic",
+    "Filipino onboarding",
+    "work visa Czech Republic",
+    "Filipino relocation",
+    "Czech Republic worker support",
+    "Philippines to Czech Republic",
+    "Digital Coordinator",
+    "OFW Czech Republic",
+  ],
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  alternates: {
+    canonical: SITE_URL,
+  },
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
@@ -35,32 +67,36 @@ export const metadata: Metadata = {
     ],
   },
   openGraph: {
-    title: "Digital Coordinator — Suporta sa Manggagawang Pilipino",
+    title: "Digital Coordinator — AI-Powered Onboarding for Filipino Workers",
     description:
-      "Automated onboarding and worker support for Filipino workers in Czech Republic.",
-    url: "https://digitalcoordinator.eu",
+      "Helping Filipino workers relocate with confidence. Employee Card guidance, bank setup, healthcare, and daily life support in the Czech Republic.",
+    url: SITE_URL,
     siteName: "Digital Coordinator",
     locale: "en_US",
     type: "website",
     images: [
       {
-        url: "/icons/icon-512x512.png",
-        width: 512,
-        height: 512,
+        url: "/og-image.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Digital Coordinator — Helping Filipino workers relocate with confidence",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Digital Coordinator — Suporta sa Manggagawang Pilipino",
+    title: "Digital Coordinator — AI-Powered Onboarding for Filipino Workers",
     description:
-      "Automated onboarding and worker support for Filipino workers in Czech Republic.",
-    images: ["/icons/icon-512x512.png"],
+      "Helping Filipino workers relocate with confidence. Employee Card guidance, bank setup, healthcare, and daily life support in the Czech Republic.",
+    images: ["/og-image.jpg"],
   },
 };
 
 export const viewport: Viewport = {
-  themeColor: "#1e3a5f",
+  themeColor: [
+    { media: "(prefers-color-scheme: dark)", color: "#0f172a" },
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+  ],
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
@@ -77,7 +113,6 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
       >
         <body className="min-h-full bg-surface text-fg">
-        <style>{`body{background:#0f172a;color:#e2e8f0;font-family:system-ui,-apple-system,sans-serif;padding:1rem}a{color:#60a5fa}.hidden{display:block!important}`}</style>
         <ThemeProvider>
           <SessionProvider>
             {children}
@@ -86,6 +121,7 @@ export default function RootLayout({
             <PwaProvider />
           </SessionProvider>
         </ThemeProvider>
+        <JsonLd />
       </body>
     </html>
   );
