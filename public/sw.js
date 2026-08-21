@@ -1,7 +1,8 @@
-const CACHE = "digicoord-1783437404"
+const VERSION = "__CACHE_VERSION__"
+const SHELL_CACHE = `digicoord-shell-${VERSION}`
+const ASSET_CACHE = `digicoord-assets-${VERSION}`
 
-const ASSETS = [
-  "/",
+const SHELL_ASSETS = [
   "/offline.html",
   "/manifest.json",
   "/icons/icon.svg",
@@ -9,34 +10,63 @@ const ASSETS = [
   "/icons/icon-512x512.png",
 ]
 
+const CACHEABLE_PATTERN = /\.(css|js|png|svg|jpg|jpeg|webp|gif|woff2?|ico)$/
+
+function cacheFirst(request) {
+  return caches.match(request).then((cached) => {
+    if (cached) return cached
+    return fetch(request).then((response) => {
+      if (response.ok) {
+        const clone = response.clone()
+        caches.open(ASSET_CACHE).then((cache) => cache.put(request, clone))
+      }
+      return response
+    })
+  })
+}
+
 self.addEventListener("install", (event) => {
   event.waitUntil(
-    caches.open(CACHE).then((cache) => cache.addAll(ASSETS)).then(() => self.skipWaiting()),
+    caches
+      .open(SHELL_CACHE)
+      .then((cache) => cache.addAll(SHELL_ASSETS))
+      .then(() => self.skipWaiting()),
   )
 })
 
 self.addEventListener("activate", (event) => {
   event.waitUntil(
-    caches.keys().then((keys) => Promise.all(keys.filter((k) => k !== CACHE).map((k) => caches.delete(k)))),
+    caches
+      .keys()
+      .then((keys) =>
+        Promise.all(
+          keys
+            .filter((key) => key !== SHELL_CACHE && key !== ASSET_CACHE)
+            .map((key) => caches.delete(key)),
+        ),
+      )
+      .then(() => self.clients.claim()),
   )
-  self.clients.claim()
 })
 
 self.addEventListener("fetch", (event) => {
-  if (event.request.method !== "GET") return
-  if (!event.request.url.startsWith(self.location.origin)) return
-  event.respondWith(
-    caches.match(event.request).then((cached) => cached || fetch(event.request).then((res) => {
-      if (res.status === 200 && /\.(png|svg|jpg|jpeg|webp|woff2?|ico)$/.test(event.request.url)) {
-        const clone = res.clone()
-        caches.open(CACHE).then((cache) => cache.put(event.request, clone))
-      }
-      return res
-    }).catch(() => {
-      if (event.request.mode === "navigate") return caches.match("/offline.html")
-      return caches.match(event.request)
-    })),
-  )
+  const { request } = event
+  if (request.method !== "GET") return
+  const url = new URL(request.url)
+  if (url.origin !== self.location.origin) return
+
+  if (request.mode === "navigate") {
+    event.respondWith(
+      fetch(request).catch(() =>
+        caches.match(request).then((cached) => cached || caches.match("/offline.html")),
+      ),
+    )
+    return
+  }
+
+  if (url.pathname.startsWith("/_next/static/") || CACHEABLE_PATTERN.test(url.pathname)) {
+    event.respondWith(cacheFirst(request))
+  }
 })
 
 self.addEventListener("push", (event) => {
