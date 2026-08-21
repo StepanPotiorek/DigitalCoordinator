@@ -215,5 +215,15 @@
   "privacy.title": "Patakaran sa Pagkapribado",
   "privacy.subtitle": "Paano namin pinangangasiwaan ang iyong personal na data",
   "privacy.consent": "Sumasang-ayon ako sa pagproseso ng aking personal na data alinsunod sa Patakaran sa Pagkapribado",
-  "privacy.consentRequired": "Dapat kang sumang-ayon sa Patakaran sa Pagkapribado upang magrehistro"
+  "privacy.consentRequired": "Dapat kang sumang-ayon sa Patakaran sa Pagkapribado upang magrehistro",
+  "terms.box.title": "Mga Tuntunin at Serbisyo",
+  "terms.box.tagline": "Alamin kung ano ang libre at kung ano ang may bayad.",
+  "terms.box.free": "LIBRE",
+  "terms.box.free.desc": "Pangkalahatang impormasyon, mga gabay, self-service na工具 at pangkalahatang online na suporta.",
+  "terms.box.paid": "MAY BAYAD",
+  "terms.box.paid.desc": "Personal na tulong at indibidwal na koordinasyon na nangangailangan ng nakalaang oras ng tao.",
+  "terms.box.noHiddenFees": "Walang nakatagong bayad. Palagi mong makikita ang presyo at kumpirmahin bago magsimula ang anumang bayad na serbisyo.",
+  "terms.box.cta": "Tingnan ang Mga Tuntunin at Serbisyo →",
+  "terms.title": "Mga Tuntunin at Serbisyo",
+  "terms.subtitle": "Transparent na pangkalahatang-ideya ng libre at bayad na mga serbisyo"
 }

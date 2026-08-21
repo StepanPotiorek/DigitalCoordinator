@@ -112,6 +112,32 @@ export default async function Home() {
             {t("nav.contact", lang)} →
           </Link>
         </InfoBox>
+
+        {/* Terms & Services */}
+        <InfoBox color="blue" title={t("terms.box.title", lang)}>
+          <p className="text-sm font-medium text-blue-300">
+            {t("terms.box.tagline", lang)}
+          </p>
+          <div className="mt-3 space-y-2 text-sm text-slate-300">
+            <p>
+              <span className="font-semibold text-green-400">🟢 {t("terms.box.free", lang)}</span>{" "}
+              {t("terms.box.free.desc", lang)}
+            </p>
+            <p>
+              <span className="font-semibold text-blue-400">🔵 {t("terms.box.paid", lang)}</span>{" "}
+              {t("terms.box.paid.desc", lang)}
+            </p>
+          </div>
+          <p className="mt-3 text-xs text-slate-400 italic">
+            {t("terms.box.noHiddenFees", lang)}
+          </p>
+          <Link
+            href="/terms"
+            className="mt-3 inline-block text-xs font-medium text-blue-400 underline underline-offset-2 hover:text-blue-300"
+          >
+            {t("terms.box.cta", lang)}
+          </Link>
+        </InfoBox>
       </PageContainer>
 
       <SiteFooter />

@@ -215,5 +215,15 @@
   "privacy.title": "Zásady ochrany osobních údajů",
   "privacy.subtitle": "Jak nakládáme s vašimi osobními údaji",
   "privacy.consent": "Souhlasím se zpracováním osobních údajů v souladu s těmito zásadami",
-  "privacy.consentRequired": "Pro registraci musíte souhlasit se zpracováním osobních údajů"
+  "privacy.consentRequired": "Pro registraci musíte souhlasit se zpracováním osobních údajů",
+  "terms.box.title": "Podmínky a služby",
+  "terms.box.tagline": "Vězte, co je zdarma a co je placené.",
+  "terms.box.free": "ZDARMA",
+  "terms.box.free.desc": "Obecné informace, průvodci, samoobslužné nástroje a obecná online podpora.",
+  "terms.box.paid": "PLACENÉ",
+  "terms.box.paid.desc": "Osobní pomoc a individuální koordinace vyžadující vyhrazený čas člověka.",
+  "terms.box.noHiddenFees": "Žádné skryté poplatky. Vždy uvidíte cenu a potvrdíte ji před zahájením jakékoli placené služby.",
+  "terms.box.cta": "Zobrazit podmínky a služby →",
+  "terms.title": "Podmínky a služby",
+  "terms.subtitle": "Průhledný přehled bezplatných a placených služeb"
 }

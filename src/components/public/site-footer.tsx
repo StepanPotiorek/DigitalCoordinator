@@ -12,6 +12,12 @@ export function SiteFooter() {
           ☕ Support the Project
         </a>
         <a
+          href="/terms"
+          className="text-slate-500 hover:text-slate-300 transition-colors"
+        >
+          Terms & Services
+        </a>
+        <a
           href="/privacy"
           className="text-slate-500 hover:text-slate-300 transition-colors"
         >

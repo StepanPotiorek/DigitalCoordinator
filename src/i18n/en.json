@@ -215,5 +215,15 @@
   "privacy.title": "Privacy Policy",
   "privacy.subtitle": "How we handle your personal data",
   "privacy.consent": "I agree to the processing of my personal data in accordance with the Privacy Policy",
-  "privacy.consentRequired": "You must agree to the Privacy Policy to register"
+  "privacy.consentRequired": "You must agree to the Privacy Policy to register",
+  "terms.box.title": "Terms & Services",
+  "terms.box.tagline": "Know what is free and what is paid.",
+  "terms.box.free": "FREE",
+  "terms.box.free.desc": "General information, guides, self-service tools and general online support.",
+  "terms.box.paid": "PAID",
+  "terms.box.paid.desc": "Personal assistance and individual coordination requiring dedicated human time.",
+  "terms.box.noHiddenFees": "No hidden fees. You will always see the price and confirm before any paid service starts.",
+  "terms.box.cta": "View Terms & Services →",
+  "terms.title": "Terms & Services",
+  "terms.subtitle": "Transparent overview of free and paid services"
 }
